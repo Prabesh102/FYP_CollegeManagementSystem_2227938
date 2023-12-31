@@ -1,0 +1,100 @@
+body {
+  background-color: #ededed;
+}
+.chart-container {
+  height: 400px;
+}
+
+.summary-box {
+  background-color: rgb(255, 255, 255);
+  margin-left: 10px;
+  height: 200px;
+  border-radius: 10px;
+  padding: 10px;
+  width: 300px;
+  /* justify-content: center; */
+  text-align: center;
+}
+.summary-box h2 {
+  color: #4d8a8a;
+}
+.summary-box h4 {
+  color: rgb(101, 44, 67);
+}
+.heading-student {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: rgb(255, 255, 255);
+
+  background-color: black;
+  padding: 5px;
+}
+.main-chart {
+  background-color: white;
+  padding: 0 0 30px 0;
+}
+.admin-details {
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  background-color: white;
+  height: 230px;
+  padding: 30px;
+  width: 350px;
+  border-radius: 10px;
+}
+.text-admin {
+  margin-top: 30px;
+}
+.registered-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.recently-registered-text {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.recently-registered-container {
+  display: flex;
+  justify-content: center;
+}
+
+.recently-registered {
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  background-color: white;
+  padding: 20px;
+  height: 200px;
+  border-radius: 30px;
+  margin: 0 5px;
+}
+.recently-registered-columns {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+
+.recently-registered-column {
+  width: 200%;
+}
+.login-rishav {
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  background-color: white;
+  height: 300px;
+  width: 200px;
+}
+.main-rishav {
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+  width: 100%;
+}
