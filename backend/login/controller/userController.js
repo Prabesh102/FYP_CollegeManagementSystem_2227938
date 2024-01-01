@@ -8,22 +8,19 @@ const userRegister = asyncHandler(async (req, res) => {
   try {
     const { username, email, password, role, registrationDate } = req.body;
     if (!username || !email || !password || !role || !registrationDate) {
-      res.status(400).send("Please enter all details correctly");
-      return;
+      return res.status(400).send("Please enter all details correctly");
     }
 
     const userAvailable = await User.findOne({ email });
     if (userAvailable) {
-      res
+      return res
         .status(400)
         .send("User is already registered, please use a new email");
-      return;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({
       username,
-
       email,
       password: hashedPassword,
       role,
@@ -31,19 +28,29 @@ const userRegister = asyncHandler(async (req, res) => {
     });
 
     console.log("User created successfully: - ", newUser);
-    if (newUser) {
-      res.status(201).json({
+
+    // Send email with user's entered email and password
+    const emailSent = await sendEmail(
+      email,
+      "Registration Details",
+      `Thank you for registering!\nEmail: ${email}\nPassword: ${password}`
+    );
+
+    if (emailSent) {
+      return res.status(201).json({
         _id: newUser.id,
         email: newUser.email,
       });
     } else {
-      res.status(400).send("Problem while registration");
+      // If email fails to send, delete the created user
+      await User.findByIdAndDelete(newUser._id);
+      return res.status(500).json({ error: "Failed to send welcome email" });
     }
   } catch (error) {
     if (error.code === 11000) {
-      res.status(400).json({ error: "Email already exists" });
+      return res.status(400).json({ error: "Email already exists" });
     } else {
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
 });
