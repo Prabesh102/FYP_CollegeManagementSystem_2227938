@@ -3,6 +3,7 @@ import axios from "axios";
 import { Navigate } from "react-router-dom"; // Import Navigate from react-router-dom
 import image from "../image/loginImage.jpg";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { Modal, Button } from "react-bootstrap";
 import "./home.css";
 
 const Login = () => {
@@ -13,6 +14,8 @@ const Login = () => {
 
   const [redirectTo, setRedirectTo] = useState(null);
   const [alertMessage, setAlertMessage] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,18 +44,84 @@ const Login = () => {
       } else if (userRole === "admin") {
         setRedirectTo("/AdminDashboard");
       }
+      if (response.data.message === "Password change required") {
+        setUserId(response.data.userId); // Set the userId for the password change modal
+        setShowModal(true); // Show password change modal
+      }
     } catch (error) {
       console.error("Login failed", error.message);
       setAlertMessage("Login failed. Please enter correct email or password.");
     }
   };
-
+  const handleClose = () => setShowModal(false);
   if (redirectTo) {
     return <Navigate to={redirectTo} />;
   }
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    try {
+      const newPassword = e.target.newPassword.value;
+      const confirmPassword = e.target.confirmPassword.value;
+
+      if (newPassword !== confirmPassword) {
+        // Handle password mismatch error
+        return;
+      }
+
+      const response = await axios.post(
+        "http://localhost:5000/api/users/updatePassword",
+        {
+          userId: userId,
+          newPassword: newPassword,
+        }
+      );
+
+      // Handle successful password change
+      setShowModal(false);
+    } catch (error) {
+      // Handle password change error
+      console.error("Password change failed", error.message);
+    }
+  };
 
   return (
     <div className="hero-section-login">
+      <Modal show={showModal} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Password Change</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form onSubmit={handleChangePassword}>
+            <div className="mb-3">
+              <label htmlFor="newPassword" className="form-label">
+                New Password
+              </label>
+              <input
+                type="password"
+                className="form-control"
+                id="newPassword"
+                name="newPassword"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label htmlFor="confirmPassword" className="form-label">
+                Confirm New Password
+              </label>
+              <input
+                type="password"
+                className="form-control"
+                id="confirmPassword"
+                name="confirmPassword"
+                required
+              />
+            </div>
+            <Button variant="primary" type="submit">
+              Change Password
+            </Button>
+          </form>
+        </Modal.Body>
+      </Modal>
       <div className="container-fluid h-custom">
         <div className="row d-flex justify-content-center align-items-center h-100">
           <div className="col-md-9 col-lg-6 col-xl-5">

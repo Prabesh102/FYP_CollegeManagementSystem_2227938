@@ -49,7 +49,7 @@ const AdminDashboard = () => {
         referrerpolicy="no-referrer"
       />
       <Navbar />
-      <div className="main-admin-page">
+      <div className="main-admin-page" style={{ paddingTop: "60px" }}>
         <div className="dashboard-summary d-flex justify-content-around mt-4">
           <div className="admin-details">
             <i class="fa-solid fa-user fa-3x" style={{ color: "#4d8a8a" }}></i>

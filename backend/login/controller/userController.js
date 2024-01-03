@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const express = require("express");
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/userModel");
 const { sendEmail } = require("./sendEmail");
@@ -18,11 +18,12 @@ const userRegister = asyncHandler(async (req, res) => {
         .send("User is already registered, please use a new email");
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({
       username,
       email,
-      password: hashedPassword,
+      // password: hashedPassword,
+      password,
       role,
       registrationDate,
     });
@@ -63,26 +64,43 @@ const userLogin = async (req, res) => {
   }
   try {
     const user = await User.findOne({ email });
-    if (user && (await bcrypt.compare(password, user.password))) {
-      // Generate JWT token
-      const token = jwt.sign(
-        {
-          id: user.id,
-          email: user.email,
-          username: user.username,
-          role: user.role,
-        },
-        process.env.ACCESS_TOKEN,
-        { expiresIn: "1h" } // Token expiration time
-      );
-      res.status(200).json({ token, role: user.role }); // Send the role along with the token
-    } else {
-      res.status(400).json({ error: "Email or password not valid" });
+    if (!user) {
+      res.status(400).json({ error: "User not found" });
+      return;
     }
+
+    // const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    // if (!isPasswordMatch) {
+    if (password != user.password) {
+      res.status(400).json({ error: "Incorrect password" });
+      return;
+    }
+
+    if (password === "prabesh") {
+      res
+        .status(200)
+        .json({ message: "Password change required", userId: user._id });
+      return;
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+      },
+      process.env.ACCESS_TOKEN,
+      { expiresIn: "1h" } // Token expiration time
+    );
+    res.status(200).json({ token, role: user.role }); // Send the role along with the token
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 const countUsersByRole = async (req, res) => {
   try {
     const studentCount = await User.countDocuments({ role: "student" });
@@ -104,8 +122,36 @@ const getRecentlyRegisteredUsers = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const updatePassword = async (req, res) => {
+  const { userId, newPassword } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Update the password
+    user.password = newPassword;
+
+    // Save the updated user
+    const updatedUser = await user.save();
+
+    // Check if the save operation was successful
+    if (updatedUser) {
+      console.log("Password updated successfully:", updatedUser);
+      return res.status(200).json({ message: "Password updated successfully" });
+    } else {
+      return res.status(500).json({ error: "Password update failed" });
+    }
+  } catch (error) {
+    console.error("Password update failed:", error.message);
+    return res.status(500).json({ error: "Password update failed" });
+  }
+};
 
 module.exports = {
+  updatePassword,
   userRegister,
   userLogin,
   countUsersByRole,
