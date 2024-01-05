@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Pie } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Bar } from "react-chartjs-2";
+import ChartJS from "chart.js/auto"; // Updated import
 import "./admin.css";
-ChartJS.register(ArcElement, Tooltip, Legend);
-const LineChartComponent = () => {
+
+const BarChartComponent = () => {
   const [userCounts, setUserCounts] = useState({});
   const [error, setError] = useState(null);
 
@@ -39,10 +39,11 @@ const LineChartComponent = () => {
   }
 
   const data = {
-    labels: ["Student", "Teacher", "Section", "Class"],
+    labels: ["Student", "Teacher", "Classes", "Sections"],
     datasets: [
       {
-        data: [userCounts.studentCount, userCounts.teacherCount, 20, 10],
+        label: "Student",
+        data: [userCounts.studentCount, userCounts.teacherCount, 20, 5],
         backgroundColor: [
           "rgba(64,219,188,255)",
           "rgba(255,189,95,255)",
@@ -54,12 +55,24 @@ const LineChartComponent = () => {
     ],
   };
 
+  const options = {
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+  const chartContainerStyle = {
+    width: "600px",
+    height: "335px",
+  };
+
   return (
-    <div className="main-chart">
+    <div className="main-chart " style={chartContainerStyle}>
       {/* <p className="heading-student">Student's Details</p> */}
-      <Pie data={data} />
+      <Bar data={data} options={options} />
     </div>
   );
 };
 
-export default LineChartComponent;
+export default BarChartComponent;

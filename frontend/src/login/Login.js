@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Navigate } from "react-router-dom"; // Import Navigate from react-router-dom
-import image from "../image/loginImage.jpg";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, Button } from "react-bootstrap";
 import "./home.css";
@@ -122,37 +122,53 @@ const Login = () => {
           </form>
         </Modal.Body>
       </Modal>
-      <div className="container-fluid h-custom">
-        <div className="row d-flex justify-content-center align-items-center h-100">
-          <div className="col-md-9 col-lg-6 col-xl-5">
-            <img src={image} className="img-fluid" alt="" />
-          </div>
-          <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-            {alertMessage && (
-              <div className="alert alert-danger" role="alert">
-                {alertMessage}
-              </div>
-            )}
-            <form onSubmit={handleLogin}>
-              <div className="d-flex flex-row align-items-center justify-content-center justify-content-lg-start"></div>
 
-              <label className="form-label" htmlFor="form3Example3">
+      <div className="container-fluid h-custom">
+        <div className="row align-items-center h-100">
+          <div className="col-lg-6">
+            <h1 className="display-2 text-white">College Management System</h1>
+            <h3 className="display-9 text-white" style={{ marginTop: "40px" }}>
+              "Empowering Education, Simplifying Management: Your College, Your
+              System!"
+            </h3>
+          </div>{" "}
+          <div className="col-lg-6">
+            <form onSubmit={handleLogin} className="custom-login-form">
+              <h1
+                className="display-6 text-white "
+                style={{ marginBottom: "20px" }}
+              >
+                Login Here!
+              </h1>
+              {alertMessage && (
+                <div className="alert alert-danger" role="alert">
+                  {alertMessage}
+                </div>
+              )}
+              {/* <div className="d-flex flex-row align-items-center justify-content-center"></div> */}
+
+              <label
+                className="form-label"
+                htmlFor="form3Example3"
+                style={{ color: "white" }}
+              >
                 Email address
               </label>
-              <div className="form-outline mb-4">
-                <input
-                  type="email"
-                  id="form3Example3"
-                  name="email"
-                  className="form-control form-control-lg"
-                  placeholder="Enter correct email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+              <input
+                type="email"
+                name="email"
+                className="form-control form-control-lg"
+                placeholder="Enter correct email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
 
-              <label className="form-label" htmlFor="form3Example4">
+              <label
+                className="form-label"
+                htmlFor="form3Example4"
+                style={{ color: "white" }}
+              >
                 Password
               </label>
 
@@ -161,7 +177,7 @@ const Login = () => {
                   type="password"
                   id="form3Example4"
                   name="password"
-                  className="form-control form-control-lg"
+                  className="form-control form-control-lg bg-transparent text-white border-white"
                   placeholder="Enter password"
                   value={formData.password}
                   onChange={handleChange}
@@ -169,11 +185,16 @@ const Login = () => {
                 />
               </div>
 
-              <div className="text-center text-lg-start mt-4 pt-2">
+              <div className="text-center text-lg-start mt-4 pt-2 d-flex justify-content-center">
                 <button
                   type="submit"
                   className="btn btn-primary btn-lg"
-                  style={{ paddingLeft: "2.5rem", paddingRight: "2.5rem" }}
+                  style={{
+                    color: "black",
+                    width: "200px",
+                    backgroundColor: "white",
+                    border: "1px solid white",
+                  }}
                 >
                   Login
                 </button>

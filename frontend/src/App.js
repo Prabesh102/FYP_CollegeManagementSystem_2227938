@@ -18,7 +18,7 @@ import Login from "./login/Login";
 import StudentDachboard from "./student/StudentDachboard";
 import TeacherDashboard from "./teacher/TeacherDashboard";
 import AdminDashboard from "./admin/main/AdminDashboard";
-
+import ViewStudents from "./admin/students/ViewStudents";
 // import LineChartComponent from "./admin/LineChartComponent";
 function App() {
   return (
@@ -34,7 +34,7 @@ function App() {
         <Route path="/admin/addFood" element={<AddFood />} />
         <Route path="/admin/food" element={<ViewFood />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
-
+        <Route path="/admin/viewStudents" element={<ViewStudents />} />
         {/* Student Routes */}
         <Route path="/StudentDashboard" element={<StudentDachboard />} />
 

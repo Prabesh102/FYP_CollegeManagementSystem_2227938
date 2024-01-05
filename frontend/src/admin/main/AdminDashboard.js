@@ -4,7 +4,7 @@ import "./admin.css";
 import LineChartComponent from "./LineChartComponent";
 import Navbar from "./Navbar";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import BarChartComponent from "./BarChartComponent";
 const AdminDashboard = () => {
   const [studentCount, setStudentCount] = useState(0);
   const [teacherCount, setTeacherCount] = useState(0);
@@ -51,83 +51,97 @@ const AdminDashboard = () => {
       <Navbar />
       <div className="main-admin-page" style={{ paddingTop: "60px" }}>
         <div className="dashboard-summary d-flex justify-content-around mt-4">
-          <div className="admin-details">
-            <i class="fa-solid fa-user fa-3x" style={{ color: "#4d8a8a" }}></i>
-            <h4 className="text-admin">Admin</h4>
-            <h5>admin@gmail.com</h5>
-          </div>
           <div className="registered-group">
             <div className="recently-registered-text">
-              <h3
+              <h4
                 style={{
                   textAlign: "center",
                   color: "#4d8a8a",
-                  marginBottom: "15px",
                 }}
               >
                 Recently Registered Users
-              </h3>
+              </h4>
             </div>
             <div className="recently-registered-columns">
               {recentlyRegisteredUsers.map((user) => (
                 <div key={user._id} className="recently-registered-column">
                   <div className="recently-registered">
-                    <i
-                      className="fa-solid fa-user fa-2x"
-                      style={{ color: "#4d8a8a" }}
-                    ></i>
-                    <h4 className="text-admin">{user.username}</h4>
-                    <h5>{user.email}</h5>
-                    <h5>Role: {user.role}</h5>
+                    <h4 style={{ color: "#4d9a8a" }}>{user.username}</h4>
+                    <h6 style={{ color: "#4d9a8a" }}>{user.email}</h6>
+                    <h6 style={{ color: "#4d9a8a" }}>Role: {user.role}</h6>
                   </div>
                 </div>
               ))}
             </div>
+            <button type="button" class="btn btn-dark mt-2 w-50 h-20">
+              View more
+            </button>
           </div>
-
           <div className="chart-container">
+            <BarChartComponent />
+          </div>
+          <div className="chart-container h-100">
             <LineChartComponent />
           </div>
         </div>
         <div className="summary  d-flex justify-content-around">
-          <div className="summary-box summary-box-custom">
-            <h4>Total Students</h4>
-            <h1>
-              <i
-                className="fa-solid fa-graduation-cap"
-                style={{ color: "#4d8a8a" }}
-              ></i>
-            </h1>
-            <h2 className="fw-bold">{studentCount}</h2>
+          <div className="summary-box summary-box-custom green">
+            <div className="overallAdminBox">
+              <h3>
+                <i
+                  className="fa-solid fa-graduation-cap"
+                  style={{ color: "white" }}
+                ></i>
+              </h3>
+              <div className="admin-text">
+                <h4>Total Students</h4>
+
+                <h2 className="fw-bold">{studentCount}</h2>
+              </div>
+            </div>
           </div>
-          <div className="summary-box summary-box-custom">
-            <h4>Total Teachers</h4>
-            <h1>
-              <i
-                className="fa-solid fa-person-chalkboard"
-                style={{ color: "#4d8a8a" }}
-              ></i>
-            </h1>
-            <h2 className="fw-bold">{teacherCount}</h2>
-          </div>
-          <div className="summary-box summary-box-custom">
-            <h4>Total Classes </h4>
-            <h1>
+          <div className="summary-box summary-box-custom yellow">
+            <div className="overallAdminBox">
               {" "}
-              <i className="fa-solid fa-book" style={{ color: "#4d8a8a" }}></i>
-            </h1>
-            <h2 className="fw-bold">40</h2>
+              <h3>
+                <i
+                  className="fa-solid fa-person-chalkboard"
+                  style={{ color: "white" }}
+                ></i>
+              </h3>
+              <div className="admin-text">
+                <h4>Total Teachers</h4>
+                <h2 className="fw-bold">{teacherCount}</h2>
+              </div>
+            </div>
           </div>
-          <div className="summary-box summary-box-custom">
-            <h4>Total Sections</h4>
-            <h1>
+          <div className="summary-box summary-box-custom blue">
+            <div className="overallAdminBox">
               {" "}
-              <i
-                className="fa-solid fa-people-group"
-                style={{ color: "#4d8a8a" }}
-              ></i>
-            </h1>
-            <h2 className="fw-bold"> 80</h2>
+              <h3>
+                {" "}
+                <i className="fa-solid fa-book" style={{ color: "white" }}></i>
+              </h3>
+              <div className="admin-text">
+                <h4>Total Classes </h4>
+                <h2 className="fw-bold">40</h2>
+              </div>
+            </div>
+          </div>
+          <div className="summary-box summary-box-custom red">
+            <div className="overallAdminBox">
+              <h3>
+                {" "}
+                <i
+                  className="fa-solid fa-people-group"
+                  style={{ color: "white" }}
+                ></i>
+              </h3>
+              <div className="admin-text">
+                <h4>Total Sections</h4>
+                <h2 className="fw-bold"> 80</h2>
+              </div>
+            </div>
           </div>
         </div>
       </div>

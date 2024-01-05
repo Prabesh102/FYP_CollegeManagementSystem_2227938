@@ -1,12 +1,13 @@
 body {
-  background-color: #ededed;
+  background-color: #eaeef3;
 }
 .chart-container {
   height: 400px;
 }
 
 .summary-box {
-  background-color: rgb(255, 255, 255);
+  /* background-color: rgb(255, 255, 255); */
+  display: flex;
   margin-left: 10px;
   height: 200px;
   border-radius: 10px;
@@ -14,12 +15,22 @@ body {
   width: 300px;
   /* justify-content: center; */
   text-align: center;
+  box-shadow: black;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+}
+.admin-text {
+  margin-left: 20px;
 }
 .summary-box h2 {
-  color: #4d8a8a;
+  color: white;
 }
 .summary-box h4 {
-  color: rgb(101, 44, 67);
+  color: white;
+}
+.overallAdminBox {
+  display: flex;
 }
 .heading-student {
   justify-content: center;
@@ -44,19 +55,21 @@ body {
   width: 350px;
   border-radius: 10px;
 }
-.text-admin {
-  margin-top: 30px;
-}
+
 .registered-group {
   display: flex;
   flex-direction: column;
   align-items: center;
+  background-color: white;
+  margin-bottom: 10px;
+  padding: 10px 10px 10px 10px;
 }
 
 .recently-registered-text {
   width: 100%;
   text-align: center;
   margin-bottom: 20px;
+  color: white;
 }
 
 .recently-registered-container {
@@ -70,31 +83,28 @@ body {
   align-items: center;
   background-color: white;
   padding: 20px;
-  height: 200px;
-  border-radius: 30px;
+  /* height: 200px; */
+  /* border-radius: 30px; */
   margin: 0 5px;
+  color: black;
+  border-bottom: 0.5px solid rgb(90, 87, 87);
 }
 .recently-registered-columns {
-  display: flex;
-  justify-content: center;
-  text-align: center;
-  align-items: center;
-}
-
-.recently-registered-column {
-  width: 200%;
-}
-.login-rishav {
   justify-content: center;
   text-align: center;
   align-items: center;
   background-color: white;
-  height: 300px;
-  width: 200px;
 }
-.main-rishav {
-  justify-content: center;
-  text-align: center;
-  align-items: center;
-  width: 100%;
+
+.green {
+  background-image: linear-gradient(to right, #3ddbbb, #49ddbf, #57e0c4);
+}
+.blue {
+  background-image: linear-gradient(to right, #51a2ff, #61aaff, #6fb2ff);
+}
+.yellow {
+  background-image: linear-gradient(to right, #ffbd5e, #ffc46f, #ffca7e);
+}
+.red {
+  background-image: linear-gradient(to right, #ff647e, #ff738b, #ff8498);
 }

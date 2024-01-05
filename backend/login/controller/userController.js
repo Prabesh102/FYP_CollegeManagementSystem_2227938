@@ -115,7 +115,7 @@ const getRecentlyRegisteredUsers = async (req, res) => {
   try {
     const recentlyRegisteredUsers = await User.find({})
       .sort({ registrationDate: -1 }) // Sort by registration date in descending order to get the most recent users first
-      .limit(3); // Adjust this limit as needed to get the desired number of recent users
+      .limit(2); // Adjust this limit as needed to get the desired number of recent users
 
     res.status(200).json(recentlyRegisteredUsers);
   } catch (error) {
@@ -149,11 +149,22 @@ const updatePassword = async (req, res) => {
     return res.status(500).json({ error: "Password update failed" });
   }
 };
+const getAllStudents = async (req, res) => {
+  try {
+    const students = await User.find({ role: "student" })
+      .sort({ registrationDate: -1 }) // Sort by registration date in descending order
+      .select("_id username email registrationDate");
 
+    res.status(200).json(students);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 module.exports = {
   updatePassword,
   userRegister,
   userLogin,
   countUsersByRole,
   getRecentlyRegisteredUsers,
+  getAllStudents,
 };

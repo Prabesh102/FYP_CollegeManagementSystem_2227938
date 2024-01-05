@@ -1,5 +1,68 @@
 .hero-section-login {
-  justify-content: center;
+  position: relative;
+  height: 100vh;
+  display: flex;
   align-items: center;
-  margin-top: 80px;
+  justify-content: center;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+    url("../image/LoginBackground.jpg");
+
+  background-size: cover;
+  background-position: center;
+}
+
+.login-container {
+  max-width: 300px; /* Adjust this width as needed */
+  width: 90%;
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.3
+  ); /* Adjust background opacity as needed */
+  padding: 20px;
+  border-radius: 8px;
+  /* Add any additional styles for centering or spacing */
+}
+
+.login-form {
+  background-color: transparent; /* Transparent background for the form */
+  /* Other styles for the form inputs */
+}
+.custom-login-form {
+  /* Your existing form styles */
+  max-width: 400px;
+  width: 90%;
+  margin: 0 auto;
+  /* background-color: rgba(255, 255, 255, 0.4); */
+  padding: 20px;
+  border-radius: 8px;
+}
+.custom-login-form .form-control {
+  background-color: transparent !important;
+  border: 1px solid #ced4da !important;
+  color: white !important;
+}
+/* Styles for the left-aligned text */
+.h-custom {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+    url("../image/LoginBackground.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+/* Additional styles to center the text in the left column */
+.h-custom h1 {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+.form-control::placeholder {
+  color: white;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
 }

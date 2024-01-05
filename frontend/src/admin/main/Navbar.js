@@ -7,6 +7,9 @@ const Navbar = () => {
     <>
       <nav className="navbar navbar-dark bg-dark fixed-top">
         <div className="container-fluid">
+          <a className="navbar-brand" href="#">
+            College Management System
+          </a>
           <button
             className="navbar-toggler"
             type="button"
@@ -53,12 +56,12 @@ const Navbar = () => {
                   </a>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <a className="dropdown-item" href="/register">
                         Add new student
                       </a>
                     </li>
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <a className="dropdown-item" href="/admin/viewStudents">
                         View students
                       </a>
                     </li>
@@ -267,9 +270,6 @@ const Navbar = () => {
               </Link>
             </div>
           </div>
-          <a className="navbar-brand" href="#">
-            College Management System
-          </a>
         </div>
       </nav>
     </>
