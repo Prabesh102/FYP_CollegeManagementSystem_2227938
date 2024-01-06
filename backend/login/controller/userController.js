@@ -95,6 +95,9 @@ const userLogin = async (req, res) => {
       process.env.ACCESS_TOKEN,
       { expiresIn: "1h" } // Token expiration time
     );
+    user.online = true;
+    await user.save();
+
     res.status(200).json({ token, role: user.role }); // Send the role along with the token
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });

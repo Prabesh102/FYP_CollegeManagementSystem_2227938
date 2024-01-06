@@ -108,3 +108,6 @@ body {
 .red {
   background-image: linear-gradient(to right, #ff647e, #ff738b, #ff8498);
 }
+.black-placeholder ::placeholder {
+  color: black;
+}
