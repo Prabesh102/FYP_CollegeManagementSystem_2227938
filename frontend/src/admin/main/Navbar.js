@@ -69,16 +69,7 @@ const Navbar = () => {
                         View students
                       </a>
                     </li>
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        Update student
-                      </a>
-                    </li>
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        Delete student
-                      </a>
-                    </li>
+
                     <li>
                       <hr className="dropdown-divider" />
                     </li>
