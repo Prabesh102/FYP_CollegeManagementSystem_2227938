@@ -120,6 +120,39 @@ const Navbar = () => {
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
+                    Courses
+                  </a>
+                  <ul className="dropdown-menu dropdown-menu-dark">
+                    <li>
+                      <a className="dropdown-item" href="/admin/addCourse">
+                        Add new course
+                      </a>
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="/admin/viewCourses">
+                        View courses
+                      </a>
+                    </li>
+
+                    <li>
+                      <hr className="dropdown-divider" />
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="#">
+                        View Graph
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
                     Admin
                   </a>
                   <ul className="dropdown-menu dropdown-menu-dark">

@@ -7,6 +7,7 @@ const studentRouter = require("./library/routes/studentRoute");
 const noticeRouter = require("./library/routes/noticeRoute");
 const foodRouter = require("./canteen/routes/foodRoute");
 const userRoute = require("./login/routes/userRoute");
+const courseRouter = require("./courses/routes/courseRoute");
 const cloudinary = require("cloudinary").v2;
 const cors = require("cors");
 
@@ -31,6 +32,7 @@ app.use("/api/library/books", bookRouter);
 app.use("/api/library/students", studentRouter);
 app.use("/api/library/notice", noticeRouter);
 app.use("/api/users", userRoute);
+app.use("/api/courses", courseRouter);
 app.use("/uploads", express.static("uploads"));
 
 const PORT = 5000;

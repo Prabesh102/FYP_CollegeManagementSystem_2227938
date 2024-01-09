@@ -20,6 +20,8 @@ import TeacherDashboard from "./teacher/TeacherDashboard";
 import AdminDashboard from "./admin/main/AdminDashboard";
 import ViewStudents from "./admin/students/ViewStudents";
 import ViewTeacher from "./admin/teachers/ViewTeacher";
+import AddCourse from "./admin/courses/AddCourse";
+import ViewCourses from "./admin/courses/ViewCourses";
 // import LineChartComponent from "./admin/LineChartComponent";
 function App() {
   return (
@@ -36,9 +38,11 @@ function App() {
         <Route path="/admin/food" element={<ViewFood />} />
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/admin/viewStudents" element={<ViewStudents />} />
+        <Route path="/admin/viewCourses" element={<ViewCourses />} />
         {/* Student Routes */}
         <Route path="/StudentDashboard" element={<StudentDachboard />} />
         <Route path="/admin/viewTeachers" element={<ViewTeacher />} />
+        <Route path="/admin/addCourse" element={<AddCourse />} />
 
         {/* Teacher Routes */}
         <Route path="/TeacherDashboard" element={<TeacherDashboard />} />
