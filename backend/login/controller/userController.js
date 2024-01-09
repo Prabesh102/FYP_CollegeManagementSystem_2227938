@@ -163,7 +163,63 @@ const getAllStudents = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const updateUserDetails = async (req, res) => {
+  try {
+    const { userId, updatedName, updatedEmail } = req.body;
+
+    // Find the user by userId and update the details
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Update the user details
+    user.username = updatedName;
+    user.email = updatedEmail;
+
+    // Save the updated user
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ message: "User details updated successfully" });
+  } catch (error) {
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+const deleteUser = async (req, res) => {
+  const userId = req.params.id; // Assuming you're passing user ID in the route
+
+  try {
+    // Use your User model to find and delete the user by ID
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+const getAllTeachers = async (req, res) => {
+  try {
+    const students = await User.find({ role: "teacher" })
+      .sort({ registrationDate: -1 }) // Sort by registration date in descending order
+      .select("_id username email registrationDate");
+
+    res.status(200).json(students);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 module.exports = {
+  getAllTeachers,
+  deleteUser,
+  updateUserDetails,
   updatePassword,
   userRegister,
   userLogin,

@@ -3,7 +3,7 @@ import Navbar from "../main/Navbar";
 import "../main/admin.css";
 import { Modal, Button, Form } from "react-bootstrap";
 
-const ViewStudents = () => {
+const ViewTeacher = () => {
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
@@ -300,4 +300,4 @@ const ViewStudents = () => {
   );
 };
 
-export default ViewStudents;
+export default ViewTeacher;
