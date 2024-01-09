@@ -97,20 +97,11 @@ const Navbar = () => {
                       </a>
                     </li>
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <a className="dropdown-item" href="/admin/viewTeachers">
                         View teachers
                       </a>
                     </li>
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        Update teacher
-                      </a>
-                    </li>
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        Delete teacher
-                      </a>
-                    </li>
+
                     <li>
                       <hr className="dropdown-divider" />
                     </li>

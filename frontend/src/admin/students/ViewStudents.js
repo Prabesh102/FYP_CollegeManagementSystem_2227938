@@ -286,7 +286,10 @@ const ViewStudents = () => {
           <Modal.Body>
             <p>Username: {selectedUser?.username}</p>
             <p>Email: {selectedUser?.email}</p>
-            <p>Registration Date: {selectedUser?.registrationDate}</p>
+            <p>
+              Registration Date:{" "}
+              {new Date(selectedUser?.registrationDate).toLocaleDateString()}
+            </p>
             {/* Add other details you want to display */}
           </Modal.Body>
           <Modal.Footer>

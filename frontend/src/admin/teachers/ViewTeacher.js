@@ -4,7 +4,7 @@ import "../main/admin.css";
 import { Modal, Button, Form } from "react-bootstrap";
 
 const ViewTeacher = () => {
-  const [students, setStudents] = useState([]);
+  const [teachers, setteachers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -16,27 +16,27 @@ const ViewTeacher = () => {
   const [showUpdateAlert, setShowUpdateAlert] = useState(false);
 
   useEffect(() => {
-    const fetchStudentData = async () => {
+    const fetchteacherData = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/users/getAllStudents"
+          "http://localhost:5000/api/users/getAllTeachers"
         );
         if (response.ok) {
           const data = await response.json();
-          setStudents(data); // Update state with fetched student data
+          setteachers(data); // Update state with fetched teacher data
         } else {
           throw new Error("Failed to fetch data");
         }
       } catch (error) {
-        console.error("Error fetching student data:", error);
+        console.error("Error fetching teacher data:", error);
       }
     };
 
-    fetchStudentData();
+    fetchteacherData();
   }, []);
 
-  const filteredStudents = students.filter((student) =>
-    student.username.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredteachers = teachers.filter((teacher) =>
+    teacher.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleClose = () => {
@@ -188,33 +188,33 @@ const ViewTeacher = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredStudents.map((student, index) => (
-              <tr key={student._id}>
+            {filteredteachers.map((teacher, index) => (
+              <tr key={teacher._id}>
                 <th scope="row">{index + 1}</th>
-                <td>{student.username}</td>
-                <td>{student.email}</td>
+                <td>{teacher.username}</td>
+                <td>{teacher.email}</td>
                 <td>
-                  {new Date(student.registrationDate).toLocaleDateString()}
+                  {new Date(teacher.registrationDate).toLocaleDateString()}
                 </td>
                 <td>
                   <button
                     type="button"
                     className="btn btn-primary me-2"
-                    onClick={() => handleView(student)}
+                    onClick={() => handleView(teacher)}
                   >
                     View
                   </button>
                   <button
                     type="button"
                     className="btn btn-warning me-2"
-                    onClick={() => handleUpdateClick(student)}
+                    onClick={() => handleUpdateClick(teacher)}
                   >
                     Update
                   </button>
                   <button
                     type="button"
                     className="btn btn-danger me-2"
-                    onClick={() => handleDeleteClick(student)}
+                    onClick={() => handleDeleteClick(teacher)}
                   >
                     Delete
                   </button>
