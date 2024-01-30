@@ -10,11 +10,65 @@ const ViewStudents = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [updatedName, setUpdatedName] = useState("");
   const [updatedEmail, setUpdatedEmail] = useState("");
+  const [updatedYear, setUpdatedYear] = useState("");
+  const [updatedSemester, setUpdatedSemester] = useState("");
+  const [updatedSection, setUpdatedSection] = useState("");
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [showUpdateAlert, setShowUpdateAlert] = useState(false);
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [alertMessage, setAlertMessage] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    role: "student",
+    registrationDate: new Date().toISOString(),
+    section: "",
+  });
+  const handleAddUserClick = () => {
+    setShowAddUserModal(true);
+  };
 
+  const handleAddUserClose = () => {
+    setShowAddUserModal(false);
+  };
+
+  const handleAddUserSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:5000/api/users/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          role: formData.role,
+          registrationDate: formData.registrationDate,
+          section: formData.section,
+        }),
+      });
+
+      if (response.ok) {
+        // Handle successful registration
+        console.log("User added successfully");
+        // Close the modal or handle any other UI updates
+        setShowAddUserModal(false);
+        setAlertMessage("User added successfully!");
+      } else {
+        // Handle errors
+        console.error("Failed to add user");
+        setAlertMessage("Failed to add user. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
@@ -52,6 +106,9 @@ const ViewStudents = () => {
     setShowUpdateModal(false);
     setUpdatedName("");
     setUpdatedEmail("");
+    setUpdatedYear("");
+    setUpdatedSemester("");
+    setUpdatedSection("");
     setSelectedUser(null);
   };
   const handleView = (user) => {
@@ -78,6 +135,9 @@ const ViewStudents = () => {
             userId: selectedUser._id,
             updatedName,
             updatedEmail,
+            updatedYear,
+            updatedSemester,
+            updatedSection,
           }),
         }
       );
@@ -89,6 +149,9 @@ const ViewStudents = () => {
         setShowUpdateModal(false);
         setUpdatedName("");
         setUpdatedEmail("");
+        setUpdatedYear("");
+        setUpdatedSection("");
+        setUpdatedSemester("");
         setSelectedUser(null);
         setShowUpdateAlert(true);
       } else {
@@ -148,17 +211,6 @@ const ViewStudents = () => {
       <Navbar />
       <div className="viewTable" style={{ paddingTop: "60px" }}>
         <div className="d-flex justify-content-between align-items-center mb-3">
-          {showDeleteAlert && (
-            <div className="alert alert-success" role="alert">
-              User deleted successfully!
-            </div>
-          )}
-
-          {showUpdateAlert && (
-            <div className="alert alert-success" role="alert">
-              User details updated successfully!
-            </div>
-          )}
           <div className="ml-auto">
             <input
               type="text"
@@ -167,6 +219,15 @@ const ViewStudents = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
+          </div>
+          <div className="d-flex justify-content-end mb-3">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleAddUserClick}
+            >
+              Add User
+            </button>
           </div>
         </div>
         <table className="table">
@@ -183,7 +244,16 @@ const ViewStudents = () => {
                 <i class="fa-regular fa-calendar-days"></i> Registration Date
               </th>
               <th scope="col">
-                <i class="fa-regular fa-calendar-days"></i> Actions
+                <i class="fa-solid fa-landmark"></i> Section
+              </th>
+              <th scope="col">
+                <i class="fa-solid fa-book"></i> Semester
+              </th>
+              <th scope="col">
+                <i class="fa-solid fa-graduation-cap"></i> Year
+              </th>
+              <th scope="col">
+                <i class="fa-solid fa-gear"></i> Actions
               </th>
             </tr>
           </thead>
@@ -196,6 +266,9 @@ const ViewStudents = () => {
                 <td>
                   {new Date(student.registrationDate).toLocaleDateString()}
                 </td>
+                <td>{student.section}</td>
+                <td>{student.semester}</td>
+                <td>{student.year}</td>
                 <td>
                   <button
                     type="button"
@@ -223,6 +296,22 @@ const ViewStudents = () => {
             ))}
           </tbody>
         </table>
+        {showDeleteAlert && (
+          <div className="alert alert-success" role="alert">
+            User deleted successfully!
+          </div>
+        )}
+
+        {showUpdateAlert && (
+          <div className="alert alert-success" role="alert">
+            User details updated successfully!
+          </div>
+        )}
+        {alertMessage && (
+          <div className="alert alert-success" role="alert">
+            User added successfully!
+          </div>
+        )}
         <Modal show={showDeleteConfirmation} onHide={handleDeleteClose}>
           <Modal.Header closeButton>
             <Modal.Title>Confirmation</Modal.Title>
@@ -267,6 +356,33 @@ const ViewStudents = () => {
                   onChange={(e) => setUpdatedEmail(e.target.value)}
                 />
               </Form.Group>
+              <Form.Group controlId="formUpdateEmail">
+                <Form.Label>Year</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Enter updated email"
+                  value={updatedYear}
+                  onChange={(e) => setUpdatedYear(e.target.value)}
+                />
+              </Form.Group>
+              <Form.Group controlId="formUpdateEmail">
+                <Form.Label>Semester</Form.Label>
+                <Form.Control
+                  type="number"
+                  placeholder="Enter updated email"
+                  value={updatedSemester}
+                  onChange={(e) => setUpdatedSemester(e.target.value)}
+                />
+              </Form.Group>
+              <Form.Group controlId="formUpdateEmail">
+                <Form.Label>Section</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter updated email"
+                  value={updatedSection}
+                  onChange={(e) => setUpdatedSection(e.target.value)}
+                />
+              </Form.Group>
               <Button variant="primary" type="submit">
                 Update
               </Button>
@@ -290,11 +406,117 @@ const ViewStudents = () => {
               Registration Date:{" "}
               {new Date(selectedUser?.registrationDate).toLocaleDateString()}
             </p>
+            <p>Semester: {selectedUser?.semester}</p>
+            <p>Year: {selectedUser?.year}</p>
+            <p>Section: {selectedUser?.section}</p>
             {/* Add other details you want to display */}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleCloseUserDetails}>
               Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal show={showAddUserModal} onHide={handleAddUserClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Add User</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="mb-3">
+              <label>Username</label>
+              <input
+                type="text"
+                name="username"
+                className="form-control"
+                placeholder="Enter username"
+                value={formData.username}
+                onChange={(e) =>
+                  setFormData({ ...formData, username: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label>Email address</label>
+              <input
+                type="email"
+                name="email"
+                className="form-control"
+                placeholder="Enter correct email"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                className="form-control"
+                placeholder="Enter password"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label>Role</label>
+              <select
+                className="form-select"
+                name="role"
+                value={formData.role}
+                onChange={(e) =>
+                  setFormData({ ...formData, role: e.target.value })
+                }
+                required
+              >
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+
+            <div className="mb-3">
+              <label>Registration Date</label>
+              <input
+                type="date"
+                name="registrationDate"
+                className="form-control"
+                value={formData.registrationDate}
+                onChange={(e) =>
+                  setFormData({ ...formData, registrationDate: e.target.value })
+                }
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label>Section</label>
+              <input
+                type="text"
+                name="section"
+                className="form-control"
+                value={formData.section}
+                onChange={(e) =>
+                  setFormData({ ...formData, section: e.target.value })
+                }
+                required
+              />
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleAddUserClose}>
+              Close
+            </Button>
+            <Button variant="primary" onClick={handleAddUserSubmit}>
+              Add User
             </Button>
           </Modal.Footer>
         </Modal>

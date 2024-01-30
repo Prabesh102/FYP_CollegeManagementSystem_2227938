@@ -11,6 +11,7 @@ const Register = () => {
     password: "",
     role: "student",
     registrationDate: new Date().toISOString(),
+    section: "",
   });
 
   const handleChange = (e) => {
@@ -120,6 +121,17 @@ const Register = () => {
                 name="registrationDate"
                 className="form-control"
                 value={formData.registrationDate}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label>Section</label>
+              <input
+                type="text"
+                name="section"
+                className="form-control"
+                value={formData.section}
                 onChange={handleChange}
                 required
               />

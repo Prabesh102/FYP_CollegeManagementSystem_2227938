@@ -92,7 +92,7 @@ const Navbar = () => {
                   </a>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <a className="dropdown-item" href="/register">
                         Add new teacher
                       </a>
                     </li>
@@ -144,6 +144,33 @@ const Navbar = () => {
                     </li>
                   </ul>
                 </li>
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Sections
+                  </a>
+                  <ul className="dropdown-menu dropdown-menu-dark">
+                    <li>
+                      <a className="dropdown-item" href="/admin/viewSection">
+                        View sections
+                      </a>
+                    </li>
+
+                    <li>
+                      <hr className="dropdown-divider" />
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="#">
+                        View Graph
+                      </a>
+                    </li>
+                  </ul>
+                </li>
 
                 <li className="nav-item dropdown">
                   <a
@@ -157,25 +184,16 @@ const Navbar = () => {
                   </a>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <a className="dropdown-item" href="/register">
                         Add new admin
                       </a>
                     </li>
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <a className="dropdown-item" href="/admin/viewAdmins">
                         View admins
                       </a>
                     </li>
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        Update admin
-                      </a>
-                    </li>
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        Delete admin
-                      </a>
-                    </li>
+
                     <li>
                       <hr className="dropdown-divider" />
                     </li>

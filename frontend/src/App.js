@@ -22,6 +22,8 @@ import ViewStudents from "./admin/students/ViewStudents";
 import ViewTeacher from "./admin/teachers/ViewTeacher";
 import AddCourse from "./admin/courses/AddCourse";
 import ViewCourses from "./admin/courses/ViewCourses";
+import ViewAdmin from "./admin/admin/ViewAdmin";
+import ViewSections from "./admin/sections/ViewSections";
 // import LineChartComponent from "./admin/LineChartComponent";
 function App() {
   return (
@@ -39,10 +41,12 @@ function App() {
         <Route path="/AdminDashboard" element={<AdminDashboard />} />
         <Route path="/admin/viewStudents" element={<ViewStudents />} />
         <Route path="/admin/viewCourses" element={<ViewCourses />} />
+        <Route path="/admin/viewAdmins" element={<ViewAdmin />} />
         {/* Student Routes */}
         <Route path="/StudentDashboard" element={<StudentDachboard />} />
         <Route path="/admin/viewTeachers" element={<ViewTeacher />} />
         <Route path="/admin/addCourse" element={<AddCourse />} />
+        <Route path="/admin/viewSection" element={<ViewSections />} />
 
         {/* Teacher Routes */}
         <Route path="/TeacherDashboard" element={<TeacherDashboard />} />

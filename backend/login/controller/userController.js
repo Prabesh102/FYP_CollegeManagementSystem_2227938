@@ -6,8 +6,16 @@ const User = require("../model/userModel");
 const { sendEmail } = require("./sendEmail");
 const userRegister = asyncHandler(async (req, res) => {
   try {
-    const { username, email, password, role, registrationDate } = req.body;
-    if (!username || !email || !password || !role || !registrationDate) {
+    const { username, email, password, role, registrationDate, section } =
+      req.body;
+    if (
+      !username ||
+      !email ||
+      !password ||
+      !role ||
+      !registrationDate ||
+      !section
+    ) {
       return res.status(400).send("Please enter all details correctly");
     }
 
@@ -26,6 +34,7 @@ const userRegister = asyncHandler(async (req, res) => {
       password,
       role,
       registrationDate,
+      section,
     });
 
     console.log("User created successfully: - ", newUser);
@@ -34,7 +43,7 @@ const userRegister = asyncHandler(async (req, res) => {
     const emailSent = await sendEmail(
       email,
       "Registration Details",
-      `Thank you for registering!\nEmail: ${email}\nPassword: ${password}`
+      `Thank you for registering!\nEmail: ${email}\nPassword: ${password} \nSection: ${section}`
     );
 
     if (emailSent) {
@@ -156,7 +165,7 @@ const getAllStudents = async (req, res) => {
   try {
     const students = await User.find({ role: "student" })
       .sort({ registrationDate: -1 }) // Sort by registration date in descending order
-      .select("_id username email registrationDate");
+      .select("_id username email registrationDate section year semester");
 
     res.status(200).json(students);
   } catch (error) {
@@ -165,7 +174,14 @@ const getAllStudents = async (req, res) => {
 };
 const updateUserDetails = async (req, res) => {
   try {
-    const { userId, updatedName, updatedEmail } = req.body;
+    const {
+      userId,
+      updatedName,
+      updatedEmail,
+      updatedYear,
+      updatedSemester,
+      updatedSection,
+    } = req.body;
 
     // Find the user by userId and update the details
     const user = await User.findById(userId);
@@ -177,6 +193,9 @@ const updateUserDetails = async (req, res) => {
     // Update the user details
     user.username = updatedName;
     user.email = updatedEmail;
+    user.year = updatedYear;
+    user.semester = updatedSemester;
+    user.section = updatedSection;
 
     // Save the updated user
     await user.save();
@@ -216,6 +235,17 @@ const getAllTeachers = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const getAllAdmins = async (req, res) => {
+  try {
+    const students = await User.find({ role: "admin" })
+      .sort({ registrationDate: -1 }) // Sort by registration date in descending order
+      .select("_id username email registrationDate");
+
+    res.status(200).json(students);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 module.exports = {
   getAllTeachers,
   deleteUser,
@@ -226,4 +256,5 @@ module.exports = {
   countUsersByRole,
   getRecentlyRegisteredUsers,
   getAllStudents,
+  getAllAdmins,
 };

@@ -36,6 +36,7 @@ const updateCourse = asyncHandler(async (req, res) => {
   }
   res.send(course).status(200);
 });
+
 const deleteCourse = asyncHandler(async (req, res) => {
   const course = await Course.findByIdAndDelete(req.params.id);
   if (!course) {

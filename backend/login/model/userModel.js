@@ -23,9 +23,17 @@ const userSchema = mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    online: {
-      type: Boolean,
-      default: false, // Initially set to false
+    year: {
+      type: Number,
+      default: 1,
+    },
+    semester: {
+      type: Number,
+      default: 1,
+    },
+    section: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }
