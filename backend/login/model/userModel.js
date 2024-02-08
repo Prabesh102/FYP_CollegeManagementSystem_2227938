@@ -26,10 +26,16 @@ const userSchema = mongoose.Schema(
     year: {
       type: Number,
       default: 1,
+      required: false,
     },
     semester: {
       type: Number,
       default: 1,
+      required: false,
+    },
+    course: {
+      type: String,
+      required: true,
     },
     section: {
       type: String,

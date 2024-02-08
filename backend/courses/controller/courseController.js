@@ -14,17 +14,33 @@ const getCourseById = asyncHandler(async (req, res) => {
 });
 
 const postCourse = asyncHandler(async (req, res) => {
-  const { courseName, totalCredits, modules, totalStudentsAllocated } =
-    req.body;
-  if (!courseName || !totalCredits || !modules || !totalStudentsAllocated) {
-    res.send("Please enter all the fields");
+  const { courseName, totalCredits, totalModules, modules } = req.body;
+
+  if (!courseName || !totalCredits || !totalModules || !modules) {
+    return res.status(400).send("Please enter all the fields");
   }
+
+  const courseModules = [];
+
+  // Loop through the totalModules and add module names
+  for (let i = 1; i <= totalModules; i++) {
+    const moduleName =
+      modules[i - 1] && modules[i - 1].moduleName
+        ? modules[i - 1].moduleName
+        : `Module ${i}`;
+
+    courseModules.push({
+      moduleName,
+      // Add other module properties as needed
+    });
+  }
+
   const course = await Course.create({
     courseName,
     totalCredits,
-    modules,
-    totalStudentsAllocated,
+    modules: courseModules,
   });
+
   res.send(course).status(201);
 });
 const updateCourse = asyncHandler(async (req, res) => {

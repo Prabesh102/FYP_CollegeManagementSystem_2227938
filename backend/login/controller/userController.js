@@ -6,15 +6,23 @@ const User = require("../model/userModel");
 const { sendEmail } = require("./sendEmail");
 const userRegister = asyncHandler(async (req, res) => {
   try {
-    const { username, email, password, role, registrationDate, section } =
-      req.body;
+    const {
+      username,
+      email,
+      password,
+      role,
+      registrationDate,
+      section,
+      course,
+    } = req.body;
     if (
       !username ||
       !email ||
       !password ||
       !role ||
       !registrationDate ||
-      !section
+      !section ||
+      !course
     ) {
       return res.status(400).send("Please enter all details correctly");
     }
@@ -35,6 +43,7 @@ const userRegister = asyncHandler(async (req, res) => {
       role,
       registrationDate,
       section,
+      course,
     });
 
     console.log("User created successfully: - ", newUser);
@@ -226,15 +235,18 @@ const deleteUser = async (req, res) => {
 };
 const getAllTeachers = async (req, res) => {
   try {
-    const students = await User.find({ role: "teacher" })
-      .sort({ registrationDate: -1 }) // Sort by registration date in descending order
-      .select("_id username email registrationDate");
+    // Find all users with the role 'teacher'
+    const teachers = await User.find({ role: "teacher" }).select(
+      "_id username email course section registrationDate"
+    );
 
-    res.status(200).json(students);
+    res.status(200).json(teachers);
   } catch (error) {
+    console.error("Error fetching teachers:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 const getAllAdmins = async (req, res) => {
   try {
     const students = await User.find({ role: "admin" })

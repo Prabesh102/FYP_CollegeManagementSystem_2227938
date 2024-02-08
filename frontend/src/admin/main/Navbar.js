@@ -60,11 +60,6 @@ const Navbar = () => {
                   </a>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="/register">
-                        Add new student
-                      </a>
-                    </li>
-                    <li>
                       <a className="dropdown-item" href="/admin/viewStudents">
                         View students
                       </a>
@@ -92,11 +87,6 @@ const Navbar = () => {
                   </a>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="/register">
-                        Add new teacher
-                      </a>
-                    </li>
-                    <li>
                       <a className="dropdown-item" href="/admin/viewTeachers">
                         View teachers
                       </a>
@@ -123,11 +113,6 @@ const Navbar = () => {
                     Courses
                   </a>
                   <ul className="dropdown-menu dropdown-menu-dark">
-                    <li>
-                      <a className="dropdown-item" href="/admin/addCourse">
-                        Add new course
-                      </a>
-                    </li>
                     <li>
                       <a className="dropdown-item" href="/admin/viewCourses">
                         View courses
@@ -171,6 +156,33 @@ const Navbar = () => {
                     </li>
                   </ul>
                 </li>
+                <li className="nav-item dropdown">
+                  <a
+                    className="nav-link dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Classroom
+                  </a>
+                  <ul className="dropdown-menu dropdown-menu-dark">
+                    <li>
+                      <a className="dropdown-item" href="/admin/viewClassroom">
+                        View classroom
+                      </a>
+                    </li>
+
+                    <li>
+                      <hr className="dropdown-divider" />
+                    </li>
+                    <li>
+                      <a className="dropdown-item" href="#">
+                        View Graph
+                      </a>
+                    </li>
+                  </ul>
+                </li>
 
                 <li className="nav-item dropdown">
                   <a
@@ -183,11 +195,6 @@ const Navbar = () => {
                     Admin
                   </a>
                   <ul className="dropdown-menu dropdown-menu-dark">
-                    <li>
-                      <a className="dropdown-item" href="/register">
-                        Add new admin
-                      </a>
-                    </li>
                     <li>
                       <a className="dropdown-item" href="/admin/viewAdmins">
                         View admins
@@ -217,22 +224,7 @@ const Navbar = () => {
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
                       <a className="dropdown-item" href="#">
-                        Add new book
-                      </a>
-                    </li>
-                    <li>
-                      <a className="dropdown-item" href="#">
                         View books
-                      </a>
-                    </li>
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        Update book
-                      </a>
-                    </li>
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        Delete book
                       </a>
                     </li>
                     <li>

@@ -26,7 +26,49 @@ const ViewStudents = () => {
     role: "student",
     registrationDate: new Date().toISOString(),
     section: "",
+    course: "",
   });
+  const [sections, setSections] = useState([]); // Add state for sections
+  const [courses, setCourses] = useState([]);
+  // Fetch sections when the component mounts
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/section/getAllSection"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setSections(data);
+        } else {
+          throw new Error("Failed to fetch sections");
+        }
+      } catch (error) {
+        console.error("Error fetching sections:", error);
+      }
+    };
+
+    fetchSections();
+  }, []);
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/courses/getAllCourse"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setCourses(data);
+        } else {
+          throw new Error("Failed to fetch courses");
+        }
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchCourses();
+  }, []);
   const handleAddUserClick = () => {
     setShowAddUserModal(true);
   };
@@ -51,6 +93,7 @@ const ViewStudents = () => {
           role: formData.role,
           registrationDate: formData.registrationDate,
           section: formData.section,
+          course: formData.course,
         }),
       });
 
@@ -244,6 +287,9 @@ const ViewStudents = () => {
                 <i class="fa-regular fa-calendar-days"></i> Registration Date
               </th>
               <th scope="col">
+                <i class="fa-solid fa-book"></i> Course
+              </th>
+              <th scope="col">
                 <i class="fa-solid fa-landmark"></i> Section
               </th>
               <th scope="col">
@@ -266,6 +312,7 @@ const ViewStudents = () => {
                 <td>
                   {new Date(student.registrationDate).toLocaleDateString()}
                 </td>
+                <td>{student.course}</td>
                 <td>{student.section}</td>
                 <td>{student.semester}</td>
                 <td>{student.year}</td>
@@ -408,6 +455,7 @@ const ViewStudents = () => {
             </p>
             <p>Semester: {selectedUser?.semester}</p>
             <p>Year: {selectedUser?.year}</p>
+            <p>Section: {selectedUser?.course}</p>
             <p>Section: {selectedUser?.section}</p>
             {/* Add other details you want to display */}
           </Modal.Body>
@@ -479,8 +527,6 @@ const ViewStudents = () => {
                 required
               >
                 <option value="student">Student</option>
-                <option value="teacher">Teacher</option>
-                <option value="admin">Admin</option>
               </select>
             </div>
 
@@ -497,18 +543,42 @@ const ViewStudents = () => {
                 required
               />
             </div>
+
             <div className="mb-3">
               <label>Section</label>
-              <input
-                type="text"
+              <Form.Select
                 name="section"
-                className="form-control"
                 value={formData.section}
                 onChange={(e) =>
                   setFormData({ ...formData, section: e.target.value })
                 }
                 required
-              />
+              >
+                <option value="">Select Section</option>
+                {sections.map((section) => (
+                  <option key={section._id} value={section.sectionName}>
+                    {section.sectionName}
+                  </option>
+                ))}
+              </Form.Select>
+            </div>
+            <div className="mb-3">
+              <label>Course</label>
+              <Form.Select
+                name="course"
+                value={formData.course}
+                onChange={(e) =>
+                  setFormData({ ...formData, course: e.target.value })
+                }
+                required
+              >
+                <option value="">Select course</option>
+                {courses.map((course) => (
+                  <option key={course._id} value={course.courseName}>
+                    {course.courseName}
+                  </option>
+                ))}
+              </Form.Select>
             </div>
           </Modal.Body>
           <Modal.Footer>
