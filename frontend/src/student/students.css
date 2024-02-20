@@ -1,0 +1,12 @@
+.hero-section-main {
+  background-image: linear-gradient(to right, #9b62f8, #9766e3, #aa81e8);
+}
+.sidebar {
+  background-image: linear-gradient(
+    to bottom,
+    #b28eeb,
+    #925fe2,
+    #925fe2,
+    #925fe2
+  );
+}

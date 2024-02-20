@@ -52,15 +52,39 @@ const postBooks = asyncHandler(async (req, res) => {
   });
 });
 const updateBooks = asyncHandler(async (req, res) => {
-  const books = await Book.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
+  upload.single("image")(req, res, async (err) => {
+    if (err) {
+      console.error("Image upload failed:", err);
+      res.status(400).json({ message: "Image upload failed" });
+      return;
+    }
+
+    try {
+      if (req.file) {
+        const image = await cloudinary.uploader.upload(req.file.path);
+        req.body.image = image.secure_url;
+      }
+      const updatedBook = await Book.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {
+          new: true,
+        }
+      );
+
+      if (!updatedBook) {
+        res.status(404).json({ message: "Book not found" });
+        return;
+      }
+
+      res.status(200).json(updatedBook);
+    } catch (error) {
+      console.error("Error updating book:", error);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
   });
-  if (!books) {
-    res.send("Book not found");
-    res.status(404);
-  }
-  res.send(books).status(200);
 });
+
 const deleteBooks = asyncHandler(async (req, res) => {
   const books = await Book.findByIdAndDelete(req.params.id);
   if (!books) {

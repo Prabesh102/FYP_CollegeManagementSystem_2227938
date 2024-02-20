@@ -223,7 +223,7 @@ const Navbar = () => {
                   </a>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <a className="dropdown-item" href="/admin/viewBooks">
                         View books
                       </a>
                     </li>
