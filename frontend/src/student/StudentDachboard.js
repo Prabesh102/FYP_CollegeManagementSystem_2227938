@@ -114,7 +114,7 @@ const StudentDachboard = () => {
                       border: "1px solid #BFBFBF",
                       backgroundColor: "white",
                       boxShadow: "1px 2px 2px 1px #aaaaaa",
-                      height: "200px",
+                      height: "190px",
                       justifyContent: "center",
                       textAlign: "center",
                       alignItems: "center",
@@ -145,7 +145,7 @@ const StudentDachboard = () => {
                       border: "1px solid #BFBFBF",
                       backgroundColor: "white",
                       boxShadow: "1px 2px 2px 1px #aaaaaa",
-                      height: "200px",
+                      height: "190px",
                       justifyContent: "center",
                       textAlign: "center",
                       alignItems: "center",
@@ -176,7 +176,7 @@ const StudentDachboard = () => {
                       border: "1px solid #BFBFBF",
                       backgroundColor: "white",
                       boxShadow: "1px 2px 2px 1px #aaaaaa",
-                      height: "200px",
+                      height: "190px",
                       justifyContent: "center",
                       textAlign: "center",
                       alignItems: "center",
@@ -215,6 +215,7 @@ const StudentDachboard = () => {
                       // justifyContent: "center",
                       // textAlign: "center",
                       // alignItems: "center",
+                      height: "190px",
                       width: "38%",
                       borderRadius: "10px",
                       display: "flex",
@@ -222,7 +223,7 @@ const StudentDachboard = () => {
                       marginLeft: "15px",
                     }}
                   >
-                    <div className="imageDashboard p-3 d-flex">
+                    <div className="imageDashboard d-flex">
                       {" "}
                       <img
                         src={notice}

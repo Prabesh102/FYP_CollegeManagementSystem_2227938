@@ -6,7 +6,7 @@ import profile from "../../image/profile.png";
 const ViewLibrary = () => {
   const [library, setLibrary] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const booksPerPage = 7;
+  const booksPerPage = 8;
 
   useEffect(() => {
     axios
@@ -105,8 +105,8 @@ const ViewLibrary = () => {
                 <img
                   src={book.image}
                   alt={book.bookName}
-                  width="150px"
-                  height="180px"
+                  width="120px"
+                  height="140px"
                   style={{ padding: "15px" }}
                 />
                 <div style={{ paddingBottom: "10px" }}>

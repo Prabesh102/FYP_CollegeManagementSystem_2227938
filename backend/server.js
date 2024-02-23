@@ -12,6 +12,7 @@ const cloudinary = require("cloudinary").v2;
 const cors = require("cors");
 const SectionRouter = require("./sections/routes/sectionRoute");
 const classroomRouter = require("./classroom/route/classroomRoute");
+const scheduleRouter = require("./schedule/route/scheduleRoute");
 
 app.use(express.json());
 cloudinary.config({
@@ -37,6 +38,7 @@ app.use("/api/users", userRoute);
 app.use("/api/courses", courseRouter);
 app.use("/api/section", SectionRouter);
 app.use("/api/classroom", classroomRouter);
+app.use("/api/schedule", scheduleRouter);
 app.use("/uploads", express.static("uploads"));
 
 const PORT = 5000;
