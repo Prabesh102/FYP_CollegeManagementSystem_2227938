@@ -14,7 +14,8 @@ const Sidebar = () => {
           borderRadius: "15px",
           display: "flex",
           flexDirection: "column",
-          height: "90%",
+          height: "650px",
+          width: "155px",
         }}
       >
         <div className="sidebar-sticky justify-content-center text-align-center align-items-center">
@@ -76,7 +77,11 @@ const Sidebar = () => {
               </a>
             </li>
             <li className="nav-item">
-              <a href="#" className="nav-link" style={{ color: "white" }}>
+              <a
+                href="/student/viewLibrary"
+                className="nav-link"
+                style={{ color: "white" }}
+              >
                 <i class="fa-solid fa-book-open-reader"></i> Library
               </a>
             </li>

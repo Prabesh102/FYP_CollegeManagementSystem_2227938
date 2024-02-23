@@ -26,6 +26,7 @@ import ViewAdmin from "./admin/admin/ViewAdmin";
 import ViewSections from "./admin/sections/ViewSections";
 import ViewClassroom from "./admin/classroom/ViewClassroom";
 import ViewLibrary from "./admin/library/ViewLibrary";
+import ViewLibrary1 from "./student/library/ViewLibrary";
 // import LineChartComponent from "./admin/LineChartComponent";
 function App() {
   return (
@@ -62,6 +63,7 @@ function App() {
 
         {/* Default Redirect */}
         <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/student/viewLibrary" element={<ViewLibrary1 />} />
       </Routes>
     </Router>
   );
