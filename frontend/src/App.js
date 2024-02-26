@@ -27,6 +27,8 @@ import ViewSections from "./admin/sections/ViewSections";
 import ViewClassroom from "./admin/classroom/ViewClassroom";
 import ViewLibrary from "./admin/library/ViewLibrary";
 import ViewLibrary1 from "./student/library/ViewLibrary";
+import ViewSchedule from "./admin/schedule/ViewSchedule";
+import ScheduleTable from "./admin/schedule/ScheduleTable";
 // import LineChartComponent from "./admin/LineChartComponent";
 function App() {
   return (
@@ -52,7 +54,8 @@ function App() {
         <Route path="/admin/viewTeachers" element={<ViewTeacher />} />
 
         <Route path="/admin/viewSection" element={<ViewSections />} />
-
+        <Route path="/admin/viewSchedule" element={<ViewSchedule />} />
+        <Route path="/admin/scheduleTable" element={<ScheduleTable />} />
         {/* Teacher Routes */}
         <Route path="/TeacherDashboard" element={<TeacherDashboard />} />
         {/* <Route path="/graph" element={<LineChartComponent />} /> */}

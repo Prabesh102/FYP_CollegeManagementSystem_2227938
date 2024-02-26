@@ -253,6 +253,7 @@ const ViewAdmin = () => {
                   placeholder="Enter updated name"
                   value={updatedName}
                   onChange={(e) => setUpdatedName(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Form.Group controlId="formUpdateEmail">
@@ -262,6 +263,7 @@ const ViewAdmin = () => {
                   placeholder="Enter updated email"
                   value={updatedEmail}
                   onChange={(e) => setUpdatedEmail(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Button variant="primary" type="submit">

@@ -15,10 +15,35 @@ const ViewSections = () => {
   const [showUpdateAlert, setShowUpdateAlert] = useState(false);
   const [showAddSectionModal, setShowAddSectionModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState("");
+
   const [formData, setFormData] = useState({
     sectionName: "",
     totalStudents: "",
+    course: "",
   });
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/courses/getAllCourse"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setCourses(data);
+        } else {
+          throw new Error("Failed to fetch courses");
+        }
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchCourses();
+  }, []);
+
   const handleAddSectionClick = () => {
     setShowAddSectionModal(true);
   };
@@ -41,6 +66,7 @@ const ViewSections = () => {
           body: JSON.stringify({
             sectionName: formData.sectionName,
             totalStudents: formData.totalStudents,
+            course: selectedCourse,
           }),
         }
       );
@@ -60,25 +86,6 @@ const ViewSections = () => {
       console.error("Error:", error);
     }
   };
-  useEffect(() => {
-    const fetchSectionData = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:5000/api/section/getAllSection"
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setSections(data); // Update state with fetched student data
-        } else {
-          throw new Error("Failed to fetch data");
-        }
-      } catch (error) {
-        console.error("Error fetching section data:", error);
-      }
-    };
-
-    fetchSectionData();
-  }, []);
 
   const filteredSections = sections.filter((sections) =>
     sections.sectionName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -179,6 +186,25 @@ const ViewSections = () => {
       // Handle error or show a message to the user
     }
   };
+  useEffect(() => {
+    const fetchSectionData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/section/getAllSection"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setSections(data);
+        } else {
+          throw new Error("Failed to fetch section data");
+        }
+      } catch (error) {
+        console.error("Error fetching section data:", error);
+      }
+    };
+
+    fetchSectionData();
+  }, []);
 
   return (
     <>
@@ -219,6 +245,9 @@ const ViewSections = () => {
                 <i class="fa-solid fa-user"></i> Section name
               </th>
               <th scope="col">
+                <i class="fa-regular fa-envelope"></i> Course Name
+              </th>
+              <th scope="col">
                 <i class="fa-regular fa-envelope"></i> Total students allocated
               </th>
               <th scope="col">
@@ -231,6 +260,7 @@ const ViewSections = () => {
               <tr key={section._id}>
                 <th scope="row">{index + 1}</th>
                 <td>{section.sectionName}</td>
+                <td>{section.course}</td>
                 <td>{section.totalStudents}</td>
 
                 <td>
@@ -309,6 +339,7 @@ const ViewSections = () => {
                   placeholder="Enter updated name"
                   value={updatedName}
                   onChange={(e) => setUpdatedName(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Form.Group controlId="formUpdateStudentNumber">
@@ -318,6 +349,7 @@ const ViewSections = () => {
                   placeholder="Enter updated section"
                   value={updatedStudentNumber}
                   onChange={(e) => setUpdatedStudentNumber(e.target.value)}
+                  required
                 />
               </Form.Group>
 
@@ -383,6 +415,22 @@ const ViewSections = () => {
                 }
                 required
               />
+            </div>
+            <div className="mb-3">
+              <label>Course</label>
+              <Form.Select
+                name="course"
+                value={selectedCourse}
+                onChange={(e) => setSelectedCourse(e.target.value)}
+                required
+              >
+                <option value="">Select Course</option>
+                {courses.map((course) => (
+                  <option key={course._id} value={course.courseName}>
+                    {course.courseName}
+                  </option>
+                ))}
+              </Form.Select>
             </div>
           </Modal.Body>
           <Modal.Footer>

@@ -5,26 +5,19 @@ const getSchedule = asyncHandler(async (req, res) => {
   res.send(schedule).status(200);
 });
 const postSchedule = asyncHandler(async (req, res) => {
-  const { section, scheduledDay, numberOfClass, scheduledTime, classroom } =
-    req.body;
-  if (
-    !section ||
-    !scheduledDay ||
-    !numberOfClass ||
-    !scheduledTime ||
-    !classroom
-  ) {
-    res.send("please enter all details correctly");
-    res.status(404);
+  const { section, scheduleDetails } = req.body;
+
+  if (!section || !scheduleDetails || scheduleDetails.length === 0) {
+    res.status(400).json({ message: "Please enter all details correctly" });
+    return;
   }
+
   const schedule = await Schedule.create({
     section,
-    scheduledDay,
-    numberOfClass,
-    scheduledTime,
-    classroom,
+    scheduleDetails,
   });
-  res.send(schedule).status(200);
+
+  res.status(201).json(schedule);
 });
 const getScheduleById = asyncHandler(async (req, res) => {
   const schedule = await Schedule.findById(req.params.id);

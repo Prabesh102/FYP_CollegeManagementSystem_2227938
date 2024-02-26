@@ -16,13 +16,14 @@ const getSectionById = asyncHandler(async (req, res) => {
 });
 
 const postSection = asyncHandler(async (req, res) => {
-  const { sectionName, totalStudents } = req.body;
-  if (!sectionName || !totalStudents) {
+  const { sectionName, totalStudents, course } = req.body;
+  if (!sectionName || !totalStudents || !course) {
     res.send("Please enter all the fields");
   }
   const section = await Section.create({
     sectionName,
     totalStudents,
+    course,
   });
   res.send(section).status(201);
 });
@@ -50,10 +51,20 @@ const deleteSection = asyncHandler(async (req, res) => {
   }
   res.send(section).status(200);
 });
+const countSection = async (req, res) => {
+  try {
+    const sectionCount = await Section.countDocuments({});
+
+    res.status(200).json({ sectionCount });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 module.exports = {
   getSection,
   getSectionById,
   postSection,
   updateSection,
   deleteSection,
+  countSection,
 };

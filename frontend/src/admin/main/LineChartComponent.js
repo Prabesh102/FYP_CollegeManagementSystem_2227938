@@ -5,6 +5,8 @@ import "./admin.css";
 ChartJS.register(ArcElement, Tooltip, Legend);
 const LineChartComponent = () => {
   const [userCounts, setUserCounts] = useState({});
+  const [sectionCount, setSectionCount] = useState(0);
+  const [classroomCount, setClassroomCount] = useState(0);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -25,9 +27,38 @@ const LineChartComponent = () => {
 
     fetchData();
   }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/classroom/countClassroom"
+        );
+        const data = await response.json();
+        setClassroomCount(data.classroomCount);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/section/getSectionCount"
+        );
+        const data = await response.json();
+        setSectionCount(data.sectionCount);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
-    // Log userCounts for debugging
     console.log("userCounts:", userCounts);
   }, [userCounts]);
 
@@ -42,7 +73,12 @@ const LineChartComponent = () => {
     labels: ["Student", "Teacher", "Section", "Class"],
     datasets: [
       {
-        data: [userCounts.studentCount, userCounts.teacherCount, 20, 10],
+        data: [
+          userCounts.studentCount,
+          userCounts.teacherCount,
+          sectionCount,
+          classroomCount,
+        ],
         backgroundColor: [
           "rgba(64,219,188,255)",
           "rgba(255,189,95,255)",

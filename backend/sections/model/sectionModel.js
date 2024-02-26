@@ -10,6 +10,10 @@ const sectionSchema = mongoose.Schema(
       type: Number,
       required: [true, "please enter total students"],
     },
+    course: {
+      type: String,
+      required: [true, "please enter the course name"],
+    },
   },
   { timestamps: true }
 );

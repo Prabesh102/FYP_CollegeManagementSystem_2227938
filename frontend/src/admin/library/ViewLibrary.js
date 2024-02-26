@@ -349,6 +349,7 @@ const ViewLibrary = () => {
                   placeholder="Enter updated name"
                   value={updatedName}
                   onChange={(e) => setUpdatedName(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Form.Group controlId="formUpdateBookCategory">
@@ -358,6 +359,7 @@ const ViewLibrary = () => {
                   placeholder="Enter updated category"
                   value={updatedBookCategory}
                   onChange={(e) => setUpdatedBookCategory(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Form.Group controlId="formUpdateBookPrice">
@@ -367,6 +369,7 @@ const ViewLibrary = () => {
                   placeholder="Enter updated price"
                   value={updatedBookPrice}
                   onChange={(e) => setUpdatedBookPrice(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Form.Group controlId="formUpdateTotalPages">
@@ -376,6 +379,7 @@ const ViewLibrary = () => {
                   placeholder="Enter updated pages"
                   value={updatedTotalPages}
                   onChange={(e) => setUpdatedTotalPages(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Form.Group controlId="formUpdateSelfNo">
@@ -385,6 +389,7 @@ const ViewLibrary = () => {
                   placeholder="Enter updated self no."
                   value={updatedSelfNo}
                   onChange={(e) => setUpdatedSelfNo(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Form.Group controlId="formUpdateImage">
@@ -394,6 +399,7 @@ const ViewLibrary = () => {
                   accept="image/*"
                   placeholder="Choose updating image"
                   onChange={(e) => setUpdatedImage(e.target.files[0])}
+                  required
                 />
               </Form.Group>
 
@@ -511,7 +517,7 @@ const ViewLibrary = () => {
               Close
             </Button>
             <Button variant="primary" onClick={handleAddLibrarySubmit}>
-              Add Library
+              Add Book
             </Button>
           </Modal.Footer>
         </Modal>

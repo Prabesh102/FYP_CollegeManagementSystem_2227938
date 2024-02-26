@@ -4,6 +4,8 @@ import ChartJS from "chart.js/auto"; // Updated import
 import "./admin.css";
 
 const BarChartComponent = () => {
+  const [sectionCount, setSectionCount] = useState(0);
+  const [classroomCount, setClassroomCount] = useState(0);
   const [userCounts, setUserCounts] = useState({});
   const [error, setError] = useState(null);
 
@@ -25,9 +27,38 @@ const BarChartComponent = () => {
 
     fetchData();
   }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/classroom/countClassroom"
+        );
+        const data = await response.json();
+        setClassroomCount(data.classroomCount);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/section/getSectionCount"
+        );
+        const data = await response.json();
+        setSectionCount(data.sectionCount);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
-    // Log userCounts for debugging
     console.log("userCounts:", userCounts);
   }, [userCounts]);
 
@@ -42,8 +73,13 @@ const BarChartComponent = () => {
     labels: ["Student", "Teacher", "Classes", "Sections"],
     datasets: [
       {
-        label: "Student",
-        data: [userCounts.studentCount, userCounts.teacherCount, 20, 5],
+        label: "Counts",
+        data: [
+          userCounts.studentCount,
+          userCounts.teacherCount,
+          classroomCount,
+          sectionCount,
+        ],
         backgroundColor: [
           "rgba(64,219,188,255)",
           "rgba(255,189,95,255)",

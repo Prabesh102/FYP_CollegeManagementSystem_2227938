@@ -35,10 +35,21 @@ const deleteClassroom = asyncHandler(async (req, res) => {
   }
   res.send(classroom).status(200);
 });
+const countClassroom = asyncHandler(async (req, res) => {
+  try {
+    const classroomCount = await Classroom.countDocuments({});
+
+    res.status(200).json({ classroomCount });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = {
   getClassroom,
   getClassroomById,
   updateClassroom,
   postClassroom,
   deleteClassroom,
+  countClassroom,
 };

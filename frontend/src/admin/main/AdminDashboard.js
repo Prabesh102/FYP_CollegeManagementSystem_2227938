@@ -8,6 +8,8 @@ import BarChartComponent from "./BarChartComponent";
 const AdminDashboard = () => {
   const [studentCount, setStudentCount] = useState(0);
   const [teacherCount, setTeacherCount] = useState(0);
+  const [sectionCount, setSectionCount] = useState(0);
+  const [classroomCount, setClassroomCount] = useState(0);
   const [recentlyRegisteredUsers, setRecentlyRegisteredUsers] = useState([]);
   useEffect(() => {
     const fetchRecentlyRegisteredUsers = async () => {
@@ -16,12 +18,42 @@ const AdminDashboard = () => {
           "http://localhost:5000/api/users/recentlyRegisteredUsers"
         );
         const data = await response.json();
-        setRecentlyRegisteredUsers(data); // Assuming data is an array of recently registered users
+        setRecentlyRegisteredUsers(data);
       } catch (error) {
         console.error("Error fetching recently registered users:", error);
       }
     };
     fetchRecentlyRegisteredUsers();
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/classroom/countClassroom"
+        );
+        const data = await response.json();
+        setClassroomCount(data.classroomCount);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/section/getSectionCount"
+        );
+        const data = await response.json();
+        setSectionCount(data.sectionCount);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
   useEffect(() => {
     const fetchData = async () => {
@@ -124,7 +156,7 @@ const AdminDashboard = () => {
               </h3>
               <div className="admin-text">
                 <h4>Total Classes </h4>
-                <h2 className="fw-bold">40</h2>
+                <h2 className="fw-bold">{classroomCount}</h2>
               </div>
             </div>
           </div>
@@ -139,7 +171,7 @@ const AdminDashboard = () => {
               </h3>
               <div className="admin-text">
                 <h4>Total Sections</h4>
-                <h2 className="fw-bold"> 80</h2>
+                <h2 className="fw-bold">{sectionCount}</h2>
               </div>
             </div>
           </div>

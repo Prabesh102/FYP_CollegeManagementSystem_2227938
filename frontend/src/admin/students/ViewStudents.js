@@ -19,6 +19,8 @@ const ViewStudents = () => {
   const [showUpdateAlert, setShowUpdateAlert] = useState(false);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState("");
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -392,6 +394,7 @@ const ViewStudents = () => {
                   placeholder="Enter updated name"
                   value={updatedName}
                   onChange={(e) => setUpdatedName(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Form.Group controlId="formUpdateEmail">
@@ -401,6 +404,7 @@ const ViewStudents = () => {
                   placeholder="Enter updated email"
                   value={updatedEmail}
                   onChange={(e) => setUpdatedEmail(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Form.Group controlId="formUpdateEmail">
@@ -410,6 +414,7 @@ const ViewStudents = () => {
                   placeholder="Enter updated email"
                   value={updatedYear}
                   onChange={(e) => setUpdatedYear(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Form.Group controlId="formUpdateEmail">
@@ -419,6 +424,7 @@ const ViewStudents = () => {
                   placeholder="Enter updated email"
                   value={updatedSemester}
                   onChange={(e) => setUpdatedSemester(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Form.Group controlId="formUpdateEmail">
@@ -428,6 +434,7 @@ const ViewStudents = () => {
                   placeholder="Enter updated email"
                   value={updatedSection}
                   onChange={(e) => setUpdatedSection(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Button variant="primary" type="submit">
@@ -545,31 +552,14 @@ const ViewStudents = () => {
             </div>
 
             <div className="mb-3">
-              <label>Section</label>
-              <Form.Select
-                name="section"
-                value={formData.section}
-                onChange={(e) =>
-                  setFormData({ ...formData, section: e.target.value })
-                }
-                required
-              >
-                <option value="">Select Section</option>
-                {sections.map((section) => (
-                  <option key={section._id} value={section.sectionName}>
-                    {section.sectionName}
-                  </option>
-                ))}
-              </Form.Select>
-            </div>
-            <div className="mb-3">
               <label>Course</label>
               <Form.Select
                 name="course"
                 value={formData.course}
-                onChange={(e) =>
-                  setFormData({ ...formData, course: e.target.value })
-                }
+                onChange={(e) => {
+                  setFormData({ ...formData, course: e.target.value });
+                  setSelectedCourse(e.target.value);
+                }}
                 required
               >
                 <option value="">Select course</option>
@@ -580,6 +570,28 @@ const ViewStudents = () => {
                 ))}
               </Form.Select>
             </div>
+            {selectedCourse && (
+              <div className="mb-3">
+                <label>Section</label>
+                <Form.Select
+                  name="section"
+                  value={formData.section}
+                  onChange={(e) =>
+                    setFormData({ ...formData, section: e.target.value })
+                  }
+                  required
+                >
+                  <option value="">Select Section</option>
+                  {sections
+                    .filter((section) => section.course === selectedCourse)
+                    .map((section) => (
+                      <option key={section._id} value={section.sectionName}>
+                        {section.sectionName}
+                      </option>
+                    ))}
+                </Form.Select>
+              </div>
+            )}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={handleAddUserClose}>

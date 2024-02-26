@@ -303,6 +303,7 @@ const ViewClassroom = () => {
                   placeholder="Enter updated name"
                   value={updatedName}
                   onChange={(e) => setUpdatedName(e.target.value)}
+                  required
                 />
               </Form.Group>
               <Form.Group controlId="formUpdateStudentNumber">
@@ -312,6 +313,7 @@ const ViewClassroom = () => {
                   placeholder="Enter updated total desk"
                   value={updatedDesk}
                   onChange={(e) => setUpdatedDesk(e.target.value)}
+                  required
                 />
               </Form.Group>
 
