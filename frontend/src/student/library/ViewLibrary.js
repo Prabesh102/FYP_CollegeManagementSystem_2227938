@@ -111,10 +111,6 @@ const ViewLibrary = () => {
                 />
                 <div style={{ paddingBottom: "10px" }}>
                   <p style={{ fontSize: "18px" }}>{book.bookName}</p>
-                  {/* <p>{book.bookCategory}</p> */}
-                  {/* <p>{book.bookPrice}</p>
-                  <p>{book.totalPages}</p>
-                  <p>{book.selfNo}</p> */}
                   <button
                     type="button"
                     class="btn btn-primary"
@@ -152,13 +148,10 @@ const ViewLibrary = () => {
                     backgroundColor: "#925fe2",
                     height: "40px",
                     width: "120px",
-                    //   justifyContent: "center",
-                    //   textAlign: "center",
-                    //   alignItems: "center",
                   }}
                   onClick={handleViewMore}
                 >
-                  View More
+                  Next Page
                 </button>
               </div>
             </div>

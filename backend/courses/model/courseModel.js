@@ -5,7 +5,6 @@ const moduleSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  // Add other module properties as needed
 });
 
 const courseSchema = mongoose.Schema(

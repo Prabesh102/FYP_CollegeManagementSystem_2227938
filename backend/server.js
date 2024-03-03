@@ -1,3 +1,4 @@
+// Import the required modules
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv").config();
@@ -13,7 +14,10 @@ const cors = require("cors");
 const SectionRouter = require("./sections/routes/sectionRoute");
 const classroomRouter = require("./classroom/route/classroomRoute");
 const scheduleRouter = require("./schedule/route/scheduleRoute");
+const path = require("path");
 
+const assignmentRoute = require("./assignment/route/assignmentRoute");
+app.use(express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 cloudinary.config({
   cloud_name: "dsnmhnj0b",
@@ -40,6 +44,8 @@ app.use("/api/section", SectionRouter);
 app.use("/api/classroom", classroomRouter);
 app.use("/api/schedule", scheduleRouter);
 app.use("/uploads", express.static("uploads"));
+
+app.use("/api/assignments", assignmentRoute);
 
 const PORT = 5000;
 

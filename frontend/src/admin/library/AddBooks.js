@@ -59,6 +59,7 @@ const AddBooks = () => {
           name="bookName"
           value={formData.bookName}
           onChange={handleInputChange}
+          required
         />
       </div>
       <div>
@@ -68,6 +69,7 @@ const AddBooks = () => {
           name="bookCategory"
           value={formData.bookCategory}
           onChange={handleInputChange}
+          required
         />
       </div>
       <div>
@@ -77,6 +79,7 @@ const AddBooks = () => {
           name="bookPrice"
           value={formData.bookPrice}
           onChange={handleInputChange}
+          required
         />
       </div>
       <div>
@@ -86,6 +89,7 @@ const AddBooks = () => {
           name="totalPages"
           value={formData.totalPages}
           onChange={handleInputChange}
+          required
         />
       </div>
       <div>
@@ -95,6 +99,7 @@ const AddBooks = () => {
           name="selfNo"
           value={formData.selfNo}
           onChange={handleInputChange}
+          required
         />
       </div>
       <div>
@@ -104,6 +109,7 @@ const AddBooks = () => {
           name="image"
           accept="image/*"
           onChange={handleInputChange}
+          required
         />
       </div>
       <button type="submit">Create Book</button>
