@@ -5,6 +5,8 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
+
+import { AuthProvider, useAuth } from "./login/AuthContext";
 import ViewBooks from "./admin/library/ViewBooks";
 import AddBooks from "./admin/library/AddBooks";
 import AddStudent from "./admin/library/AddStudent";
@@ -20,7 +22,6 @@ import TeacherDashboard from "./teacher/TeacherDashboard";
 import AdminDashboard from "./admin/main/AdminDashboard";
 import ViewStudents from "./admin/students/ViewStudents";
 import ViewTeacher from "./admin/teachers/ViewTeacher";
-
 import ViewCourses from "./admin/courses/ViewCourses";
 import ViewAdmin from "./admin/admin/ViewAdmin";
 import ViewSections from "./admin/sections/ViewSections";
@@ -31,49 +32,82 @@ import ViewSchedule from "./admin/schedule/ViewSchedule";
 import ScheduleTable from "./admin/schedule/ScheduleTable";
 import ViewAssignment from "./teacher/assignment/ViewAssignment";
 import Hello from "./teacher/Hello";
-// import LineChartComponent from "./admin/LineChartComponent";
+
 function App() {
+  const { authenticated } = useAuth();
+  const userRole = localStorage.getItem("userRole");
   return (
     <Router>
       <Routes>
-        {/* Admin Routes */}
-        <Route path="/admin/books" element={<ViewBooks />} />
-        <Route path="/admin/addBooks" element={<AddBooks />} />
-        <Route path="/admin/addStudent" element={<AddStudent />} />
-        <Route path="/admin/students" element={<ViewStudent />} />
-        <Route path="/admin/notice" element={<ViewNotice />} />
-        <Route path="/admin/addNotice" element={<AddNotice />} />
-        <Route path="/admin/addFood" element={<AddFood />} />
-        <Route path="/admin/food" element={<ViewFood />} />
-        <Route path="/AdminDashboard" element={<AdminDashboard />} />
-        <Route path="/admin/viewStudents" element={<ViewStudents />} />
-        <Route path="/admin/viewCourses" element={<ViewCourses />} />
-        <Route path="/admin/viewAdmins" element={<ViewAdmin />} />
-        <Route path="/admin/viewClassroom" element={<ViewClassroom />} />
-        <Route path="/admin/viewBooks" element={<ViewLibrary />} />
-        {/* Student Routes */}
-        <Route path="/StudentDashboard" element={<StudentDachboard />} />
-        <Route path="/admin/viewTeachers" element={<ViewTeacher />} />
-
-        <Route path="/admin/viewSection" element={<ViewSections />} />
-        <Route path="/admin/viewSchedule" element={<ViewSchedule />} />
-        <Route path="/admin/scheduleTable" element={<ScheduleTable />} />
-        <Route path="/teacher/ViewAssignment" element={<ViewAssignment />} />
-        {/* Teacher Routes */}
-        <Route path="/TeacherDashboard" element={<TeacherDashboard />} />
-        {/* <Route path="/graph" element={<LineChartComponent />} /> */}
-
-        {/* Common Routes */}
-        <Route path="/register" element={<Register />} />
+        {/* Public Routes */}
+        {/* <Route path="/register" element={<Register />} /> */}
         <Route path="/login" element={<Login />} />
+        {/* Private Routes */}
+        {authenticated ? (
+          <>
+            {/* Admin Routes */}
+            <Route path="/admin/books" element={<ViewBooks />} />
+            <Route path="/admin/addBooks" element={<AddBooks />} />
+            <Route path="/admin/addStudent" element={<AddStudent />} />
+            <Route path="/admin/students" element={<ViewStudents />} />
+            <Route path="/admin/notice" element={<ViewNotice />} />
+            <Route path="/admin/addNotice" element={<AddNotice />} />
+            <Route path="/admin/addFood" element={<AddFood />} />
+            <Route path="/admin/food" element={<ViewFood />} />
+            <Route path="/AdminDashboard" element={<AdminDashboard />} />
+            <Route path="/admin/viewStudents" element={<ViewStudents />} />
+            <Route path="/admin/viewCourses" element={<ViewCourses />} />
+            <Route path="/admin/viewAdmins" element={<ViewAdmin />} />
+            <Route path="/admin/viewClassroom" element={<ViewClassroom />} />
+            <Route path="/admin/viewBooks" element={<ViewLibrary />} />
 
-        {/* Default Redirect */}
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/student/viewLibrary" element={<ViewLibrary1 />} />
-        <Route path="/hello" element={<Hello />} />
+            {/* Student Routes */}
+            <Route path="/StudentDashboard" element={<StudentDachboard />} />
+            <Route path="/admin/viewTeachers" element={<ViewTeacher />} />
+            <Route path="/admin/viewSection" element={<ViewSections />} />
+            <Route path="/admin/viewSchedule" element={<ViewSchedule />} />
+            <Route path="/student/viewLibrary" element={<ViewLibrary1 />} />
+            {/* Teacher Routes */}
+            <Route path="/TeacherDashboard" element={<TeacherDashboard />} />
+            <Route
+              path="/teacher/ViewAssignment"
+              element={<ViewAssignment />}
+            />
+            <Route path="/hello" element={<Hello />} />
+            {userRole === "admin" && (
+              <Route
+                path="/"
+                element={<Navigate to="/AdminDashboard" replace />}
+              />
+            )}
+            {userRole === "student" && (
+              <Route
+                path="/"
+                element={<Navigate to="/StudentDashboard" replace />}
+              />
+            )}
+            {userRole === "teacher" && (
+              <Route
+                path="/"
+                element={<Navigate to="/TeacherDashboard" replace />}
+              />
+            )}
+          </>
+        ) : (
+          // Redirect unauthenticated users to the login page
+          <Route path="/*" element={<Navigate to="/login" />} />
+        )}
       </Routes>
     </Router>
   );
 }
 
-export default App;
+function Main() {
+  return (
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  );
+}
+
+export default Main;

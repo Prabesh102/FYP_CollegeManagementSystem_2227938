@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import profile from "../image/profile.png";
 import cap from "../image/cap.png";
@@ -11,6 +11,19 @@ import notice from "../image/notice.png";
 import "./students.css";
 
 const StudentDachboard = () => {
+  const [username, setUsername] = useState("");
+  const [semester, setSemester] = useState("");
+  const [section, setSection] = useState("");
+
+  useEffect(() => {
+    // Fetch username from localStorage
+    const storedUsername = localStorage.getItem("username");
+    const storedSemester = localStorage.getItem("semester");
+    const storedSection = localStorage.getItem("section");
+    setUsername(storedUsername);
+    setSemester(storedSemester);
+    setSection(storedSection);
+  }, []);
   return (
     <>
       <link
@@ -61,7 +74,9 @@ const StudentDachboard = () => {
                       className="down-text-hero-section-text"
                       style={{ marginTop: "120px" }}
                     >
-                      <h2 style={{ color: "white" }}>Welcome Back ! User</h2>
+                      <h2 style={{ color: "white" }}>
+                        Welcome Back ! {username}
+                      </h2>
                       <p style={{ color: "#c7acf0" }}>
                         Stay updated with College Management System.
                       </p>
@@ -289,8 +304,10 @@ const StudentDachboard = () => {
                   <div className="ml-2 d-flex">
                     <div className="context-texts">
                       {" "}
-                      <h5>Username</h5>
-                      <p>Semester/year</p>{" "}
+                      <h5>{username}</h5>
+                      <p>
+                        Semester:{semester}/Section:{section}{" "}
+                      </p>
                     </div>
 
                     <i

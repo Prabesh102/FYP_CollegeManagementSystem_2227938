@@ -1,28 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Navigate } from "react-router-dom"; // Import Navigate from react-router-dom
 
+import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, Button } from "react-bootstrap";
 import "./home.css";
+import { useAuth } from "./AuthContext";
 
 const Login = () => {
+  const { login, authenticated } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
-  const [redirectTo, setRedirectTo] = useState(null);
   const [alertMessage, setAlertMessage] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [userId, setUserId] = useState(null);
+  // const [username, setUsername] = useState("");
+  // const [semester, setSemester] = useState("");
+  // const [section, setSection] = useState("");
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const navigateUser = () => {
+      const userRole = localStorage.getItem("userRole");
+      if (userRole === "admin") {
+        navigate("/AdminDashboard");
+      } else if (userRole === "teacher") {
+        navigate("/TeacherDashboard");
+      } else if (userRole === "student") {
+        navigate("/StudentDashboard");
+      }
+    };
+
+    if (isMounted && authenticated) {
+      navigateUser();
+    }
+
+    return () => {
+      isMounted = false;
+    };
+  }, [authenticated, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Inside handleLogin function
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -30,33 +56,36 @@ const Login = () => {
         "http://localhost:5000/api/users/login",
         formData
       );
-      // setAlertMessage("Login successfull. Redirecting to homepage");
 
       const userRole = response.data.role;
+      const userUsername = response.data.username;
+      const userSemester = response.data.semester;
+      const userSection = response.data.section;
 
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem("userRole", userRole); // Store user role
-      // Check the role and set redirection accordingly
-      if (userRole === "student") {
-        setRedirectTo("/StudentDashboard");
-      } else if (userRole === "teacher") {
-        setRedirectTo("/TeacherDashboard");
-      } else if (userRole === "admin") {
-        setRedirectTo("/AdminDashboard");
-      }
+      localStorage.setItem("userRole", userRole);
+      localStorage.setItem("username", userUsername);
+      localStorage.setItem("semester", userSemester);
+      localStorage.setItem("section", userSection);
+      console.log("User Role:", userRole);
+      console.log("User Username:", userUsername);
+      console.log("Navigating to Dashboard");
+      login();
+
       if (response.data.message === "Password change required") {
-        setUserId(response.data.userId); // Set the userId for the password change modal
-        setShowModal(true); // Show password change modal
+        setUserId(response.data.userId);
+        setShowModal(true);
+      } else {
+        navigate(`/${userRole}Dashboard`);
       }
     } catch (error) {
       console.error("Login failed", error.message);
       setAlertMessage("Login failed. Please enter correct email or password.");
     }
   };
+
   const handleClose = () => setShowModal(false);
-  if (redirectTo) {
-    return <Navigate to={redirectTo} />;
-  }
+
   const handleChangePassword = async (e) => {
     e.preventDefault();
     try {
@@ -145,8 +174,6 @@ const Login = () => {
                   {alertMessage}
                 </div>
               )}
-              {/* <div className="d-flex flex-row align-items-center justify-content-center"></div> */}
-
               <label
                 className="form-label"
                 htmlFor="form3Example3"
@@ -163,7 +190,6 @@ const Login = () => {
                 onChange={handleChange}
                 required
               />
-
               <label
                 className="form-label"
                 htmlFor="form3Example4"
@@ -171,7 +197,6 @@ const Login = () => {
               >
                 Password
               </label>
-
               <div className="form-outline mb-3">
                 <input
                   type="password"
@@ -184,7 +209,6 @@ const Login = () => {
                   required
                 />
               </div>
-
               <div className="text-center text-lg-start mt-4 pt-2 d-flex justify-content-center">
                 <button
                   type="submit"

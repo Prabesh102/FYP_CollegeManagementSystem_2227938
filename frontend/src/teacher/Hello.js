@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Modal, Button, Table } from "react-bootstrap";
+import moment from "moment-timezone";
 
 function Hello() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [assignmentTitle, setAssignmentTitle] = useState("");
   const [assignmentDescription, setAssignmentDescription] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [files, setFiles] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [isPortalOpen, setIsPortalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -15,7 +19,20 @@ function Hello() {
         const response = await axios.get(
           "http://localhost:5000/api/assignments/files"
         );
-        setFiles(response.data);
+        const assignments = response.data;
+
+        const currentDate = moment().tz("Asia/Kathmandu");
+        const visibleAssignments = assignments.filter((assignment) =>
+          currentDate.isBetween(
+            moment.tz(assignment.startDate, "Asia/Kathmandu"),
+            moment.tz(assignment.endDate, "Asia/Kathmandu")
+          )
+        );
+
+        setFiles(visibleAssignments);
+
+        // Check if there are visible assignments, and set isPortalOpen to true
+        setIsPortalOpen(visibleAssignments.length > 0);
       } catch (error) {
         console.error(error);
       }
@@ -36,21 +53,34 @@ function Hello() {
     setAssignmentDescription(event.target.value);
   };
 
+  const handleStartDateChange = (event) => {
+    setStartDate(event.target.value);
+  };
+
+  const handleEndDateChange = (event) => {
+    setEndDate(event.target.value);
+  };
+
   const handleUpload = async () => {
     try {
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("assignmentTitle", assignmentTitle);
       formData.append("assignmentDescription", assignmentDescription);
+      formData.append("startDate", startDate);
+      formData.append("endDate", endDate);
 
       await axios.post(
         "http://localhost:5000/api/assignments/upload",
         formData
       );
-      const response = await axios.get(
-        "http://localhost:5000/api/assignments/files"
-      );
-      setFiles(response.data);
+
+      if (isPortalOpen) {
+        const response = await axios.get(
+          "http://localhost:5000/api/assignments/files"
+        );
+        setFiles(response.data);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -90,6 +120,24 @@ function Hello() {
               Assignment File:
               <input type="file" onChange={handleFileChange} />
             </label>
+            <br />
+            <label>
+              Start Date and Time:
+              <input
+                type="datetime-local"
+                value={startDate}
+                onChange={handleStartDateChange}
+              />
+            </label>
+            <br />
+            <label>
+              End Date and Time:
+              <input
+                type="datetime-local"
+                value={endDate}
+                onChange={handleEndDateChange}
+              />
+            </label>
           </form>
         </Modal.Body>
         <Modal.Footer>
@@ -102,7 +150,7 @@ function Hello() {
         </Modal.Footer>
       </Modal>
 
-      {files.length > 0 && (
+      {isPortalOpen && files.length > 0 && (
         <div>
           <h2>Files</h2>
           <Table striped bordered hover>
@@ -110,6 +158,8 @@ function Hello() {
               <tr>
                 <th>Assignment Title</th>
                 <th>Assignment Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
                 <th>File</th>
               </tr>
             </thead>
@@ -118,6 +168,16 @@ function Hello() {
                 <tr key={file._id}>
                   <td>{file.assignmentTitle}</td>
                   <td>{file.assignmentDescription}</td>
+                  <td>
+                    {new Date(file.startDate).toLocaleString("en-US", {
+                      timeZone: "Asia/Kathmandu",
+                    })}
+                  </td>
+                  <td>
+                    {new Date(file.endDate).toLocaleString("en-US", {
+                      timeZone: "Asia/Kathmandu",
+                    })}
+                  </td>
                   <td>
                     <a
                       href={`http://localhost:5000/uploads/${file.filename}`}

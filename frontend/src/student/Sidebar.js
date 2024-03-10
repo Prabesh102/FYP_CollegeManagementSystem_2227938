@@ -3,6 +3,7 @@ import profile from "../image/profile.png";
 import image from "../image/CMS.png";
 import "./students.css";
 import logooo from "../image/logooo.png";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   return (
@@ -56,15 +57,13 @@ const Sidebar = () => {
               justifyContent: "space-between",
             }}
           >
-            <li className="nav-item">
-              <a
-                href="/StudentDashboard"
-                className="nav-link"
-                style={{ color: "white" }}
-              >
-                <i class="fa-solid fa-house"></i> Home
-              </a>
-            </li>
+            <Link
+              to="/StudentDashboard"
+              className="nav-link"
+              style={{ color: "white" }}
+            >
+              <i className="fa-solid fa-house"></i> Home
+            </Link>
             <li className="nav-item">
               <a href="#" className="nav-link" style={{ color: "white" }}>
                 <i class="fa-solid fa-book"></i> Classroom
@@ -80,14 +79,15 @@ const Sidebar = () => {
                 <i class="fa-solid fa-person-circle-check"></i> Attendance
               </a>
             </li>
+
             <li className="nav-item">
-              <a
-                href="/student/viewLibrary"
+              <Link
+                to="/student/viewLibrary"
                 className="nav-link"
                 style={{ color: "white" }}
               >
                 <i class="fa-solid fa-book-open-reader"></i> Library
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
               <a href="#" className="nav-link" style={{ color: "white" }}>

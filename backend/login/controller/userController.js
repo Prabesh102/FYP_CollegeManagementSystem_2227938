@@ -80,6 +80,7 @@ const userLogin = async (req, res) => {
     res.status(400).json({ error: "Please enter correct email or password" });
     return;
   }
+
   try {
     const user = await User.findOne({ email });
     if (!user) {
@@ -87,18 +88,11 @@ const userLogin = async (req, res) => {
       return;
     }
 
+    // Authenticate the user by comparing the password
     // const isPasswordMatch = await bcrypt.compare(password, user.password);
-
     // if (!isPasswordMatch) {
-    if (password != user.password) {
+    if (password !== user.password) {
       res.status(400).json({ error: "Incorrect password" });
-      return;
-    }
-
-    if (password === "prabesh") {
-      res
-        .status(200)
-        .json({ message: "Password change required", userId: user._id });
       return;
     }
 
@@ -108,15 +102,22 @@ const userLogin = async (req, res) => {
         id: user.id,
         email: user.email,
         username: user.username,
+        semester: user.semester,
         role: user.role,
+        section: user.section,
       },
       process.env.ACCESS_TOKEN,
       { expiresIn: "1h" } // Token expiration time
     );
-    user.online = true;
-    await user.save();
 
-    res.status(200).json({ token, role: user.role }); // Send the role along with the token
+    // Send the token along with the user's role
+    res.status(200).json({
+      token,
+      role: user.role,
+      username: user.username,
+      semester: user.semester,
+      section: user.section,
+    });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }

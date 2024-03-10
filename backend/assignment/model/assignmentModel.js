@@ -5,6 +5,8 @@ const File = mongoose.model("File", {
   path: String,
   assignmentTitle: String,
   assignmentDescription: String,
+  startDate: Date,
+  endDate: Date,
 });
 
 module.exports = File;

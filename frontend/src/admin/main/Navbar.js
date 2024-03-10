@@ -2,14 +2,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
 const Navbar = () => {
   return (
     <>
       <nav className="navbar navbar-dark bg-dark fixed-top">
         <div className="container-fluid">
-          <a className="navbar-brand" href="#">
+          <Link to="/AdminDashboard" className="navbar-brand">
             College Management System
-          </a>
+          </Link>
           <button
             className="navbar-toggler"
             type="button"
@@ -40,254 +41,228 @@ const Navbar = () => {
             <div className="offcanvas-body">
               <ul className="navbar-nav justify-content-end flex-grow-1 pe-3">
                 <li className="nav-item">
-                  <a
+                  <Link
+                    to="/AdminDashboard"
                     className="nav-link active"
                     aria-current="page"
-                    href="/AdminDashboard"
                   >
                     Home
-                  </a>
+                  </Link>
                 </li>
-                <li className="nav-item dropdown">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
+                <li className="nav-item">
+                  <Link
+                    to="/admin/viewStudents"
+                    className="nav-link active"
+                    aria-current="page"
                   >
                     Students
-                  </a>
-                  <ul className="dropdown-menu dropdown-menu-dark">
-                    <li>
-                      <a className="dropdown-item" href="/admin/viewStudents">
-                        View students
-                      </a>
-                    </li>
-
-                    <li>
-                      <hr className="dropdown-divider" />
-                    </li>
-                    <li>
-                      <a className="dropdown-item" href="#">
-                        View Graph
-                      </a>
-                    </li>
-                  </ul>
+                  </Link>
                 </li>
                 <li className="nav-item dropdown">
-                  <a
+                  <Link
+                    to="/admin/viewTeachers"
                     className="nav-link dropdown-toggle"
-                    href="#"
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
                     Teachers
-                  </a>
+                  </Link>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="/admin/viewTeachers">
+                      <Link to="/admin/viewTeachers" className="dropdown-item">
                         View teachers
-                      </a>
+                      </Link>
                     </li>
-
                     <li>
                       <hr className="dropdown-divider" />
                     </li>
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <Link to="#" className="dropdown-item">
                         View Graph
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </li>
                 <li className="nav-item dropdown">
-                  <a
+                  <Link
+                    to="/admin/viewCourses"
                     className="nav-link dropdown-toggle"
-                    href="#"
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
                     Courses
-                  </a>
+                  </Link>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="/admin/viewCourses">
+                      <Link to="/admin/viewCourses" className="dropdown-item">
                         View courses
-                      </a>
+                      </Link>
                     </li>
-
                     <li>
                       <hr className="dropdown-divider" />
                     </li>
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <Link to="#" className="dropdown-item">
                         View Graph
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </li>
                 <li className="nav-item dropdown">
-                  <a
+                  <Link
+                    to="/admin/viewSection"
                     className="nav-link dropdown-toggle"
-                    href="#"
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
                     Sections
-                  </a>
+                  </Link>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="/admin/viewSection">
+                      <Link to="/admin/viewSection" className="dropdown-item">
                         View sections
-                      </a>
+                      </Link>
                     </li>
-
                     <li>
                       <hr className="dropdown-divider" />
                     </li>
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <Link to="#" className="dropdown-item">
                         View Graph
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </li>
                 <li className="nav-item dropdown">
-                  <a
+                  <Link
+                    to="/admin/viewClassroom"
                     className="nav-link dropdown-toggle"
-                    href="#"
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
                     Classroom
-                  </a>
+                  </Link>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="/admin/viewClassroom">
+                      <Link to="/admin/viewClassroom" className="dropdown-item">
                         View classroom
-                      </a>
+                      </Link>
                     </li>
-
                     <li>
                       <hr className="dropdown-divider" />
                     </li>
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <Link to="#" className="dropdown-item">
                         View Graph
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </li>
-
                 <li className="nav-item dropdown">
-                  <a
+                  <Link
+                    to="/admin/viewAdmins"
                     className="nav-link dropdown-toggle"
-                    href="#"
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    Admin
-                  </a>
+                    Admins
+                  </Link>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="/admin/viewAdmins">
+                      <Link to="/admin/viewAdmins" className="dropdown-item">
                         View admins
-                      </a>
+                      </Link>
                     </li>
-
                     <li>
                       <hr className="dropdown-divider" />
                     </li>
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <Link to="#" className="dropdown-item">
                         View Graph
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </li>
                 <li className="nav-item dropdown">
-                  <a
+                  <Link
+                    to="/admin/viewBooks"
                     className="nav-link dropdown-toggle"
-                    href="#"
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
                     Library
-                  </a>
+                  </Link>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="/admin/viewBooks">
+                      <Link to="/admin/viewBooks" className="dropdown-item">
                         View books
-                      </a>
+                      </Link>
                     </li>
                     <li>
                       <hr className="dropdown-divider" />
                     </li>
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <Link to="#" className="dropdown-item">
                         View Graph
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </li>
                 <li className="nav-item dropdown">
-                  <a
+                  <Link
+                    to="#"
                     className="nav-link dropdown-toggle"
-                    href="#"
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
-                    Results
-                  </a>
+                    Result
+                  </Link>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <Link to="#" className="dropdown-item">
                         View results
-                      </a>
+                      </Link>
                     </li>
-
                     <li>
                       <hr className="dropdown-divider" />
                     </li>
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <Link to="#" className="dropdown-item">
                         View Graph
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </li>
                 <li className="nav-item dropdown">
-                  <a
+                  <Link
+                    to="#"
                     className="nav-link dropdown-toggle"
-                    href="#"
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                   >
                     Assignments
-                  </a>
+                  </Link>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <Link to="#" className="dropdown-item">
                         View assignments
-                      </a>
+                      </Link>
                     </li>
-
                     <li>
                       <hr className="dropdown-divider" />
                     </li>
                     <li>
-                      <a className="dropdown-item" href="#">
+                      <Link to="#" className="dropdown-item">
                         View Graph
-                      </a>
+                      </Link>
                     </li>
                   </ul>
                 </li>
