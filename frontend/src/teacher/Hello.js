@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Modal, Button, Table } from "react-bootstrap";
 import moment from "moment-timezone";
+import Navbar from "../admin/main/Navbar";
 
 function Hello() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -21,18 +22,11 @@ function Hello() {
         );
         const assignments = response.data;
 
-        const currentDate = moment().tz("Asia/Kathmandu");
-        const visibleAssignments = assignments.filter((assignment) =>
-          currentDate.isBetween(
-            moment.tz(assignment.startDate, "Asia/Kathmandu"),
-            moment.tz(assignment.endDate, "Asia/Kathmandu")
-          )
-        );
+        // Remove the date filter, display all assignments
+        setFiles(assignments);
 
-        setFiles(visibleAssignments);
-
-        // Check if there are visible assignments, and set isPortalOpen to true
-        setIsPortalOpen(visibleAssignments.length > 0);
+        // Check if there are assignments, and set isPortalOpen to true
+        setIsPortalOpen(assignments.length > 0);
       } catch (error) {
         console.error(error);
       }
@@ -88,7 +82,12 @@ function Hello() {
 
   return (
     <div>
-      <Button variant="primary" onClick={() => setShowAddModal(true)}>
+      <Navbar />
+      <Button
+        variant="primary"
+        onClick={() => setShowAddModal(true)}
+        style={{ marginTop: "100px", marginLeft: "15px" }}
+      >
         Add Assignment
       </Button>
 
@@ -152,8 +151,7 @@ function Hello() {
 
       {isPortalOpen && files.length > 0 && (
         <div>
-          <h2>Files</h2>
-          <Table striped bordered hover>
+          <Table striped bordered hover style={{ marginTop: "50px" }}>
             <thead>
               <tr>
                 <th>Assignment Title</th>

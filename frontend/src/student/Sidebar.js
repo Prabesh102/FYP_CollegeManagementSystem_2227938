@@ -70,9 +70,13 @@ const Sidebar = () => {
               </a>
             </li>
             <li className="nav-item">
-              <a href="#" className="nav-link" style={{ color: "white" }}>
+              <Link
+                to="/student/ViewAssignment"
+                className="nav-link"
+                style={{ color: "white" }}
+              >
                 <i class="fa-solid fa-laptop"></i> Assignments
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
               <a href="#" className="nav-link" style={{ color: "white" }}>

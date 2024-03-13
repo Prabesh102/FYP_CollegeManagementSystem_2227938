@@ -252,7 +252,7 @@ const Navbar = () => {
                   </Link>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <Link to="#" className="dropdown-item">
+                      <Link to="/hello" className="dropdown-item">
                         View assignments
                       </Link>
                     </li>

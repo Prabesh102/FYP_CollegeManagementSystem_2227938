@@ -30,7 +30,7 @@ import ViewLibrary from "./admin/library/ViewLibrary";
 import ViewLibrary1 from "./student/library/ViewLibrary";
 import ViewSchedule from "./admin/schedule/ViewSchedule";
 import ScheduleTable from "./admin/schedule/ScheduleTable";
-import ViewAssignment from "./teacher/assignment/ViewAssignment";
+import ViewAssignment from "./student/assignment/ViewAssignment";
 import Hello from "./teacher/Hello";
 
 function App() {
@@ -70,7 +70,7 @@ function App() {
             {/* Teacher Routes */}
             <Route path="/TeacherDashboard" element={<TeacherDashboard />} />
             <Route
-              path="/teacher/ViewAssignment"
+              path="/student/ViewAssignment"
               element={<ViewAssignment />}
             />
             <Route path="/hello" element={<Hello />} />
