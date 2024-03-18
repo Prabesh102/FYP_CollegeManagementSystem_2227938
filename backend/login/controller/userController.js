@@ -105,6 +105,7 @@ const userLogin = async (req, res) => {
         semester: user.semester,
         role: user.role,
         section: user.section,
+        course: user.course,
       },
       process.env.ACCESS_TOKEN,
       { expiresIn: "1h" } // Token expiration time
@@ -117,6 +118,7 @@ const userLogin = async (req, res) => {
       username: user.username,
       semester: user.semester,
       section: user.section,
+      course: user.course,
     });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });

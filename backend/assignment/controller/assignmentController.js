@@ -4,8 +4,14 @@ const File = require("../model/assignmentModel");
 const uploadFile = async (req, res) => {
   try {
     const { filename, path } = req.file;
-    const { assignmentTitle, assignmentDescription, startDate, endDate } =
-      req.body;
+    const {
+      assignmentTitle,
+      assignmentDescription,
+      startDate,
+      endDate,
+      course,
+      section,
+    } = req.body;
 
     console.log("Received Start Date:", startDate);
     console.log("Received End Date:", endDate);
@@ -33,6 +39,8 @@ const uploadFile = async (req, res) => {
       assignmentDescription,
       startDate,
       endDate,
+      course,
+      section,
     });
 
     await newFile.save();

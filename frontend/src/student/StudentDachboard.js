@@ -14,25 +14,20 @@ const StudentDachboard = () => {
   const [username, setUsername] = useState("");
   const [semester, setSemester] = useState("");
   const [section, setSection] = useState("");
+  const [course, setCourse] = useState("");
 
   useEffect(() => {
-    // Fetch username from localStorage
     const storedUsername = localStorage.getItem("username");
     const storedSemester = localStorage.getItem("semester");
     const storedSection = localStorage.getItem("section");
+    const storedCourse = localStorage.getItem("course");
     setUsername(storedUsername);
     setSemester(storedSemester);
     setSection(storedSection);
+    setCourse(storedCourse);
   }, []);
   return (
     <>
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer"
-      />
       <div className="main" style={{ backgroundColor: "#fafafa" }}>
         <div className="container-fluid">
           <div className="row">

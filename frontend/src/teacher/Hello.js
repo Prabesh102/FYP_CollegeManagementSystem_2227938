@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Modal, Button, Table } from "react-bootstrap";
+import { Modal, Button, Table, Alert } from "react-bootstrap";
 import moment from "moment-timezone";
 import Navbar from "../admin/main/Navbar";
 
@@ -13,6 +13,12 @@ function Hello() {
   const [files, setFiles] = useState([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [isPortalOpen, setIsPortalOpen] = useState(false);
+  const [sections, setSections] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [selectedSection, setSelectedSection] = useState("");
+  const [selectedCourse, setSelectedCourse] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertType, setAlertType] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,11 +27,7 @@ function Hello() {
           "http://localhost:5000/api/assignments/files"
         );
         const assignments = response.data;
-
-        // Remove the date filter, display all assignments
         setFiles(assignments);
-
-        // Check if there are assignments, and set isPortalOpen to true
         setIsPortalOpen(assignments.length > 0);
       } catch (error) {
         console.error(error);
@@ -34,7 +36,44 @@ function Hello() {
 
     fetchData();
   }, []);
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/section/getAllSection"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setSections(data);
+        } else {
+          throw new Error("Failed to fetch sections");
+        }
+      } catch (error) {
+        console.error("Error fetching sections:", error);
+      }
+    };
 
+    fetchSections();
+  }, []);
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/courses/getAllCourse"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setCourses(data);
+        } else {
+          throw new Error("Failed to fetch courses");
+        }
+      } catch (error) {
+        console.error("Error fetching courses:", error);
+      }
+    };
+
+    fetchCourses();
+  }, []);
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
@@ -63,19 +102,22 @@ function Hello() {
       formData.append("assignmentDescription", assignmentDescription);
       formData.append("startDate", startDate);
       formData.append("endDate", endDate);
+      formData.append("section", selectedSection);
+      formData.append("course", selectedCourse);
 
       await axios.post(
         "http://localhost:5000/api/assignments/upload",
         formData
       );
-
-      if (isPortalOpen) {
-        const response = await axios.get(
-          "http://localhost:5000/api/assignments/files"
-        );
-        setFiles(response.data);
-      }
+      setAlertType("success");
+      setAlertMessage("Assignment uploaded successfully!");
+      const response = await axios.get(
+        "http://localhost:5000/api/assignments/files"
+      );
+      setFiles(response.data);
     } catch (error) {
+      setAlertType("danger");
+      setAlertMessage("Failed to upload assignment.");
       console.error(error);
     }
   };
@@ -96,6 +138,23 @@ function Hello() {
           <Modal.Title>Add Assignment</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {alertMessage && ( // Display alert if alertMessage is not empty
+            <Alert
+              variant={alertType}
+              onClose={() => setAlertMessage("")}
+              dismissible
+            >
+              {alertMessage}
+            </Alert>
+          )}
+
+          {isPortalOpen && files.length > 0 && (
+            <div>
+              <Table striped bordered hover style={{ marginTop: "50px" }}>
+                {/* Table content remains the same */}
+              </Table>
+            </div>
+          )}
           <form>
             <label>
               Assignment Title:
@@ -115,6 +174,37 @@ function Hello() {
               />
             </label>
             <br />
+            <label>
+              Course:
+              <select
+                value={selectedCourse}
+                onChange={(e) => setSelectedCourse(e.target.value)}
+              >
+                <option value="">Select Course</option>
+                {courses.map((course) => (
+                  <option key={course._id} value={course.courseName}>
+                    {course.courseName}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <br />
+            <label>
+              Section:
+              <select
+                value={selectedSection}
+                onChange={(e) => setSelectedSection(e.target.value)}
+              >
+                <option value="">Select Section</option>
+                {sections.map((section) => (
+                  <option key={section._id} value={section.sectionName}>
+                    {section.sectionName}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <br />
+
             <label>
               Assignment File:
               <input type="file" onChange={handleFileChange} />

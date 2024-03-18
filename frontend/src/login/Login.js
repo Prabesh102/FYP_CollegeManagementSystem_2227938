@@ -57,18 +57,17 @@ const Login = () => {
         formData
       );
 
-      const userRole = response.data.role;
-      const userUsername = response.data.username;
-      const userSemester = response.data.semester;
-      const userSection = response.data.section;
+      const { role, username, semester, section, course } = response.data;
 
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem("userRole", userRole);
-      localStorage.setItem("username", userUsername);
-      localStorage.setItem("semester", userSemester);
-      localStorage.setItem("section", userSection);
-      console.log("User Role:", userRole);
-      console.log("User Username:", userUsername);
+      localStorage.setItem("userRole", role);
+      localStorage.setItem("username", username);
+      localStorage.setItem("semester", semester);
+      localStorage.setItem("section", section);
+      localStorage.setItem("course", course); // Store the course information
+
+      console.log("User Role:", role);
+      console.log("User Username:", username);
       console.log("Navigating to Dashboard");
       login();
 
@@ -76,14 +75,13 @@ const Login = () => {
         setUserId(response.data.userId);
         setShowModal(true);
       } else {
-        navigate(`/${userRole}Dashboard`);
+        navigate(`/${role}Dashboard`);
       }
     } catch (error) {
       console.error("Login failed", error.message);
       setAlertMessage("Login failed. Please enter correct email or password.");
     }
   };
-
   const handleClose = () => setShowModal(false);
 
   const handleChangePassword = async (e) => {

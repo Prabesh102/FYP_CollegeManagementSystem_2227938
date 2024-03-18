@@ -7,6 +7,8 @@ const File = mongoose.model("File", {
   assignmentDescription: String,
   startDate: Date,
   endDate: Date,
+  course: String,
+  section: String,
 });
 
 module.exports = File;
