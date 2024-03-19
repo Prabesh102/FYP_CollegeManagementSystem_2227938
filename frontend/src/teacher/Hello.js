@@ -96,6 +96,24 @@ function Hello() {
 
   const handleUpload = async () => {
     try {
+      // const currentDate = moment().tz("Asia/Kathmandu");
+      // const startDateTime = moment.tz(startDate, "Asia/Kathmandu");
+      // const endDateTime = moment.tz(endDate, "Asia/Kathmandu");
+
+      // if (
+      //   startDateTime.isBefore(currentDate) ||
+      //   endDateTime.isBefore(currentDate)
+      // ) {
+      //   setAlertType("danger");
+      //   setAlertMessage("Start and End dates should be in the future.");
+      //   return;
+      // }
+
+      // if (startDateTime.isAfter(endDateTime)) {
+      //   setAlertType("danger");
+      //   setAlertMessage("Start date should be before End date.");
+      //   return;
+      // }
       const formData = new FormData();
       formData.append("file", selectedFile);
       formData.append("assignmentTitle", assignmentTitle);
@@ -148,18 +166,12 @@ function Hello() {
             </Alert>
           )}
 
-          {isPortalOpen && files.length > 0 && (
-            <div>
-              <Table striped bordered hover style={{ marginTop: "50px" }}>
-                {/* Table content remains the same */}
-              </Table>
-            </div>
-          )}
           <form>
             <label>
               Assignment Title:
               <input
                 type="text"
+                className="form-control"
                 value={assignmentTitle}
                 onChange={handleAssignmentTitleChange}
               />
@@ -169,6 +181,7 @@ function Hello() {
               Assignment Description:
               <input
                 type="text"
+                className="form-control"
                 value={assignmentDescription}
                 onChange={handleAssignmentDescriptionChange}
               />
@@ -177,6 +190,7 @@ function Hello() {
             <label>
               Course:
               <select
+                className="form-control"
                 value={selectedCourse}
                 onChange={(e) => setSelectedCourse(e.target.value)}
               >
@@ -192,6 +206,7 @@ function Hello() {
             <label>
               Section:
               <select
+                className="form-control"
                 value={selectedSection}
                 onChange={(e) => setSelectedSection(e.target.value)}
               >
@@ -207,12 +222,17 @@ function Hello() {
 
             <label>
               Assignment File:
-              <input type="file" onChange={handleFileChange} />
+              <input
+                type="file"
+                className="form-control"
+                onChange={handleFileChange}
+              />
             </label>
             <br />
             <label>
               Start Date and Time:
               <input
+                className="form-control"
                 type="datetime-local"
                 value={startDate}
                 onChange={handleStartDateChange}
@@ -222,6 +242,7 @@ function Hello() {
             <label>
               End Date and Time:
               <input
+                className="form-control"
                 type="datetime-local"
                 value={endDate}
                 onChange={handleEndDateChange}
