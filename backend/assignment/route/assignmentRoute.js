@@ -1,7 +1,12 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const { uploadFile, getFiles } = require("../controller/assignmentController");
+const {
+  uploadFile,
+  getFiles,
+  deleteFiles,
+  updateFile,
+} = require("../controller/assignmentController");
 
 const router = express.Router();
 
@@ -22,5 +27,7 @@ router.get("/files/:filename", (req, res) => {
   const filename = req.params.filename;
   res.sendFile(path.join(__dirname, `../uploads/${filename}`));
 });
+router.delete("/deleteFile/:id", deleteFiles);
+router.put("/updateFile/:id", upload.single("file"), updateFile); // Update route with multer upload middleware
 
 module.exports = router;

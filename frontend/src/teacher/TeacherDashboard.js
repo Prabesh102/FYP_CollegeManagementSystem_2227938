@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import profile from "../image/profile.png";
 import cap from "../image/cap.png";
@@ -11,15 +11,23 @@ import notice from "../image/notice.png";
 import "./teacher.css";
 
 const TeacherDashboard = () => {
+  const [username, setUsername] = useState("");
+  const [semester, setSemester] = useState("");
+  const [section, setSection] = useState("");
+  const [course, setCourse] = useState("");
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    const storedSemester = localStorage.getItem("semester");
+    const storedSection = localStorage.getItem("section");
+    const storedCourse = localStorage.getItem("course");
+    setUsername(storedUsername);
+    setSemester(storedSemester);
+    setSection(storedSection);
+    setCourse(storedCourse);
+  }, []);
   return (
     <>
-      <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer"
-      />
       <div className="main" style={{ backgroundColor: "#fafafa" }}>
         <div className="container-fluid">
           <div className="row">
@@ -61,7 +69,9 @@ const TeacherDashboard = () => {
                       className="down-text-hero-section-text"
                       style={{ marginTop: "120px" }}
                     >
-                      <h2 style={{ color: "white" }}>Welcome Back ! User</h2>
+                      <h2 style={{ color: "white" }}>
+                        Welcome Back ! {username}
+                      </h2>
                       <p style={{ color: "#c7acf0" }}>
                         Stay updated with College Management System.
                       </p>
@@ -289,8 +299,10 @@ const TeacherDashboard = () => {
                   <div className="ml-2 d-flex">
                     <div className="context-texts">
                       {" "}
-                      <h5>Username</h5>
-                      <p>Semester/year</p>{" "}
+                      <h5>{username}</h5>
+                      <p>
+                        Semester:{semester}/Section:{section}{" "}
+                      </p>
                     </div>
 
                     <i

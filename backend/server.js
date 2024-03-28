@@ -1,4 +1,3 @@
-// Import the required modules
 const express = require("express");
 const app = express();
 const dotenv = require("dotenv").config();
