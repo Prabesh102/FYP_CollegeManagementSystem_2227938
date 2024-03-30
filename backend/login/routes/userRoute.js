@@ -11,6 +11,7 @@ const {
   deleteUser,
   getAllTeachers,
   getAllAdmins,
+  getStudentsBySection,
 } = require("../controller/userController");
 router.post("/register", userRegister);
 router.post("/login", userLogin);
@@ -22,4 +23,5 @@ router.put("/updateUserDetails", updateUserDetails);
 router.delete("/deleteUser/:id", deleteUser);
 router.get("/getAllTeachers", getAllTeachers);
 router.get("/getAllAdmins", getAllAdmins);
+router.get("/students/getStudentsBySection", getStudentsBySection);
 module.exports = router;

@@ -1,12 +1,12 @@
 .hero-section-main {
-  background-image: linear-gradient(to right, #5fe291, #5fe26a, #73e25f);
+  background-image: linear-gradient(to right, #9b62f8, #9766e3, #aa81e8);
 }
 .sidebar {
   background-image: linear-gradient(
     to bottom,
-    #8eebb2,
-    #5fe291,
-    #5fe26a,
-    #73e25f
+    #b28eeb,
+    #925fe2,
+    #925fe2,
+    #925fe2
   );
 }

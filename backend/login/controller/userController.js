@@ -261,6 +261,23 @@ const getAllAdmins = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const getStudentsBySection = async (req, res) => {
+  try {
+    const { section } = req.query;
+
+    if (!section) {
+      return res.status(400).json({ error: "Section parameter is required" });
+    }
+
+    const students = await User.find({ role: "student", section })
+      .sort({ registrationDate: -1 })
+      .select("_id username email registrationDate section year semester");
+
+    res.status(200).json(students);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 module.exports = {
   getAllTeachers,
   deleteUser,
@@ -272,4 +289,5 @@ module.exports = {
   getRecentlyRegisteredUsers,
   getAllStudents,
   getAllAdmins,
+  getStudentsBySection,
 };

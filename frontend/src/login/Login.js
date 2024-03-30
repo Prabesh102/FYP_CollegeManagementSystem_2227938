@@ -64,7 +64,7 @@ const Login = () => {
       localStorage.setItem("username", username);
       localStorage.setItem("semester", semester);
       localStorage.setItem("section", section);
-      localStorage.setItem("course", course); // Store the course information
+      localStorage.setItem("course", course);
 
       console.log("User Role:", role);
       console.log("User Username:", username);

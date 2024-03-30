@@ -3,7 +3,9 @@ import profile from "../image/profile.png";
 import image from "../image/CMS.png";
 import "./teacher.css";
 import logooo from "../image/logooo.png";
-
+import { Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Modal, Button } from "react-bootstrap";
 const Sidebar = () => {
   return (
     <>
@@ -76,9 +78,13 @@ const Sidebar = () => {
               </a>
             </li>
             <li className="nav-item">
-              <a href="#" className="nav-link" style={{ color: "white" }}>
-                <i class="fa-solid fa-person-circle-check"></i> Attendance
-              </a>
+              <Link
+                to="/teacher/attendance"
+                className="nav-link"
+                style={{ color: "white" }}
+              >
+                <i class="fa-solid fa-laptop"></i> Attendance
+              </Link>
             </li>
             <li className="nav-item">
               <a

@@ -32,6 +32,7 @@ import ViewSchedule from "./admin/schedule/ViewSchedule";
 import ScheduleTable from "./admin/schedule/ScheduleTable";
 import ViewAssignment from "./student/assignment/ViewAssignment";
 import Hello from "./teacher/Hello";
+import ViewAttendance from "./teacher/attendance/ViewAttendance";
 
 function App() {
   const { authenticated } = useAuth();
@@ -67,8 +68,10 @@ function App() {
             <Route path="/admin/viewSection" element={<ViewSections />} />
             <Route path="/admin/viewSchedule" element={<ViewSchedule />} />
             <Route path="/student/viewLibrary" element={<ViewLibrary1 />} />
+
             {/* Teacher Routes */}
             <Route path="/TeacherDashboard" element={<TeacherDashboard />} />
+            <Route path="/teacher/attendance" element={<ViewAttendance />} />
             <Route
               path="/student/ViewAssignment"
               element={<ViewAssignment />}
