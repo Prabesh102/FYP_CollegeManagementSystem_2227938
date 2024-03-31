@@ -304,7 +304,7 @@ const Navbar = () => {
                   </Link>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <Link to="/admin/viewSchedule" className="dropdown-item">
+                      <Link to="/admin/attendance" className="dropdown-item">
                         View Attendance
                       </Link>
                     </li>

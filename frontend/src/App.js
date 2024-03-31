@@ -33,7 +33,7 @@ import ScheduleTable from "./admin/schedule/ScheduleTable";
 import ViewAssignment from "./student/assignment/ViewAssignment";
 import Hello from "./teacher/Hello";
 import ViewAttendance from "./teacher/attendance/ViewAttendance";
-
+import ViewAttendanceAdmin from "./admin/attendance/ViewAttendenceAdmin";
 function App() {
   const { authenticated } = useAuth();
   const userRole = localStorage.getItem("userRole");
@@ -61,7 +61,7 @@ function App() {
             <Route path="/admin/viewAdmins" element={<ViewAdmin />} />
             <Route path="/admin/viewClassroom" element={<ViewClassroom />} />
             <Route path="/admin/viewBooks" element={<ViewLibrary />} />
-
+            <Route path="/admin/attendance" element={<ViewAttendanceAdmin />} />
             {/* Student Routes */}
             <Route path="/StudentDashboard" element={<StudentDachboard />} />
             <Route path="/admin/viewTeachers" element={<ViewTeacher />} />

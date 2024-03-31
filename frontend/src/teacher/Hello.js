@@ -3,8 +3,11 @@ import axios from "axios";
 import { Modal, Button, Table, Alert } from "react-bootstrap";
 import moment from "moment-timezone";
 import Navbar from "../admin/main/Navbar";
+import "./teacher.css";
 
 function Hello() {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(7);
   const [selectedFile, setSelectedFile] = useState(null);
   const [assignmentTitle, setAssignmentTitle] = useState("");
   const [assignmentDescription, setAssignmentDescription] = useState("");
@@ -24,6 +27,7 @@ function Hello() {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentDate, setCurrentDate] = useState("");
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -116,6 +120,7 @@ function Hello() {
       setEndDate(selectedDate);
     }
   };
+
   const handleUpdateSubmit = async () => {
     try {
       const formData = new FormData();
@@ -222,9 +227,17 @@ function Hello() {
     }
   };
 
+  // Pagination Logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = files.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
   return (
     <div>
       <Navbar />
+      {/* Add Assignment Button */}
       <Button
         variant="primary"
         onClick={() => setShowAddModal(true)}
@@ -232,12 +245,16 @@ function Hello() {
       >
         Add Assignment
       </Button>
+
+      {/* Add Assignment Modal */}
       <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
+        {/* Modal Header */}
         <Modal.Header closeButton>
           <Modal.Title>Add Assignment</Modal.Title>
         </Modal.Header>
+        {/* Modal Body */}
         <Modal.Body>
-          {alertMessage && ( // Display alert if alertMessage is not empty
+          {alertMessage && (
             <Alert
               variant={alertType}
               onClose={() => setAlertMessage("")}
@@ -248,32 +265,38 @@ function Hello() {
           )}
 
           <form>
+            {/* Assignment Title */}
             <label>
               Assignment Title:
               <input
                 type="text"
-                className="form-control"
+                className="form-control custom-input"
                 value={assignmentTitle}
                 onChange={handleAssignmentTitleChange}
+                required
               />
             </label>
             <br />
+            {/* Assignment Description */}
             <label>
               Assignment Description:
               <input
                 type="text"
-                className="form-control"
+                className="form-control custom-input"
                 value={assignmentDescription}
                 onChange={handleAssignmentDescriptionChange}
+                required
               />
             </label>
             <br />
+            {/* Course */}
             <label>
               Course:
               <select
-                className="form-control"
+                className="form-control custom-input"
                 value={selectedCourse}
                 onChange={(e) => setSelectedCourse(e.target.value)}
+                required
               >
                 <option value="">Select Course</option>
                 {courses.map((course) => (
@@ -284,12 +307,14 @@ function Hello() {
               </select>
             </label>
             <br />
+            {/* Section */}
             <label>
               Section:
               <select
-                className="form-control"
+                className="form-control custom-input"
                 value={selectedSection}
                 onChange={(e) => setSelectedSection(e.target.value)}
+                required
               >
                 <option value="">Select Section</option>
                 {sections.map((section) => (
@@ -300,42 +325,47 @@ function Hello() {
               </select>
             </label>
             <br />
-
+            {/* File input field */}
             <label>
               Assignment File:
               <input
                 type="file"
-                className="form-control"
+                className="form-control custom-input"
                 onChange={handleFileChange}
+                required
               />
             </label>
             <br />
+            {/* Start Date and Time */}
             <label>
               Start Date and Time:
               <input
-                className="form-control"
+                className="form-control custom-input"
                 type="datetime-local"
                 value={startDate}
                 onChange={handleStartDateChange}
+                required
               />
             </label>
             <br />
+            {/* End Date and Time */}
             <label>
               End Date and Time:
               <input
-                className="form-control"
+                className="form-control custom-input"
                 type="datetime-local"
                 value={endDate}
                 onChange={handleEndDateChange}
+                required
               />
             </label>
           </form>
         </Modal.Body>
+        {/* Modal Footer */}
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowAddModal(false)}>
             Close
           </Button>
-
           <Button
             variant="primary"
             onClick={handleUpload}
@@ -345,6 +375,8 @@ function Hello() {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {/* View Assignment Modal */}
       <Modal show={showViewModal} onHide={() => setShowViewModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>View Assignment</Modal.Title>
@@ -364,12 +396,16 @@ function Hello() {
         </Modal.Footer>
       </Modal>
 
+      {/* Update Assignment Modal */}
       <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
+        {/* Modal Header */}
         <Modal.Header closeButton>
           <Modal.Title>Update Assignment</Modal.Title>
         </Modal.Header>
+        {/* Modal Body */}
         <Modal.Body>
           <form>
+            {/* Assignment Title */}
             <label>
               Assignment Title:
               <input
@@ -381,6 +417,7 @@ function Hello() {
               />
             </label>
             <br />
+            {/* Assignment Description */}
             <label>
               Assignment Description:
               <input
@@ -392,6 +429,7 @@ function Hello() {
               />
             </label>
             <br />
+            {/* Course */}
             <label>
               Course:
               <select
@@ -409,6 +447,7 @@ function Hello() {
               </select>
             </label>
             <br />
+            {/* Section */}
             <label>
               Section:
               <select
@@ -426,7 +465,6 @@ function Hello() {
               </select>
             </label>
             <br />
-
             {/* File input field */}
             <label>
               Assignment File:
@@ -438,7 +476,7 @@ function Hello() {
               />
             </label>
             <br />
-
+            {/* Start Date and Time */}
             <label>
               Start Date and Time:
               <input
@@ -450,6 +488,7 @@ function Hello() {
               />
             </label>
             <br />
+            {/* End Date and Time */}
             <label>
               End Date and Time:
               <input
@@ -462,6 +501,7 @@ function Hello() {
             </label>
           </form>
         </Modal.Body>
+        {/* Modal Footer */}
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowUpdateModal(false)}>
             Close
@@ -472,6 +512,7 @@ function Hello() {
         </Modal.Footer>
       </Modal>
 
+      {/* Delete Assignment Modal */}
       <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Confirm Deletion</Modal.Title>
@@ -489,7 +530,10 @@ function Hello() {
         </Modal.Footer>
       </Modal>
 
-      {isPortalOpen && files.length > 0 && (
+      {/* Pagination */}
+
+      {/* Table */}
+      {isPortalOpen && currentItems.length > 0 && (
         <div>
           <Table className="table" style={{ marginTop: "50px" }}>
             <thead>
@@ -499,13 +543,12 @@ function Hello() {
                 <th>Start Date</th>
                 <th>End Date</th>
                 <th>Uploaded Date</th>
-
                 <th>File</th>
                 <th>Operations</th>
               </tr>
             </thead>
             <tbody>
-              {files.map((file) => (
+              {currentItems.map((file) => (
                 <tr key={file._id}>
                   <td>{file.assignmentTitle}</td>
                   <td>{file.assignmentDescription}</td>
@@ -571,6 +614,23 @@ function Hello() {
           </Table>
         </div>
       )}
+      <ul className="pagination">
+        {Array.from(
+          { length: Math.ceil(files.length / itemsPerPage) },
+          (_, index) => (
+            <li
+              key={index}
+              className={`page-item ${
+                currentPage === index + 1 ? "active" : ""
+              }`}
+            >
+              <button className="page-link" onClick={() => paginate(index + 1)}>
+                {index + 1}
+              </button>
+            </li>
+          )
+        )}
+      </ul>
     </div>
   );
 }
