@@ -62,6 +62,8 @@ function App() {
             <Route path="/admin/viewClassroom" element={<ViewClassroom />} />
             <Route path="/admin/viewBooks" element={<ViewLibrary />} />
             <Route path="/admin/attendance" element={<ViewAttendanceAdmin />} />
+            <Route path="/admin/ScheduleTable" element={<ScheduleTable />} />
+
             {/* Student Routes */}
             <Route path="/StudentDashboard" element={<StudentDachboard />} />
             <Route path="/admin/viewTeachers" element={<ViewTeacher />} />

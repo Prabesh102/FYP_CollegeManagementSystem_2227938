@@ -21,8 +21,21 @@ const scheduleSchema = mongoose.Schema({
             type: String,
             required: true,
           },
-          time: {
+          startTime: {
             type: String,
+            required: true,
+          },
+          endTime: {
+            type: String,
+            required: true,
+          },
+          teacher: {
+            type: String,
+            required: true,
+          },
+          classType: {
+            type: String,
+            enum: ["tutorial", "workshop", "lecture"],
             required: true,
           },
         },

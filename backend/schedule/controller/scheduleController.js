@@ -1,15 +1,29 @@
 const Schedule = require("../model/scheduleModel");
 const asyncHandler = require("express-async-handler");
+
 const getSchedule = asyncHandler(async (req, res) => {
   const schedule = await Schedule.find({});
   res.send(schedule).status(200);
 });
+
 const postSchedule = asyncHandler(async (req, res) => {
   const { section, scheduleDetails } = req.body;
 
   if (!section || !scheduleDetails || scheduleDetails.length === 0) {
     res.status(400).json({ message: "Please enter all details correctly" });
     return;
+  }
+
+  // Validate start time and end time
+  for (const detail of scheduleDetails) {
+    for (const classroom of detail.classrooms) {
+      if (classroom.startTime >= classroom.endTime) {
+        res
+          .status(400)
+          .json({ message: "Start time should be before end time" });
+        return;
+      }
+    }
   }
 
   const schedule = await Schedule.create({
@@ -19,6 +33,7 @@ const postSchedule = asyncHandler(async (req, res) => {
 
   res.status(201).json(schedule);
 });
+
 const getScheduleById = asyncHandler(async (req, res) => {
   const schedule = await Schedule.findById(req.params.id);
   if (!schedule) {
@@ -26,6 +41,7 @@ const getScheduleById = asyncHandler(async (req, res) => {
   }
   res.send(schedule).status(200);
 });
+
 const updateSchedule = asyncHandler(async (req, res) => {
   const schedule = await Schedule.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
@@ -43,6 +59,7 @@ const deleteSchedule = asyncHandler(async (req, res) => {
   }
   res.send(schedule).status(200);
 });
+
 module.exports = {
   getSchedule,
   getScheduleById,

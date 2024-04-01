@@ -105,7 +105,6 @@ const BarChartComponent = () => {
 
   return (
     <div className="main-chart " style={chartContainerStyle}>
-      {/* <p className="heading-student">Student's Details</p> */}
       <Bar data={data} options={options} />
     </div>
   );

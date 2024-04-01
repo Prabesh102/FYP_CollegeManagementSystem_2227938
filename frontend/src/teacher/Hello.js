@@ -265,7 +265,6 @@ function Hello() {
           )}
 
           <form>
-            {/* Assignment Title */}
             <label>
               Assignment Title:
               <input
@@ -277,7 +276,7 @@ function Hello() {
               />
             </label>
             <br />
-            {/* Assignment Description */}
+
             <label>
               Assignment Description:
               <input
@@ -289,7 +288,7 @@ function Hello() {
               />
             </label>
             <br />
-            {/* Course */}
+
             <label>
               Course:
               <select

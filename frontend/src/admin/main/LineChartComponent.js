@@ -82,8 +82,8 @@ const LineChartComponent = () => {
         backgroundColor: [
           "rgba(64,219,188,255)",
           "rgba(255,189,95,255)",
-          "rgba(86,165,255,255)",
           "rgba(255,102,128,255)",
+          "rgba(86,165,255,255)",
         ],
         borderWidth: 1,
       },
