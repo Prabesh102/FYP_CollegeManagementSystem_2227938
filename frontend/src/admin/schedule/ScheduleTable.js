@@ -10,7 +10,9 @@ const ScheduleTable = () => {
   useEffect(() => {
     const fetchScheduleData = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/schedule");
+        const response = await axios.get(
+          "http://localhost:5000/api/schedule/getAllSchedule"
+        );
         setScheduleData(response.data);
       } catch (error) {
         console.error("Error fetching schedule data:", error);
