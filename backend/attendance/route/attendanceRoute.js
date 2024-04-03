@@ -8,4 +8,9 @@ attendanceRouter.get(
   "/getAllAttendance",
   attendanceController.getAllAttendance
 );
+attendanceRouter.get(
+  "/getAttendanceByTeacherName",
+  attendanceController.getAttendanceByTeacherName
+);
+
 module.exports = attendanceRouter;

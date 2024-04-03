@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
 import Sidebar from "../Sidebar";
+import { Link } from "react-router-dom";
 
 const ViewAttendance = () => {
   const [students, setStudents] = useState([]);
@@ -93,13 +94,16 @@ const ViewAttendance = () => {
   const handleSubmitAttendance = async () => {
     try {
       const attendanceData = students.map((student) => ({
-        studentName: student.username, // Assuming username holds the student's name
+        studentName: student.username,
         present: student.present,
       }));
 
-      // Send attendance data to the backend
+      const teacherName = localStorage.getItem("username"); // Get the teacher's name
+
+      // Send attendance data to the backend along with teacherName
       await axios.post("http://localhost:5000/api/attendance/attendance", {
         section: sectionName,
+        teacherName: teacherName,
         attendance: attendanceData,
       });
 
@@ -119,25 +123,43 @@ const ViewAttendance = () => {
           {/* Render section name and teacher name if available */}
           {scheduleData.section && <p>Section: {scheduleData.section}</p>}
           {/* Render dropdown for section name */}
-          <div className="dropdown">
-            <button
-              className="btn btn-secondary dropdown-toggle"
-              type="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              {sectionName ? sectionName : "Section"}
-            </button>
-            <ul className="dropdown-menu">
-              {/* Render section name if available */}
-              {sectionName && (
-                <li>
-                  <a className="dropdown-item" href="#">
-                    {sectionName}
-                  </a>
-                </li>
-              )}
-            </ul>
+          <div
+            style={{
+              display: "flex",
+              width: "500px",
+              justifyContent: "space-evenly",
+            }}
+          >
+            <div className="dropdown">
+              <button
+                className="btn btn-secondary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                style={{ width: "150px" }}
+              >
+                {sectionName ? sectionName : "Section"}
+              </button>
+              <ul className="dropdown-menu">
+                {/* Render section name if available */}
+                {sectionName && (
+                  <li>
+                    <a className="dropdown-item" href="#">
+                      {sectionName}
+                    </a>
+                  </li>
+                )}
+              </ul>
+            </div>
+            <Button>
+              <Link
+                to="/teacher/oldAttendance"
+                className="nav-link"
+                style={{ color: "white", width: "150px" }}
+              >
+                <i class="fa-solid fa-laptop"></i> Old Attendances
+              </Link>
+            </Button>
           </div>
           <h1 className="text-center mb-4">Attendance System</h1>
           {students.length > 0 && (

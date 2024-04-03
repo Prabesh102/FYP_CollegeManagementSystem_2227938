@@ -4,10 +4,14 @@ const attendanceSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  teacherName: {
+    type: String,
+  },
   studentName: {
     type: String,
     required: true,
   },
+
   present: {
     type: Boolean,
     required: true,

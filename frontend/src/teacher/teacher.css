@@ -13,3 +13,23 @@
 .custom-input {
   width: 300px;
 }
+.filter-form {
+  display: flex;
+  align-items: center;
+}
+
+.filter-group {
+  margin-right: 10px;
+}
+
+.filter-datepicker {
+  width: 150px;
+}
+
+.filter-dropdown-toggle {
+  width: 150px;
+}
+
+.filter-button {
+  margin-left: 10px;
+}
