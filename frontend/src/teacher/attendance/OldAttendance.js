@@ -4,7 +4,7 @@ import Sidebar from "../Sidebar";
 import { Table, Button, Form } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
+import { Link } from "react-router-dom";
 const OldAttendance = () => {
   const [attendanceData, setAttendanceData] = useState([]);
   const [filteredAttendance, setFilteredAttendance] = useState([]);
@@ -62,7 +62,7 @@ const OldAttendance = () => {
             }}
           >
             <h2>Attendance Details</h2>
-            <Form className="filter-form">
+            <Form className="filter-form" style={{ marginBottom: "50px" }}>
               <Form.Group controlId="filterDate">
                 <Form.Label>Date:</Form.Label>
                 <DatePicker
@@ -76,6 +76,18 @@ const OldAttendance = () => {
               <Button variant="primary" onClick={handleFilter}>
                 Apply Filter
               </Button>
+              <div style={{ marginLeft: "30px" }}>
+                <Button variant="primary">
+                  {" "}
+                  <Link
+                    to="/teacher/updateAttendance"
+                    className="nav-link"
+                    style={{ color: "white" }}
+                  >
+                    <i class="fa-solid fa-laptop"></i> Update Attendance
+                  </Link>
+                </Button>
+              </div>
             </Form>
             <Table striped bordered hover>
               <thead>

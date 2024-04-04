@@ -35,6 +35,7 @@ import Hello from "./teacher/Hello";
 import ViewAttendance from "./teacher/attendance/ViewAttendance";
 import ViewAttendanceAdmin from "./admin/attendance/ViewAttendenceAdmin";
 import OldAttendance from "./teacher/attendance/OldAttendance";
+import UpdateAttendance from "./teacher/attendance/UpdateAttendance";
 function App() {
   const { authenticated } = useAuth();
   const userRole = localStorage.getItem("userRole");
@@ -76,6 +77,10 @@ function App() {
             <Route path="/TeacherDashboard" element={<TeacherDashboard />} />
             <Route path="/teacher/attendance" element={<ViewAttendance />} />
             <Route path="/teacher/oldAttendance" element={<OldAttendance />} />
+            <Route
+              path="/teacher/updateAttendance"
+              element={<UpdateAttendance />}
+            />
 
             <Route
               path="/student/ViewAssignment"

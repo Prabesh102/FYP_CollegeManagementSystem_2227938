@@ -48,9 +48,29 @@ const getAttendanceByTeacherName = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const updateAttendance = async (req, res) => {
+  try {
+    const { attendanceRecords } = req.body;
+
+    await Promise.all(
+      attendanceRecords.map(async (record) => {
+        const { _id, present } = record;
+
+        // Update the attendance record
+        await Attendance.findByIdAndUpdate(_id, { present: present });
+      })
+    );
+
+    res.status(200).json({ message: "Attendance updated successfully" });
+  } catch (error) {
+    console.error("Error updating attendance:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 module.exports = {
   recordAttendance,
   getAllAttendance,
   getAttendanceByTeacherName,
+  updateAttendance,
 };
