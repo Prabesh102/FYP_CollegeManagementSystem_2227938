@@ -57,7 +57,8 @@ const Login = () => {
         formData
       );
 
-      const { role, username, semester, section, course } = response.data;
+      const { role, username, semester, section, course, sections } =
+        response.data;
 
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userRole", role);
@@ -65,6 +66,7 @@ const Login = () => {
       localStorage.setItem("semester", semester);
       localStorage.setItem("section", section);
       localStorage.setItem("course", course);
+      localStorage.setItem("sections", JSON.stringify(sections)); // Store sections array
 
       console.log("User Role:", role);
       console.log("User Username:", username);
@@ -82,6 +84,7 @@ const Login = () => {
       setAlertMessage("Login failed. Please enter correct email or password.");
     }
   };
+
   const handleClose = () => setShowModal(false);
 
   const handleChangePassword = async (e) => {

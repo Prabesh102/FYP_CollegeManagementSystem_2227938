@@ -226,7 +226,7 @@ const Navbar = () => {
                   </Link>
                   <ul className="dropdown-menu dropdown-menu-dark">
                     <li>
-                      <Link to="#" className="dropdown-item">
+                      <Link to="/teacher/result" className="dropdown-item">
                         View results
                       </Link>
                     </li>

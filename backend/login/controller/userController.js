@@ -12,7 +12,7 @@ const userRegister = asyncHandler(async (req, res) => {
       password,
       role,
       registrationDate,
-      section,
+      sections,
       course,
     } = req.body;
     if (
@@ -21,7 +21,7 @@ const userRegister = asyncHandler(async (req, res) => {
       !password ||
       !role ||
       !registrationDate ||
-      !section ||
+      !sections ||
       !course
     ) {
       return res.status(400).send("Please enter all details correctly");
@@ -42,7 +42,7 @@ const userRegister = asyncHandler(async (req, res) => {
       password,
       role,
       registrationDate,
-      section,
+      sections: req.body.sections,
       course,
     });
 
@@ -96,7 +96,6 @@ const userLogin = async (req, res) => {
       return;
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       {
         id: user.id,
@@ -106,6 +105,7 @@ const userLogin = async (req, res) => {
         role: user.role,
         section: user.section,
         course: user.course,
+        sections: user.sections, // Include the sections field here
       },
       process.env.ACCESS_TOKEN,
       { expiresIn: "1h" } // Token expiration time
@@ -119,6 +119,7 @@ const userLogin = async (req, res) => {
       semester: user.semester,
       section: user.section,
       course: user.course,
+      sections: user.sections, // Include the sections field here
     });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -239,9 +240,10 @@ const deleteUser = async (req, res) => {
 const getAllTeachers = async (req, res) => {
   try {
     // Find all users with the role 'teacher'
-    const teachers = await User.find({ role: "teacher" }).select(
-      "_id username email course section registrationDate"
-    );
+    const teachers = await User.find({ role: "teacher" });
+    // .select(
+    //   "_id username email course section registrationDate"
+    // );
 
     res.status(200).json(teachers);
   } catch (error) {

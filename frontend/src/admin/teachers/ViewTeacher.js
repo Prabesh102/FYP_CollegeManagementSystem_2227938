@@ -18,19 +18,30 @@ const ViewTeacher = () => {
   const [sections, setSections] = useState([]);
   const [courses, setCourses] = useState([]);
   const [alertMessage, setAlertMessage] = useState(false);
-
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     role: "teacher",
     registrationDate: new Date().toISOString(),
-    section: "",
+    sections: [], // Change this to an array
     course: "",
   });
-
   const handleAddTeacherClick = () => {
     setShowAddTeacherModal(true);
+  };
+  const handleAddTeacherClose = () => {
+    setShowAddTeacherModal(false);
+    // Clear the form data when the modal is closed
+    setFormData({
+      username: "",
+      email: "",
+      password: "",
+      role: "teacher",
+      registrationDate: new Date().toISOString(),
+      sections: [], // Clear the sections array
+      course: "",
+    });
   };
   // const handleAddTeacherClose = () => {
   //   setShowAddTeacherModal(false);
@@ -48,6 +59,7 @@ const ViewTeacher = () => {
 
   const handleAddTeacherSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitting form with data:", formData); // Log the form data before sending
 
     try {
       const response = await fetch("http://localhost:5000/api/users/register", {
@@ -61,10 +73,12 @@ const ViewTeacher = () => {
           password: formData.password,
           role: formData.role,
           registrationDate: formData.registrationDate,
-          section: formData.section,
+          sections: formData.sections,
           course: formData.course,
         }),
       });
+
+      console.log("Server response:", response); // Log the server response
 
       if (response.ok) {
         // Handle successful registration
@@ -100,10 +114,10 @@ const ViewTeacher = () => {
     const fetchSectionsAndCourses = async () => {
       try {
         const sectionsResponse = await fetch(
-          "http://localhost:5000/api/sections"
+          "http://localhost:5000/api/section/getAllSection"
         );
         const coursesResponse = await fetch(
-          "http://localhost:5000/api/courses"
+          "http://localhost:5000/api/courses/getAllCourse"
         );
 
         if (sectionsResponse.ok && coursesResponse.ok) {
@@ -343,7 +357,16 @@ const ViewTeacher = () => {
                   <td>{teacher.username}</td>
                   <td>{teacher.email}</td>
                   <td>{teacher.course}</td>
-                  <td>{teacher.section}</td>
+                  <td>
+                    {teacher.sections
+                      ? teacher.sections.map((section, index) => (
+                          <span key={index}>
+                            {section}
+                            <br />
+                          </span>
+                        ))
+                      : ""}
+                  </td>
                   <td>
                     {new Date(teacher.registrationDate).toLocaleDateString()}
                   </td>
@@ -541,16 +564,23 @@ const ViewTeacher = () => {
               </div>
 
               <div className="mb-3">
-                <label>Section</label>
+                <label>Sections</label>
                 <Form.Select
-                  name="section"
-                  value={formData.section}
+                  multiple // Add this attribute to allow multiple selections
+                  name="sections"
+                  value={formData.sections}
                   onChange={(e) =>
-                    setFormData({ ...formData, section: e.target.value })
+                    setFormData({
+                      ...formData,
+                      sections: Array.from(
+                        e.target.selectedOptions,
+                        (option) => option.value
+                      ),
+                    })
                   }
                   required
                 >
-                  <option value="">Select Section</option>
+                  <option value="">Select Sections</option>
                   {sections.map((section) => (
                     <option key={section._id} value={section.sectionName}>
                       {section.sectionName}
@@ -558,7 +588,6 @@ const ViewTeacher = () => {
                   ))}
                 </Form.Select>
               </div>
-
               <div className="mb-3">
                 <label>Course</label>
                 <Form.Select

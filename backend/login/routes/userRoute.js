@@ -23,5 +23,6 @@ router.put("/updateUserDetails", updateUserDetails);
 router.delete("/deleteUser/:id", deleteUser);
 router.get("/getAllTeachers", getAllTeachers);
 router.get("/getAllAdmins", getAllAdmins);
-router.get("/students/getStudentsBySection", getStudentsBySection);
+router.get("/getStudentsBySection", getStudentsBySection);
+
 module.exports = router;

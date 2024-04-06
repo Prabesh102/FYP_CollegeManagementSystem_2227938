@@ -37,8 +37,8 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    section: {
-      type: String,
+    sections: {
+      type: [String],
       required: true,
     },
   },
