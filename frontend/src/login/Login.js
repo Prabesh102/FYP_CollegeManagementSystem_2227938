@@ -66,7 +66,8 @@ const Login = () => {
       localStorage.setItem("semester", semester);
       localStorage.setItem("section", section);
       localStorage.setItem("course", course);
-      localStorage.setItem("sections", JSON.stringify(sections)); // Store sections array
+      localStorage.setItem("sections", JSON.stringify(sections));
+      localStorage.setItem("module", module);
 
       console.log("User Role:", role);
       console.log("User Username:", username);

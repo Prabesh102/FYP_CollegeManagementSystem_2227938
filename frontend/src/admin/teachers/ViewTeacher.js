@@ -10,6 +10,10 @@ const ViewTeacher = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [updatedName, setUpdatedName] = useState("");
   const [updatedEmail, setUpdatedEmail] = useState("");
+  const [updatedCourse, setUpdatedCourse] = useState("");
+  const [updatedModule, setUpdatedModule] = useState("");
+  const [updatedSemester, setUpdatedSemester] = useState("");
+  const [updatedSections, setUpdatedSections] = useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -17,22 +21,27 @@ const ViewTeacher = () => {
   const [showAddTeacherModal, setShowAddTeacherModal] = useState(false);
   const [sections, setSections] = useState([]);
   const [courses, setCourses] = useState([]);
+  const [modules, setModules] = useState([]);
   const [alertMessage, setAlertMessage] = useState(false);
+  const ITEMS_PER_PAGE = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [semester, setSemester] = useState("");
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     role: "teacher",
     registrationDate: new Date().toISOString(),
-    sections: [], // Change this to an array
+    sections: [],
     course: "",
+    module: null,
   });
+
   const handleAddTeacherClick = () => {
     setShowAddTeacherModal(true);
   };
   const handleAddTeacherClose = () => {
     setShowAddTeacherModal(false);
-    // Clear the form data when the modal is closed
     setFormData({
       username: "",
       email: "",
@@ -43,19 +52,6 @@ const ViewTeacher = () => {
       course: "",
     });
   };
-  // const handleAddTeacherClose = () => {
-  //   setShowAddTeacherModal(false);
-  //   // Clear the form data when the modal is closed
-  //   setNewTeacherData({
-  //     username: "",
-  //     email: "",
-  //     password: "",
-  //     role: "teacher",
-  //     registrationDate: new Date().toISOString(),
-  //     section: "",
-  //     course: "",
-  //   });
-  // };
 
   const handleAddTeacherSubmit = async (e) => {
     e.preventDefault();
@@ -73,8 +69,10 @@ const ViewTeacher = () => {
           password: formData.password,
           role: formData.role,
           registrationDate: formData.registrationDate,
+          semester: semester,
           sections: formData.sections,
           course: formData.course,
+          module: formData.module,
         }),
       });
 
@@ -103,13 +101,6 @@ const ViewTeacher = () => {
     }
   };
 
-  // Update the form data state when inputs change
-  // const handleNewTeacherInputChange = (e) => {
-  //   setNewTeacherData({
-  //     ...newTeacherData,
-  //     [e.target.name]: e.target.value,
-  //   });
-  // };
   useEffect(() => {
     const fetchSectionsAndCourses = async () => {
       try {
@@ -154,6 +145,28 @@ const ViewTeacher = () => {
 
     fetchteacherData();
   }, []);
+  useEffect(() => {
+    const fetchModules = async () => {
+      try {
+        console.log("Fetching modules for course:", formData.course);
+        if (formData.course) {
+          const course = courses.find(
+            (course) => course.courseName === formData.course
+          );
+          if (course) {
+            console.log("Modules data:", course.modules);
+            setModules(course.modules);
+          } else {
+            throw new Error("Course not found");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching modules:", error);
+      }
+    };
+
+    fetchModules();
+  }, [formData.course, courses]);
 
   const filteredteachers = teachers.filter((teacher) =>
     teacher.username.toLowerCase().includes(searchTerm.toLowerCase())
@@ -166,8 +179,16 @@ const ViewTeacher = () => {
   const handleUpdateClick = (user) => {
     setSelectedUser(user);
     setShowUpdateModal(true);
+    setFormData({
+      ...formData,
+      username: user.username,
+      email: user.email,
+      course: user.course,
+      semester: user.semester,
+      module: user.module,
+      sections: user.sections,
+    });
   };
-
   const handleUpdateClose = () => {
     setShowUpdateModal(false);
     setUpdatedName("");
@@ -195,17 +216,20 @@ const ViewTeacher = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            userId: selectedUser._id,
+            userId: selectedUser._id, // Include the user's ID
             updatedName,
             updatedEmail,
+            updatedCourse, // Include updated course
+            updatedSemester, // Include updated semester
+            updatedModule, // Include updated module
+            updatedSections, // Include updated sections
+            // Include other updated fields here
           }),
         }
       );
 
       if (response.ok) {
-        // Handle successful update
         console.log("User details updated successfully");
-        // Close the modal or handle any other UI updates
         setShowUpdateModal(false);
         setUpdatedName("");
         setUpdatedEmail("");
@@ -220,7 +244,6 @@ const ViewTeacher = () => {
       console.error("Error:", error);
     }
   };
-
   const handleDeleteClick = (user) => {
     setSelectedUser(user); // Set the selected user
     setShowDeleteConfirmation(true); // Show the delete confirmation modal
@@ -280,7 +303,14 @@ const ViewTeacher = () => {
 
     fetchSectionsAndCourses();
   }, []);
+  const lastTeacherIndex = currentPage * ITEMS_PER_PAGE;
+  const firstTeacherIndex = lastTeacherIndex - ITEMS_PER_PAGE;
+  const currentTeachers = teachers.slice(firstTeacherIndex, lastTeacherIndex);
 
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
   return (
     <>
       <link
@@ -293,17 +323,6 @@ const ViewTeacher = () => {
       <Navbar />
       <div className="viewTable" style={{ paddingTop: "60px" }}>
         <div className="d-flex justify-content-between align-items-center mb-3">
-          {showDeleteAlert && (
-            <div className="alert alert-success" role="alert">
-              User deleted successfully!
-            </div>
-          )}
-
-          {showUpdateAlert && (
-            <div className="alert alert-success" role="alert">
-              User details updated successfully!
-            </div>
-          )}
           <div className="ml-auto">
             <input
               type="text"
@@ -337,6 +356,12 @@ const ViewTeacher = () => {
                 <i class="fa-regular fa-envelope"></i> Course
               </th>
               <th scope="col">
+                <i class="fa-regular fa-envelope"></i> Semester
+              </th>
+              <th scope="col">
+                <i class="fa-regular fa-envelope"></i> Module
+              </th>
+              <th scope="col">
                 <i class="fa-regular fa-envelope"></i> Section
               </th>
               <th scope="col">
@@ -349,7 +374,7 @@ const ViewTeacher = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredteachers.map((teacher, index) => {
+            {currentTeachers.map((teacher, index) => {
               console.log("Teacher Object:", teacher);
               return (
                 <tr key={teacher._id}>
@@ -357,6 +382,8 @@ const ViewTeacher = () => {
                   <td>{teacher.username}</td>
                   <td>{teacher.email}</td>
                   <td>{teacher.course}</td>
+                  <td>{teacher.semester}</td>
+                  <td>{teacher.module}</td>
                   <td>
                     {teacher.sections
                       ? teacher.sections.map((section, index) => (
@@ -398,6 +425,35 @@ const ViewTeacher = () => {
             })}
           </tbody>
         </table>
+        {showDeleteAlert && (
+          <div className="alert alert-success" role="alert">
+            User deleted successfully!
+          </div>
+        )}
+
+        {showUpdateAlert && (
+          <div className="alert alert-success" role="alert">
+            User details updated successfully!
+          </div>
+        )}
+        <div className="d-flex justify-content-center">
+          <button
+            type="button"
+            className="btn btn-primary me-2"
+            disabled={currentPage === 1}
+            onClick={() => handlePageChange(currentPage - 1)}
+          >
+            Previous
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={lastTeacherIndex >= teachers.length}
+            onClick={() => handlePageChange(currentPage + 1)}
+          >
+            Next
+          </button>
+        </div>
         <Modal show={showDeleteConfirmation} onHide={handleDeleteClose}>
           <Modal.Header closeButton>
             <Modal.Title>Confirmation</Modal.Title>
@@ -444,6 +500,81 @@ const ViewTeacher = () => {
                   required
                 />
               </Form.Group>
+              <Form.Group controlId="formUpdateCourse">
+                <Form.Label>Course</Form.Label>
+                <Form.Select
+                  name="course"
+                  value={updatedCourse}
+                  onChange={(e) => setUpdatedCourse(e.target.value)}
+                  required
+                >
+                  {/* Fetch courses from backend and map them here */}
+                  {courses.map((course) => (
+                    <option key={course._id} value={course.courseName}>
+                      {course.courseName}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group controlId="formUpdateSemester">
+                <Form.Label>Semester</Form.Label>
+                <Form.Select
+                  name="semester"
+                  value={updatedSemester}
+                  onChange={(e) => setUpdatedSemester(e.target.value)}
+                  required
+                >
+                  {/* Fetch semesters from backend and map them here */}
+                  {[1, 2, 3, 4, 5, 6].map((sem) => (
+                    <option key={sem} value={sem}>
+                      {sem}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group controlId="formUpdateModule">
+                <Form.Label>Module</Form.Label>
+                <Form.Select
+                  name="module"
+                  value={updatedModule}
+                  onChange={(e) => setUpdatedModule(e.target.value)}
+                  required
+                >
+                  {/* Fetch modules based on the selected course from backend and map them here */}
+                  {modules.map((module) => (
+                    <option key={module._id} value={module.moduleName}>
+                      {module.moduleName}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+
+              <Form.Group controlId="formUpdateSections">
+                <Form.Label>Sections</Form.Label>
+                <Form.Select
+                  multiple
+                  name="sections"
+                  value={updatedSections} // Use updatedSections state to populate the selected options
+                  onChange={(e) =>
+                    setUpdatedSections(
+                      Array.from(
+                        e.target.selectedOptions,
+                        (option) => option.value
+                      )
+                    )
+                  } // Update updatedSections state when selections are made
+                >
+                  {/* Map sections dynamically based on the user's sections */}
+                  {sections.map((section) => (
+                    <option key={section._id} value={section.sectionName}>
+                      {section.sectionName}
+                    </option>
+                  ))}
+                </Form.Select>
+              </Form.Group>
+
               <Button variant="primary" type="submit">
                 Update
               </Button>
@@ -464,8 +595,14 @@ const ViewTeacher = () => {
             <p>Username: {selectedUser?.username}</p>
             <p>Email: {selectedUser?.email}</p>
             <p>Registration Date: {selectedUser?.registrationDate}</p>
-            <p>Section: {selectedUser?.section}</p>
             <p>Course: {selectedUser?.course}</p>
+            <p>Semester: {selectedUser?.semester}</p>
+            <p>Module: {selectedUser?.module}</p>
+            <p>
+              Section:{" "}
+              {selectedUser?.sections && selectedUser.sections.join(", ")}
+            </p>
+
             {/* Add other details you want to display */}
           </Modal.Body>
           <Modal.Footer>
@@ -562,6 +699,60 @@ const ViewTeacher = () => {
                   required
                 />
               </div>
+              <div className="mb-3">
+                <label>Course</label>
+                <Form.Select
+                  name="course"
+                  value={formData.course}
+                  onChange={(e) =>
+                    setFormData({ ...formData, course: e.target.value })
+                  }
+                  required
+                >
+                  <option value="">Select Course</option>
+                  {courses.map((course) => (
+                    <option key={course._id} value={course.courseName}>
+                      {course.courseName}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
+              <div className="mb-3">
+                <label>Semester</label>
+                <Form.Select
+                  name="semester"
+                  value={semester}
+                  onChange={(e) => setSemester(e.target.value)}
+                  required
+                >
+                  <option value="">Select Semester</option>
+                  {[1, 2, 3, 4, 5, 6].map((sem) => (
+                    <option key={sem} value={sem}>
+                      {sem}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
+              {formData.course && (
+                <div className="mb-3">
+                  <label>Module</label>
+                  <Form.Select
+                    name="module"
+                    value={formData.module}
+                    onChange={(e) =>
+                      setFormData({ ...formData, module: e.target.value })
+                    }
+                    required
+                  >
+                    <option value="">Select Module</option>
+                    {modules.map((module) => (
+                      <option key={module._id} value={module.moduleName}>
+                        {module.moduleName}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </div>
+              )}
 
               <div className="mb-3">
                 <label>Sections</label>
@@ -584,24 +775,6 @@ const ViewTeacher = () => {
                   {sections.map((section) => (
                     <option key={section._id} value={section.sectionName}>
                       {section.sectionName}
-                    </option>
-                  ))}
-                </Form.Select>
-              </div>
-              <div className="mb-3">
-                <label>Course</label>
-                <Form.Select
-                  name="course"
-                  value={formData.course}
-                  onChange={(e) =>
-                    setFormData({ ...formData, course: e.target.value })
-                  }
-                  required
-                >
-                  <option value="">Select Course</option>
-                  {courses.map((course) => (
-                    <option key={course._id} value={course.courseName}>
-                      {course.courseName}
                     </option>
                   ))}
                 </Form.Select>

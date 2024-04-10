@@ -136,7 +136,6 @@ const ViewAttendanceAdmin = () => {
           </tbody>
         </Table>
 
-        {/* Pagination */}
         <div className="pagination">
           <Button
             onClick={() => paginate(currentPage - 1)}

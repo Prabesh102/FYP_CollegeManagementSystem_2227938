@@ -12,8 +12,10 @@ const userRegister = asyncHandler(async (req, res) => {
       password,
       role,
       registrationDate,
+      semester,
       sections,
       course,
+      module,
     } = req.body;
     if (
       !username ||
@@ -42,8 +44,10 @@ const userRegister = asyncHandler(async (req, res) => {
       password,
       role,
       registrationDate,
+      semester,
       sections: req.body.sections,
       course,
+      module,
     });
 
     console.log("User created successfully: - ", newUser);
@@ -52,7 +56,7 @@ const userRegister = asyncHandler(async (req, res) => {
     const emailSent = await sendEmail(
       email,
       "Registration Details",
-      `Thank you for registering!\nEmail: ${email}\nPassword: ${password} \nSection: ${section}`
+      `Thank you for registering!\nEmail: ${email}\nPassword: ${password} \nSection: ${sections[0]}`
     );
 
     if (emailSent) {
@@ -105,7 +109,8 @@ const userLogin = async (req, res) => {
         role: user.role,
         section: user.section,
         course: user.course,
-        sections: user.sections, // Include the sections field here
+        sections: user.sections,
+        module: user.module,
       },
       process.env.ACCESS_TOKEN,
       { expiresIn: "1h" } // Token expiration time
@@ -119,7 +124,8 @@ const userLogin = async (req, res) => {
       semester: user.semester,
       section: user.section,
       course: user.course,
-      sections: user.sections, // Include the sections field here
+      sections: user.sections,
+      module: user.module,
     });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -176,9 +182,10 @@ const updatePassword = async (req, res) => {
 };
 const getAllStudents = async (req, res) => {
   try {
-    const students = await User.find({ role: "student" })
-      .sort({ registrationDate: -1 }) // Sort by registration date in descending order
-      .select("_id username email registrationDate section year semester");
+    const students = await User.find({ role: "student" }).sort({
+      registrationDate: -1,
+    }); // Sort by registration date in descending order
+    // .select("_id username email registrationDate section year semester");
 
     res.status(200).json(students);
   } catch (error) {
@@ -191,9 +198,10 @@ const updateUserDetails = async (req, res) => {
       userId,
       updatedName,
       updatedEmail,
-      updatedYear,
+
       updatedSemester,
       updatedSection,
+      updatedModule,
     } = req.body;
 
     // Find the user by userId and update the details
@@ -206,10 +214,9 @@ const updateUserDetails = async (req, res) => {
     // Update the user details
     user.username = updatedName;
     user.email = updatedEmail;
-    user.year = updatedYear;
     user.semester = updatedSemester;
     user.section = updatedSection;
-
+    user.module = updatedModule;
     // Save the updated user
     await user.save();
 
@@ -271,15 +278,19 @@ const getStudentsBySection = async (req, res) => {
       return res.status(400).json({ error: "Section parameter is required" });
     }
 
-    const students = await User.find({ role: "student", section })
+    const students = await User.find({
+      role: "student",
+      sections: { $in: [section] },
+    })
       .sort({ registrationDate: -1 })
-      .select("_id username email registrationDate section year semester");
+      .select("_id username email registrationDate sections semester");
 
     res.status(200).json(students);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
 module.exports = {
   getAllTeachers,
   deleteUser,

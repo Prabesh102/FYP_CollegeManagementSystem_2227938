@@ -131,6 +131,7 @@ const getScheduleDetails = async (req, res) => {
       {
         $group: {
           _id: "$_id",
+
           section: { $first: "$section" },
           scheduleDetails: { $push: "$scheduleDetails" },
           __v: { $first: "$__v" },

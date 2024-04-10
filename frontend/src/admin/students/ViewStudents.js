@@ -4,13 +4,13 @@ import "../main/admin.css";
 import { Modal, Button, Form } from "react-bootstrap";
 
 const ViewStudents = () => {
+  const [selectedSection, setSelectedSection] = useState("");
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUser, setSelectedUser] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [updatedName, setUpdatedName] = useState("");
   const [updatedEmail, setUpdatedEmail] = useState("");
-  const [updatedYear, setUpdatedYear] = useState("");
   const [updatedSemester, setUpdatedSemester] = useState("");
   const [updatedSection, setUpdatedSection] = useState("");
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
@@ -20,18 +20,19 @@ const ViewStudents = () => {
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState("");
-
+  const [sections, setSections] = useState([]); // Add state for sections
+  const [courses, setCourses] = useState([]);
+  const ITEMS_PER_PAGE = 7;
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     role: "student",
     registrationDate: new Date().toISOString(),
-    section: "",
+    sections: [],
     course: "",
   });
-  const [sections, setSections] = useState([]); // Add state for sections
-  const [courses, setCourses] = useState([]);
+
   // Fetch sections when the component mounts
   useEffect(() => {
     const fetchSections = async () => {
@@ -83,6 +84,7 @@ const ViewStudents = () => {
     e.preventDefault();
 
     try {
+      console.log("Form Data:", formData);
       const response = await fetch("http://localhost:5000/api/users/register", {
         method: "POST",
         headers: {
@@ -94,11 +96,21 @@ const ViewStudents = () => {
           password: formData.password,
           role: formData.role,
           registrationDate: formData.registrationDate,
-          section: formData.section,
+          sections: formData.sections,
           course: formData.course,
         }),
       });
+      console.log("Sending request with payload:", {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role,
+        registrationDate: formData.registrationDate,
+        sections: formData.sections,
+        course: formData.course,
+      });
 
+      console.log("Server response:", response); // Log the server response
       if (response.ok) {
         // Handle successful registration
         console.log("User added successfully");
@@ -151,7 +163,6 @@ const ViewStudents = () => {
     setShowUpdateModal(false);
     setUpdatedName("");
     setUpdatedEmail("");
-    setUpdatedYear("");
     setUpdatedSemester("");
     setUpdatedSection("");
     setSelectedUser(null);
@@ -180,7 +191,7 @@ const ViewStudents = () => {
             userId: selectedUser._id,
             updatedName,
             updatedEmail,
-            updatedYear,
+
             updatedSemester,
             updatedSection,
           }),
@@ -194,7 +205,6 @@ const ViewStudents = () => {
         setShowUpdateModal(false);
         setUpdatedName("");
         setUpdatedEmail("");
-        setUpdatedYear("");
         setUpdatedSection("");
         setUpdatedSemester("");
         setSelectedUser(null);
@@ -243,7 +253,30 @@ const ViewStudents = () => {
       // Handle error or show a message to the user
     }
   };
+  const [currentPage, setCurrentPage] = useState(1);
 
+  const lastStudentIndex = currentPage * ITEMS_PER_PAGE;
+  const firstStudentIndex = lastStudentIndex - ITEMS_PER_PAGE;
+  const currentStudents = filteredStudents.slice(
+    firstStudentIndex,
+    lastStudentIndex
+  );
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handlePreviousClick = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleNextClick = () => {
+    if (lastStudentIndex < students.length) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
   return (
     <>
       <link
@@ -297,16 +330,14 @@ const ViewStudents = () => {
               <th scope="col">
                 <i class="fa-solid fa-book"></i> Semester
               </th>
-              <th scope="col">
-                <i class="fa-solid fa-graduation-cap"></i> Year
-              </th>
+
               <th scope="col">
                 <i class="fa-solid fa-gear"></i> Actions
               </th>
             </tr>
           </thead>
           <tbody>
-            {filteredStudents.map((student, index) => (
+            {currentStudents.map((student, index) => (
               <tr key={student._id}>
                 <th scope="row">{index + 1}</th>
                 <td>{student.username}</td>
@@ -315,9 +346,9 @@ const ViewStudents = () => {
                   {new Date(student.registrationDate).toLocaleDateString()}
                 </td>
                 <td>{student.course}</td>
-                <td>{student.section}</td>
+                <td>{student.sections ? student.sections.join(", ") : ""}</td>
                 <td>{student.semester}</td>
-                <td>{student.year}</td>
+
                 <td>
                   <button
                     type="button"
@@ -361,6 +392,24 @@ const ViewStudents = () => {
             User added successfully!
           </div>
         )}
+        <div className="d-flex justify-content-center">
+          <button
+            type="button"
+            className="btn btn-primary me-2"
+            disabled={currentPage === 1}
+            onClick={handlePreviousClick}
+          >
+            Previous
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            disabled={lastStudentIndex >= students.length}
+            onClick={handleNextClick}
+          >
+            Next
+          </button>
+        </div>
         <Modal show={showDeleteConfirmation} onHide={handleDeleteClose}>
           <Modal.Header closeButton>
             <Modal.Title>Confirmation</Modal.Title>
@@ -407,16 +456,7 @@ const ViewStudents = () => {
                   required
                 />
               </Form.Group>
-              <Form.Group controlId="formUpdateEmail">
-                <Form.Label>Year</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Enter updated email"
-                  value={updatedYear}
-                  onChange={(e) => setUpdatedYear(e.target.value)}
-                  required
-                />
-              </Form.Group>
+
               <Form.Group controlId="formUpdateEmail">
                 <Form.Label>Semester</Form.Label>
                 <Form.Control
@@ -427,15 +467,21 @@ const ViewStudents = () => {
                   required
                 />
               </Form.Group>
-              <Form.Group controlId="formUpdateEmail">
+              <Form.Group controlId="formUpdateSection">
                 <Form.Label>Section</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Enter updated email"
-                  value={updatedSection}
-                  onChange={(e) => setUpdatedSection(e.target.value)}
+                <Form.Select
+                  name="section"
+                  value={selectedSection}
+                  onChange={(e) => setSelectedSection(e.target.value)}
                   required
-                />
+                >
+                  <option value="">Select Section</option>
+                  {sections.map((section) => (
+                    <option key={section._id} value={section.sectionName}>
+                      {section.sectionName}
+                    </option>
+                  ))}
+                </Form.Select>
               </Form.Group>
               <Button variant="primary" type="submit">
                 Update
@@ -461,9 +507,12 @@ const ViewStudents = () => {
               {new Date(selectedUser?.registrationDate).toLocaleDateString()}
             </p>
             <p>Semester: {selectedUser?.semester}</p>
-            <p>Year: {selectedUser?.year}</p>
-            <p>Section: {selectedUser?.course}</p>
-            <p>Section: {selectedUser?.section}</p>
+
+            <p>Course: {selectedUser?.course}</p>
+            <p>
+              Section:{" "}
+              {selectedUser?.sections && selectedUser.sections.join(", ")}
+            </p>
             {/* Add other details you want to display */}
           </Modal.Body>
           <Modal.Footer>
@@ -572,23 +621,27 @@ const ViewStudents = () => {
             </div>
             {selectedCourse && (
               <div className="mb-3">
-                <label>Section</label>
+                <label>Sections</label>
                 <Form.Select
-                  name="section"
-                  value={formData.section}
+                  name="sections"
+                  value={formData.sections}
                   onChange={(e) =>
-                    setFormData({ ...formData, section: e.target.value })
+                    setFormData({
+                      ...formData,
+                      sections: Array.from(
+                        e.target.selectedOptions,
+                        (option) => option.value
+                      ),
+                    })
                   }
                   required
                 >
-                  <option value="">Select Section</option>
-                  {sections
-                    .filter((section) => section.course === selectedCourse)
-                    .map((section) => (
-                      <option key={section._id} value={section.sectionName}>
-                        {section.sectionName}
-                      </option>
-                    ))}
+                  <option value="">Select Sections</option>
+                  {sections.map((section) => (
+                    <option key={section._id} value={section.sectionName}>
+                      {section.sectionName}
+                    </option>
+                  ))}
                 </Form.Select>
               </div>
             )}

@@ -60,10 +60,19 @@ const deleteCourse = asyncHandler(async (req, res) => {
   }
   res.send(course).status(200);
 });
+const getModulesForCourse = asyncHandler(async (req, res) => {
+  const courseId = req.params.id;
+  const course = await Course.findById(courseId);
+  if (!course) {
+    return res.status(404).json({ message: "Course not found" });
+  }
+  res.json({ modules: course.modules });
+});
 module.exports = {
   getCourse,
   getCourseById,
   postCourse,
   updateCourse,
   deleteCourse,
+  getModulesForCourse,
 };

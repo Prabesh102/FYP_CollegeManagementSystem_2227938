@@ -9,17 +9,20 @@ const UpdateAttendance = () => {
   const [students, setStudents] = useState([]);
   const [sectionName, setSectionName] = useState("");
   const [attendanceRecords, setAttendanceRecords] = useState([]);
+  const [sections, setSections] = useState([]);
 
   useEffect(() => {
-    // Retrieve section name and teacher name from localStorage
-    const sectionName = localStorage.getItem("section");
-    if (sectionName) {
-      setSectionName(sectionName);
+    // Retrieve section array from localStorage
+    const sections = JSON.parse(localStorage.getItem("sections"));
+    if (sections) {
+      setSections(sections);
+    }
 
-      // Fetch students by section
+    // Fetch students and attendance records when sectionName changes
+    if (sectionName) {
       axios
         .get(
-          `http://localhost:5000/api/users/students/getStudentsBySection?section=${sectionName}`
+          `http://localhost:5000/api/users/getStudentsBySection?section=${sectionName}`
         )
         .then((response) => {
           setStudents(response.data);
@@ -28,7 +31,6 @@ const UpdateAttendance = () => {
           console.error("Error fetching students:", error);
         });
 
-      // Fetch attendance records by teacher name
       axios
         .get(
           `http://localhost:5000/api/attendance/getAttendanceByTeacherName?teacherName=${localStorage.getItem(
@@ -42,7 +44,7 @@ const UpdateAttendance = () => {
           console.error("Error fetching attendance records:", error);
         });
     }
-  }, []);
+  }, [sectionName]);
 
   const handleAttendanceChange = (studentId, present) => {
     const updatedAttendanceRecords = attendanceRecords.map((record) => {
@@ -66,11 +68,55 @@ const UpdateAttendance = () => {
     }
   };
 
+  const handleSectionChange = (selectedSection) => {
+    setSectionName(selectedSection);
+  };
+
   return (
     <>
       <div style={{ display: "flex", marginLeft: "12px" }}>
         <Sidebar />
         <div className="container mt-4">
+          <div
+            style={{
+              display: "flex",
+              width: "500px",
+              justifyContent: "space-evenly",
+            }}
+          >
+            <div className="dropdown">
+              <button
+                className="btn btn-secondary dropdown-toggle"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+                style={{ width: "150px" }}
+              >
+                {sectionName ? sectionName : "Select Section"}
+              </button>
+              <ul className="dropdown-menu">
+                {sections.map((section, index) => (
+                  <li key={index}>
+                    <button
+                      className="dropdown-item"
+                      onClick={() => handleSectionChange(section)}
+                    >
+                      {section}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <Button>
+              <Link
+                to="/teacher/oldAttendance"
+                className="nav-link"
+                style={{ color: "white", width: "150px" }}
+              >
+                <i class="fa-solid fa-laptop"></i> Old Attendances
+              </Link>
+            </Button>
+          </div>
           <h1 className="text-center mb-4">Attendance System</h1>
           {students.length > 0 && (
             <table className="table">

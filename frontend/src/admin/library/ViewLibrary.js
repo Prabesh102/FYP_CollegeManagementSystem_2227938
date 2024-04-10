@@ -20,6 +20,8 @@ const ViewLibrary = () => {
   const [showUpdateAlert, setShowUpdateAlert] = useState(false);
   const [showAddLibraryModal, setShowAddLibraryModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(3);
   const [formData, setFormData] = useState({
     bookName: "",
     bookCategory: "",
@@ -80,10 +82,6 @@ const ViewLibrary = () => {
       console.error("Error creating book:", error);
     }
   };
-
-  const filteredLibrary = library.filter((library) =>
-    library.bookName.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   const handleClose = () => {
     setSelectedLibrary(null);
@@ -197,6 +195,15 @@ const ViewLibrary = () => {
       console.error("Error deleting book:", error);
     }
   };
+  const filteredLibrary = library.filter((library) =>
+    library.bookName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredLibrary.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <>
@@ -257,7 +264,7 @@ const ViewLibrary = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredLibrary.map((library, index) => (
+            {currentItems.map((library, index) => (
               <tr key={library._id}>
                 <th scope="row">{index + 1}</th>
                 <td>
@@ -265,7 +272,7 @@ const ViewLibrary = () => {
                     src={library.image}
                     alt={library.bookName}
                     width="100"
-                    height="150"
+                    height="130"
                   />
                 </td>
                 <td>{library.bookName}</td>
@@ -300,6 +307,22 @@ const ViewLibrary = () => {
             ))}
           </tbody>
         </table>
+        <div className="pagination">
+          <button
+            className="btn btn-primary"
+            onClick={() => paginate(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
+          <button
+            className="btn btn-primary"
+            onClick={() => paginate(currentPage + 1)}
+            disabled={indexOfLastItem >= library.length}
+          >
+            Next
+          </button>
+        </div>
         {showDeleteAlert && (
           <div className="alert alert-success" role="alert">
             Book deleted successfully!

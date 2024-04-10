@@ -335,6 +335,7 @@ const ViewSchedule = () => {
               <option value="Wednesday">Wednesday</option>
               <option value="Thursday">Thursday</option>
               <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
             </select>
           </div>
           <div className="form-group">

@@ -23,11 +23,7 @@ const userSchema = mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    year: {
-      type: Number,
-      default: 1,
-      required: false,
-    },
+
     semester: {
       type: Number,
       default: 1,
@@ -40,6 +36,9 @@ const userSchema = mongoose.Schema(
     sections: {
       type: [String],
       required: true,
+    },
+    module: {
+      type: String,
     },
   },
   { timestamps: true }

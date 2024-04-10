@@ -11,82 +11,99 @@ const ViewAttendance = () => {
   const [attendanceSubmitted, setAttendanceSubmitted] = useState(false);
   const [showSubmitButton, setShowSubmitButton] = useState(false);
   const [scheduleData, setScheduleData] = useState({});
+  const [sections, setSections] = useState([]);
 
   useEffect(() => {
-    // Retrieve section name and teacher name from localStorage
-    const section = localStorage.getItem("section");
+    const section = JSON.parse(localStorage.getItem("sections"));
     const teacherName = localStorage.getItem("username");
 
-    // Fetch schedule data
     if (section && teacherName) {
       axios
         .get(
-          `http://localhost:5000/api/schedule/?section=${section}&teacherName=${teacherName}`
+          `http://localhost:5000/api/schedule/?section=${sectionName}&teacherName=${teacherName}`
         )
         .then((response) => {
           const scheduleData = response.data;
 
-          // Check if the response section name is equal to the selected section name
-          if (scheduleData.section === section) {
-            // Show the submit button
+          if (scheduleData.section === sectionName) {
             setShowSubmitButton(true);
-
-            // Store the schedule data
             setScheduleData(scheduleData);
 
-            // Set the section name
-            setSectionName(scheduleData.section);
-
-            // Fetch students by section
             axios
               .get(
-                `http://localhost:5000/api/users/students/getStudentsBySection?section=${section}`
+                `http://localhost:5000/api/users/getStudentsBySection?section=${sectionName}`
               )
               .then((response) => {
                 setStudents(response.data);
               })
               .catch((error) => {
                 console.error("Error fetching students:", error);
-                // Handle error
               });
           }
         })
         .catch((error) => {
           console.error("Error fetching schedule data:", error);
-          // Handle error
         });
     }
 
-    // Fetch students by section even if schedule data is not available
-    const sectionName = localStorage.getItem("section");
     if (sectionName) {
       axios
         .get(
-          `http://localhost:5000/api/users/students/getStudentsBySection?section=${sectionName}`
+          `http://localhost:5000/api/users/getStudentsBySection?section=${sectionName}`
         )
         .then((response) => {
           setStudents(response.data);
         })
         .catch((error) => {
           console.error("Error fetching students:", error);
-          // Handle error
         });
     }
 
-    // Set the section name
     const localSectionName = localStorage.getItem("section");
     if (localSectionName) {
       setSectionName(localSectionName);
     }
-  }, []);
+
+    const sections = JSON.parse(localStorage.getItem("sections"));
+    if (sections) {
+      setSections(sections);
+    }
+  }, [sectionName]);
+
+  const handleSectionChange = async (selectedSection) => {
+    setSectionName(selectedSection);
+    setShowSubmitButton(false); // Reset showSubmitButton to false when section changes
+
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/api/users/getStudentsBySection?section=${selectedSection}`
+      );
+      setStudents(response.data);
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    }
+
+    try {
+      const teacherName = localStorage.getItem("username");
+      const response = await axios.get(
+        `http://localhost:5000/api/schedule/?section=${selectedSection}&teacherName=${teacherName}`
+      );
+      const scheduleData = response.data;
+      if (scheduleData.section === selectedSection) {
+        setShowSubmitButton(true);
+        setScheduleData(scheduleData);
+      }
+    } catch (error) {
+      console.error("Error fetching schedule data:", error);
+    }
+  };
+
   const handleAttendanceChange = (studentId, present) => {
-    // Update the attendance status for the student
     const updatedStudents = students.map((student) => {
       if (student._id === studentId) {
         return { ...student, present: present, absent: !present };
-      } else {
-        return { ...student, present: false, absent: false };
       }
+      return student; // Return the unchanged student
     });
     setStudents(updatedStudents);
   };
@@ -98,9 +115,8 @@ const ViewAttendance = () => {
         present: student.present,
       }));
 
-      const teacherName = localStorage.getItem("username"); // Get the teacher's name
+      const teacherName = localStorage.getItem("username");
 
-      // Send attendance data to the backend along with teacherName
       await axios.post("http://localhost:5000/api/attendance/attendance", {
         section: sectionName,
         teacherName: teacherName,
@@ -111,7 +127,6 @@ const ViewAttendance = () => {
       setAttendanceSubmitted(true);
     } catch (error) {
       console.error("Error submitting attendance:", error);
-      // Handle error
     }
   };
 
@@ -120,9 +135,6 @@ const ViewAttendance = () => {
       <div style={{ display: "flex", marginLeft: "12px" }}>
         <Sidebar />
         <div className="container mt-4">
-          {/* Render section name and teacher name if available */}
-          {scheduleData.section && <p>Section: {scheduleData.section}</p>}
-          {/* Render dropdown for section name */}
           <div
             style={{
               display: "flex",
@@ -138,17 +150,20 @@ const ViewAttendance = () => {
                 aria-expanded="false"
                 style={{ width: "150px" }}
               >
-                {sectionName ? sectionName : "Section"}
+                {/* {sectionName ? sectionName : "Select Section"} */}
+                Select section
               </button>
               <ul className="dropdown-menu">
-                {/* Render section name if available */}
-                {sectionName && (
-                  <li>
-                    <a className="dropdown-item" href="#">
-                      {sectionName}
-                    </a>
+                {sections.map((section, index) => (
+                  <li key={index}>
+                    <button
+                      className="dropdown-item"
+                      onClick={() => handleSectionChange(section)}
+                    >
+                      {section}
+                    </button>
                   </li>
-                )}
+                ))}
               </ul>
             </div>
             <Button>
