@@ -16,6 +16,7 @@ const ViewCourses = () => {
   const [showViewModal, setShowViewModal] = useState(false);
   const [showAddSectionModal, setShowAddSectionModal] = useState(false);
   const [alertMessage, setAlertMessage] = useState(false);
+
   const [formData, setFormData] = useState({
     courseName: "",
     totalCredits: "",
@@ -23,8 +24,8 @@ const ViewCourses = () => {
   });
   const [updatedModulesCount, setUpdatedModulesCount] = useState(0);
   const [updatedModules, setUpdatedModules] = useState([]);
-
-  // ... other functions
+  const [currentPage, setCurrentPage] = useState(1);
+  const [coursesPerPage] = useState(8);
 
   const handleUpdateClick = (course) => {
     setSelectedCourse(course);
@@ -202,6 +203,11 @@ const ViewCourses = () => {
   const handleDeleteClose = () => {
     setShowDeleteConfirmation(false);
   };
+  const indexOfLastCourse = currentPage * coursesPerPage;
+  const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
+  const currentCourses = courses.slice(indexOfFirstCourse, indexOfLastCourse);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
   return (
     <>
       <Navbar />
@@ -247,7 +253,7 @@ const ViewCourses = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredCourses.map((course, index) => (
+            {currentCourses.map((course, index) => (
               <tr key={course._id}>
                 <th scope="row">{index + 1}</th>
                 <td>{course.courseName}</td>
@@ -288,6 +294,29 @@ const ViewCourses = () => {
             ))}
           </tbody>
         </table>
+        <nav>
+          <ul className="pagination">
+            {Array.from(
+              { length: Math.ceil(courses.length / coursesPerPage) },
+              (_, index) => (
+                <li
+                  key={index}
+                  className={`page-item ${
+                    currentPage === index + 1 ? "active" : ""
+                  }`}
+                >
+                  <a
+                    onClick={() => paginate(index + 1)}
+                    className="page-link"
+                    href="#"
+                  >
+                    {index + 1}
+                  </a>
+                </li>
+              )
+            )}
+          </ul>
+        </nav>
         {showDeleteAlert && (
           <div className="alert alert-success" role="alert">
             Course deleted successfully!

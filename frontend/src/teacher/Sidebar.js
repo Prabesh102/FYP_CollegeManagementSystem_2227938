@@ -1,14 +1,19 @@
 import React from "react";
-import profile from "../image/profile.png";
-import image from "../image/CMS.png";
+
 import "./teacher.css";
 import logooo from "../image/logooo.png";
 import { Link } from "react-router-dom";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { Modal, Button } from "react-bootstrap";
+
 const Sidebar = () => {
   return (
     <>
+      <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+      />
       <nav
         className="sidebar"
         style={{
@@ -20,7 +25,7 @@ const Sidebar = () => {
           width: "155px",
         }}
       >
-        <div className="sidebar-sticky justify-content-center text-align-center align-items-center">
+        <div className="justify-content-center text-align-center align-items-center">
           <div
             className="logoContainer"
             style={{
@@ -58,25 +63,28 @@ const Sidebar = () => {
               justifyContent: "space-between",
             }}
           >
-            <li className="nav-item">
-              <a
-                href="/StudentDashboard"
-                className="nav-link"
-                style={{ color: "white" }}
-              >
-                <i class="fa-solid fa-house"></i> Home
-              </a>
-            </li>
+            <Link
+              to="/TeacherDashboard"
+              className="nav-link"
+              style={{ color: "white" }}
+            >
+              <i className="fa-solid fa-house"></i> Home
+            </Link>
             <li className="nav-item">
               <a href="#" className="nav-link" style={{ color: "white" }}>
                 <i class="fa-solid fa-book"></i> Classroom
               </a>
             </li>
             <li className="nav-item">
-              <a href="#" className="nav-link" style={{ color: "white" }}>
+              <Link
+                to="/teacher/viewAssignment"
+                className="nav-link"
+                style={{ color: "white" }}
+              >
                 <i class="fa-solid fa-laptop"></i> Assignments
-              </a>
+              </Link>
             </li>
+
             <li className="nav-item">
               <Link
                 to="/teacher/attendance"
@@ -87,18 +95,22 @@ const Sidebar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <a
-                href="/student/viewLibrary"
+              <Link
+                to="/teacher/viewLibrary"
                 className="nav-link"
                 style={{ color: "white" }}
               >
                 <i class="fa-solid fa-book-open-reader"></i> Library
-              </a>
+              </Link>
             </li>
             <li className="nav-item">
-              <a href="#" className="nav-link" style={{ color: "white" }}>
-                <i class="fa-solid fa-clock"></i> Class Schedule
-              </a>
+              <Link
+                to="/teacher/viewSchedule"
+                className="nav-link"
+                style={{ color: "white" }}
+              >
+                <i class="fa-solid fa-book-open-reader"></i> Class Schedule
+              </Link>
             </li>
           </ul>
         </div>

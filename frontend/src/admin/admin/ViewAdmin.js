@@ -13,7 +13,8 @@ const ViewAdmin = () => {
   const [showUserDetailsModal, setShowUserDetailsModal] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [showUpdateAlert, setShowUpdateAlert] = useState(false);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(8);
   useEffect(() => {
     const fetchadminData = async () => {
       try {
@@ -134,6 +135,15 @@ const ViewAdmin = () => {
       // Handle error or show a message to the user
     }
   };
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredAdmins.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <>

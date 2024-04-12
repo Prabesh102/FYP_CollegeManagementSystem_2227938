@@ -23,7 +23,8 @@ const ViewSections = () => {
     course: "",
   });
   const [courses, setCourses] = useState([]);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sectionsPerPage] = useState(8);
   useEffect(() => {
     const fetchCourses = async () => {
       try {
@@ -205,6 +206,14 @@ const ViewSections = () => {
 
     fetchSectionData();
   }, []);
+  const indexOfLastSection = currentPage * sectionsPerPage;
+  const indexOfFirstSection = indexOfLastSection - sectionsPerPage;
+  const currentSections = sections.slice(
+    indexOfFirstSection,
+    indexOfLastSection
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <>
@@ -256,7 +265,7 @@ const ViewSections = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredSections.map((section, index) => (
+            {currentSections.map((section, index) => (
               <tr key={section._id}>
                 <th scope="row">{index + 1}</th>
                 <td>{section.sectionName}</td>
@@ -290,6 +299,29 @@ const ViewSections = () => {
             ))}
           </tbody>
         </table>
+        <nav>
+          <ul className="pagination">
+            {Array.from(
+              { length: Math.ceil(sections.length / sectionsPerPage) },
+              (_, index) => (
+                <li
+                  key={index}
+                  className={`page-item ${
+                    currentPage === index + 1 ? "active" : ""
+                  }`}
+                >
+                  <a
+                    onClick={() => paginate(index + 1)}
+                    className="page-link"
+                    href="#"
+                  >
+                    {index + 1}
+                  </a>
+                </li>
+              )
+            )}
+          </ul>
+        </nav>
         {showDeleteAlert && (
           <div className="alert alert-success" role="alert">
             Section deleted successfully!

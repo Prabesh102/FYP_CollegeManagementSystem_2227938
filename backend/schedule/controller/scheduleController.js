@@ -2,8 +2,18 @@ const Schedule = require("../model/scheduleModel");
 const asyncHandler = require("express-async-handler");
 
 const getSchedule = asyncHandler(async (req, res) => {
-  const schedule = await Schedule.find({});
-  res.send(schedule).status(200);
+  try {
+    let query = {};
+    if (req.query.teacherName) {
+      query["scheduleDetails.classrooms.teacher"] = req.query.teacherName;
+    }
+
+    const schedule = await Schedule.find(query);
+    res.status(200).json(schedule);
+  } catch (error) {
+    console.error("Error fetching schedule:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 const getScheduleSection = asyncHandler(async (req, res) => {

@@ -37,6 +37,9 @@ import ViewAttendanceAdmin from "./admin/attendance/ViewAttendenceAdmin";
 import OldAttendance from "./teacher/attendance/OldAttendance";
 import UpdateAttendance from "./teacher/attendance/UpdateAttendance";
 import ViewResult from "./teacher/result/ViewResult";
+import ViewAssignmentByTeacher from "./teacher/assignment/ViewAssignmentByTeacher";
+import ViewLibraryTeacher from "./teacher/library/ViewLibraryTeacher";
+import ViewScheduleTeacher from "./teacher/schedule/ViewScheduleTeacher";
 function App() {
   const { authenticated } = useAuth();
   const userRole = localStorage.getItem("userRole");
@@ -78,6 +81,18 @@ function App() {
             <Route path="/TeacherDashboard" element={<TeacherDashboard />} />
             <Route path="/teacher/attendance" element={<ViewAttendance />} />
             <Route path="/teacher/oldAttendance" element={<OldAttendance />} />
+            <Route
+              path="/teacher/viewAssignment"
+              element={<ViewAssignmentByTeacher />}
+            />
+            <Route
+              path="/teacher/viewLibrary"
+              element={<ViewLibraryTeacher />}
+            />
+            <Route
+              path="/teacher/viewSchedule"
+              element={<ViewScheduleTeacher />}
+            />
             <Route
               path="/teacher/updateAttendance"
               element={<UpdateAttendance />}

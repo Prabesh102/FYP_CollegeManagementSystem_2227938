@@ -1,18 +1,21 @@
 const moment = require("moment-timezone");
 const File = require("../model/assignmentModel");
 const fs = require("fs");
+const { log } = require("console");
 const uploadFile = async (req, res) => {
   try {
     const { filename, path } = req.file;
     const {
+      teacherName,
       assignmentTitle,
       assignmentDescription,
       startDate,
       endDate,
       course,
       section,
+      module,
     } = req.body;
-
+    console.log(req.body);
     const currentDate = moment().tz("Asia/Kathmandu");
 
     if (
@@ -25,6 +28,7 @@ const uploadFile = async (req, res) => {
     }
 
     const newFile = new File({
+      teacherName,
       filename,
       path,
       assignmentTitle,
@@ -33,6 +37,7 @@ const uploadFile = async (req, res) => {
       endDate,
       course,
       section,
+      module,
     });
 
     await newFile.save();
@@ -106,7 +111,19 @@ const updateFile = async (req, res) => {
 
 const getFiles = async (req, res) => {
   try {
-    const files = await File.find();
+    let query = {}; // Initialize an empty query object
+
+    // Check if filter by module is requested
+    if (req.query.module) {
+      query.module = req.query.module; // Add module filter to the query
+    }
+
+    // Check if filter by logged-in user name is requested
+    if (req.query.teacherName) {
+      query.teacherName = req.query.teacherName; // Add teacherName filter to the query
+    }
+
+    const files = await File.find(query); // Apply the query to retrieve files
     return res.status(200).json(files);
   } catch (error) {
     console.error(error);

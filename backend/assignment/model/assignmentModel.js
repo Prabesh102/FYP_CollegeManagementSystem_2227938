@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const fileSchema = new mongoose.Schema(
   {
+    teacherName: String,
     filename: String,
     path: String,
     assignmentTitle: String,
@@ -10,6 +11,7 @@ const fileSchema = new mongoose.Schema(
     endDate: Date,
     course: String,
     section: String,
+    module: String,
   },
   { timestamps: true }
 );

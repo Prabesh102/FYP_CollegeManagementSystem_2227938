@@ -57,7 +57,7 @@ const Login = () => {
         formData
       );
 
-      const { role, username, semester, section, course, sections } =
+      const { role, username, semester, section, course, sections, module } =
         response.data;
 
       localStorage.setItem("token", response.data.token);

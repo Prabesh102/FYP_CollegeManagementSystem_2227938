@@ -20,6 +20,8 @@ const ViewClassroom = () => {
     className: "",
     totalDesk: "",
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [classroomsPerPage] = useState(8);
   const handleAddClassroomClick = () => {
     setShowAddClassroomModal(true);
   };
@@ -173,7 +175,14 @@ const ViewClassroom = () => {
       // Handle error or show a message to the user
     }
   };
+  const indexOfLastClassroom = currentPage * classroomsPerPage;
+  const indexOfFirstClassroom = indexOfLastClassroom - classroomsPerPage;
+  const currentClassrooms = filteredClassrooms.slice(
+    indexOfFirstClassroom,
+    indexOfLastClassroom
+  );
 
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
   return (
     <>
       <link
@@ -221,7 +230,7 @@ const ViewClassroom = () => {
             </tr>
           </thead>
           <tbody>
-            {filteredClassrooms.map((classroom, index) => (
+            {currentClassrooms.map((classroom, index) => (
               <tr key={classroom._id}>
                 <th scope="row">{index + 1}</th>
                 <td>{classroom.className}</td>
@@ -254,6 +263,33 @@ const ViewClassroom = () => {
             ))}
           </tbody>
         </table>
+        <nav>
+          <ul className="pagination">
+            {Array.from(
+              {
+                length: Math.ceil(
+                  filteredClassrooms.length / classroomsPerPage
+                ),
+              },
+              (_, index) => (
+                <li
+                  key={index}
+                  className={`page-item ${
+                    currentPage === index + 1 ? "active" : ""
+                  }`}
+                >
+                  <a
+                    onClick={() => paginate(index + 1)}
+                    className="page-link"
+                    href="#"
+                  >
+                    {index + 1}
+                  </a>
+                </li>
+              )
+            )}
+          </ul>
+        </nav>
         {showDeleteAlert && (
           <div className="alert alert-success" role="alert">
             Classroom deleted successfully!

@@ -63,6 +63,8 @@ const ViewAssignment = () => {
                 <thead>
                   <tr>
                     <th>Assignment Title</th>
+                    <th>Uploaded By:</th>
+                    <th>Module Name</th>
                     <th>Assignment Description</th>
                     <th>Start Date</th>
                     <th>End Date</th>
@@ -72,7 +74,9 @@ const ViewAssignment = () => {
                 <tbody>
                   {files.map((file) => (
                     <tr key={file._id}>
-                      <td>{file.assignmentTitle}</td>
+                      <td>{file.assignmentTitle}</td>{" "}
+                      <td>{file.teacherName}</td>
+                      <td>{file.module}</td>
                       <td>{file.assignmentDescription}</td>
                       <td>
                         {new Date(file.startDate).toLocaleString("en-US", {
