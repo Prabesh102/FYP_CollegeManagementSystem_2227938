@@ -15,6 +15,8 @@ const ViewAttendanceAdmin = () => {
   const [teacherNames, setTeacherNames] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [rowsPerPage] = useState(10);
+  const [showSectionFilter, setShowSectionFilter] = useState(false);
+  const [showTeacherFilter, setShowTeacherFilter] = useState(false);
 
   useEffect(() => {
     // Fetch attendance details, section names, and teacher names from the backend
@@ -46,11 +48,13 @@ const ViewAttendanceAdmin = () => {
           new Date(attendance.timestamp).toLocaleDateString() ===
           filterDate.toLocaleDateString()
       );
+      setShowSectionFilter(true);
     }
     if (filterSection) {
       filteredData = filteredData.filter(
         (attendance) => attendance.section === filterSection
       );
+      setShowTeacherFilter(true);
     }
     if (filterTeacher) {
       filteredData = filteredData.filter(
@@ -84,30 +88,34 @@ const ViewAttendanceAdmin = () => {
               placeholderText="Select Date"
               className="form-control"
             />
-            <Form.Select
-              value={filterSection}
-              onChange={(e) => setFilterSection(e.target.value)}
-              style={{ width: "150px", height: "38px" }}
-            >
-              <option value="">All Sections</option>
-              {sectionNames.map((section) => (
-                <option key={section._id} value={section.sectionName}>
-                  {section.sectionName}
-                </option>
-              ))}
-            </Form.Select>
-            <Form.Select
-              value={filterTeacher}
-              onChange={(e) => setFilterTeacher(e.target.value)}
-              style={{ width: "150px", height: "38px" }}
-            >
-              <option value="">All Teachers</option>
-              {teacherNames.map((teacher) => (
-                <option key={teacher._id} value={teacher.username}>
-                  {teacher.username}
-                </option>
-              ))}
-            </Form.Select>
+            {showSectionFilter && (
+              <Form.Select
+                value={filterSection}
+                onChange={(e) => setFilterSection(e.target.value)}
+                style={{ width: "150px", height: "38px" }}
+              >
+                <option value="">All Sections</option>
+                {sectionNames.map((section) => (
+                  <option key={section._id} value={section.sectionName}>
+                    {section.sectionName}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
+            {showTeacherFilter && (
+              <Form.Select
+                value={filterTeacher}
+                onChange={(e) => setFilterTeacher(e.target.value)}
+                style={{ width: "150px", height: "38px" }}
+              >
+                <option value="">All Teachers</option>
+                {teacherNames.map((teacher) => (
+                  <option key={teacher._id} value={teacher.username}>
+                    {teacher.username}
+                  </option>
+                ))}
+              </Form.Select>
+            )}
             <Button onClick={handleFilter}>Apply Filter</Button>
           </Form.Group>
         </Form>

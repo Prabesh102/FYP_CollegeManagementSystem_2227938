@@ -4,25 +4,22 @@ import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
 import Sidebar from "../Sidebar";
 import { Link } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const UpdateAttendance = () => {
   const [students, setStudents] = useState([]);
-  const [sectionName, setSectionName] = useState("");
   const [attendanceRecords, setAttendanceRecords] = useState([]);
-  const [sections, setSections] = useState([]);
+  const [filterDate, setFilterDate] = useState(null);
+  const [filterSection, setFilterSection] = useState("");
+  const sectionsFromLocalStorage = JSON.parse(localStorage.getItem("sections"));
 
   useEffect(() => {
-    // Retrieve section array from localStorage
-    const sections = JSON.parse(localStorage.getItem("sections"));
-    if (sections) {
-      setSections(sections);
-    }
-
-    // Fetch students and attendance records when sectionName changes
-    if (sectionName) {
+    // Fetch students and attendance records when filterDate or filterSection changes
+    if (filterDate || filterSection) {
       axios
         .get(
-          `http://localhost:5000/api/users/getStudentsBySection?section=${sectionName}`
+          `http://localhost:5000/api/users/getStudentsBySection?section=${filterSection}`
         )
         .then((response) => {
           setStudents(response.data);
@@ -33,9 +30,11 @@ const UpdateAttendance = () => {
 
       axios
         .get(
-          `http://localhost:5000/api/attendance/getAttendanceByTeacherName?teacherName=${localStorage.getItem(
+          `http://localhost:5000/api/attendance/getAttendanceByTeacherNameDateAndSection?teacherName=${localStorage.getItem(
             "username"
-          )}`
+          )}&date=${
+            filterDate ? filterDate.toISOString() : ""
+          }&section=${filterSection}`
         )
         .then((response) => {
           setAttendanceRecords(response.data);
@@ -44,7 +43,7 @@ const UpdateAttendance = () => {
           console.error("Error fetching attendance records:", error);
         });
     }
-  }, [sectionName]);
+  }, [filterDate, filterSection]);
 
   const handleAttendanceChange = (studentId, present) => {
     const updatedAttendanceRecords = attendanceRecords.map((record) => {
@@ -68,8 +67,22 @@ const UpdateAttendance = () => {
     }
   };
 
-  const handleSectionChange = (selectedSection) => {
-    setSectionName(selectedSection);
+  const handleApplyFilter = () => {
+    // Fetch data based on selected filters
+    axios
+      .get(
+        `http://localhost:5000/api/attendance/getAttendanceByTeacherNameDateAndSection?teacherName=${localStorage.getItem(
+          "username"
+        )}&date=${
+          filterDate ? filterDate.toISOString() : ""
+        }&section=${filterSection}`
+      )
+      .then((response) => {
+        setAttendanceRecords(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching attendance records:", error);
+      });
   };
 
   return (
@@ -77,47 +90,39 @@ const UpdateAttendance = () => {
       <div style={{ display: "flex", marginLeft: "12px" }}>
         <Sidebar />
         <div className="container mt-4">
-          <div
-            style={{
-              display: "flex",
-              width: "500px",
-              justifyContent: "space-evenly",
-            }}
-          >
-            <div className="dropdown">
-              <button
-                className="btn btn-secondary dropdown-toggle"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                style={{ width: "150px" }}
-              >
-                {sectionName ? sectionName : "Select Section"}
-              </button>
-              <ul className="dropdown-menu">
-                {sections.map((section, index) => (
-                  <li key={index}>
-                    <button
-                      className="dropdown-item"
-                      onClick={() => handleSectionChange(section)}
-                    >
-                      {section}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+          <div className="text-center">
+            <h1 className="text-center mb-4">Attendance System</h1>
+            <div className="form-group">
+              <label htmlFor="filterDate">Filter by Date:</label>
+              <div>
+                <DatePicker
+                  selected={filterDate}
+                  onChange={(date) => setFilterDate(date)}
+                  dateFormat="yyyy-MM-dd"
+                  className="form-control"
+                />
+              </div>
             </div>
-            <Button>
-              <Link
-                to="/teacher/oldAttendance"
-                className="nav-link"
-                style={{ color: "white", width: "150px" }}
+            <div className="form-group">
+              <label htmlFor="filterSection">Filter by Section:</label>
+              <select
+                id="filterSection"
+                value={filterSection}
+                onChange={(e) => setFilterSection(e.target.value)}
+                className="form-control"
               >
-                <i class="fa-solid fa-laptop"></i> Old Attendances
-              </Link>
+                <option value="">All Sections</option>
+                {sectionsFromLocalStorage.map((section, index) => (
+                  <option key={index} value={section}>
+                    {section}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <Button variant="primary" onClick={handleApplyFilter}>
+              Apply Filter
             </Button>
           </div>
-          <h1 className="text-center mb-4">Attendance System</h1>
           {students.length > 0 && (
             <table className="table">
               <thead>

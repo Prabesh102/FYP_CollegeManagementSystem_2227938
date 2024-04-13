@@ -3,7 +3,7 @@ const Attendance = require("../model/attendanceModel");
 const recordAttendance = async (req, res) => {
   try {
     const { section, teacherName, attendance } = req.body;
-
+    console.log(section, teacherName, attendance);
     await Promise.all(
       attendance.map(async (record) => {
         const { studentName, present } = record;
@@ -68,9 +68,31 @@ const updateAttendance = async (req, res) => {
   }
 };
 
+const getAttendanceByTeacherNameDateAndSection = async (req, res) => {
+  try {
+    const { teacherName, date, section } = req.query;
+
+    let query = { teacherName };
+    if (date)
+      query.timestamp = {
+        $gte: new Date(date),
+        $lt: new Date(date).setDate(new Date(date).getDate() + 1),
+      };
+    if (section) query.section = section;
+
+    const attendanceData = await Attendance.find(query);
+
+    res.status(200).json(attendanceData);
+  } catch (error) {
+    console.error("Error fetching attendance data:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   recordAttendance,
   getAllAttendance,
   getAttendanceByTeacherName,
   updateAttendance,
+  getAttendanceByTeacherNameDateAndSection,
 };

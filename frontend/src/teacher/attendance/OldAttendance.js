@@ -5,12 +5,14 @@ import { Table, Button, Form } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Link } from "react-router-dom";
+
 const OldAttendance = () => {
   const [attendanceData, setAttendanceData] = useState([]);
   const [filteredAttendance, setFilteredAttendance] = useState([]);
   const [filterDate, setFilterDate] = useState(null);
   const [filterSection, setFilterSection] = useState("");
   const sectionName = localStorage.getItem("section");
+  const sectionsFromLocalStorage = JSON.parse(localStorage.getItem("sections"));
 
   useEffect(() => {
     const teacherName = localStorage.getItem("username");
@@ -72,6 +74,33 @@ const OldAttendance = () => {
                   placeholderText="Select date"
                   className="form-control"
                 />
+              </Form.Group>
+              <Form.Group
+                controlId="filterSection"
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginLeft: "50px",
+                  marginRight: "50px",
+                }}
+              >
+                <Form.Label style={{ marginRight: "10px" }}>
+                  Section:
+                </Form.Label>
+                <Form.Control
+                  as="select"
+                  value={filterSection}
+                  onChange={(e) => setFilterSection(e.target.value)}
+                >
+                  <option value="">All Sections</option>
+                  {sectionsFromLocalStorage &&
+                    sectionsFromLocalStorage.map((section, index) => (
+                      <option key={index} value={section}>
+                        {section}
+                      </option>
+                    ))}
+                </Form.Control>
               </Form.Group>
               <Button variant="primary" onClick={handleFilter}>
                 Apply Filter

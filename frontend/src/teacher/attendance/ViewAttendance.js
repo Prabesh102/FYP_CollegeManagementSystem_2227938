@@ -59,11 +59,6 @@ const ViewAttendance = () => {
         });
     }
 
-    const localSectionName = localStorage.getItem("section");
-    if (localSectionName) {
-      setSectionName(localSectionName);
-    }
-
     const sections = JSON.parse(localStorage.getItem("sections"));
     if (sections) {
       setSections(sections);

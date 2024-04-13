@@ -16,4 +16,9 @@ attendanceRouter.put(
   "/updateAttendance",
   attendanceController.updateAttendance
 );
+attendanceRouter.get(
+  "/getAttendanceByTeacherNameDateAndSection",
+  attendanceController.getAttendanceByTeacherNameDateAndSection
+);
+
 module.exports = attendanceRouter;
