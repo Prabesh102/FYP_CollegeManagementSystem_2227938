@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Modal, Button, Table, Alert, Card } from "react-bootstrap";
+import { Modal, Button, Table, Alert } from "react-bootstrap";
 import moment from "moment-timezone";
 import Sidebar from "../Sidebar";
 import "../teacher.css";
 
-function ViewAssignmentByTeacher() {
+function ViewAssignmentUi() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(7);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -31,39 +31,6 @@ function ViewAssignmentByTeacher() {
   const module = localStorage.getItem("module");
   const [filterByTeacher, setFilterByTeacher] = useState(false);
   const [filterByModule, setFilterByModule] = useState(false);
-  const [lastAssignment, setLastAssignment] = useState(null);
-  const [submissionDetails, setSubmissionDetails] = useState([]);
-
-  useEffect(() => {
-    const fetchSubmissionDetails = async () => {
-      try {
-        const module = localStorage.getItem("module");
-        const response = await axios.get(
-          `http://localhost:5000/api/submissions/module/${module}`
-        );
-        setSubmissionDetails(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchSubmissionDetails();
-  }, []);
-  useEffect(() => {
-    const fetchLastAssignment = async () => {
-      try {
-        const module = localStorage.getItem("module");
-        const response = await axios.get(
-          `http://localhost:5000/api/assignments/lastAssignment/${module}`
-        );
-        setLastAssignment(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchLastAssignment();
-  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -304,29 +271,6 @@ function ViewAssignmentByTeacher() {
     <div style={{ display: "flex", marginLeft: "12px" }}>
       <Sidebar />
       <div style={{ marginLeft: "50px" }}>
-        <div
-          className="card-container-assignment"
-          style={{ width: "400px", marginTop: "50px" }}
-        >
-          {lastAssignment && (
-            <Card style={{ justifyContent: "center", textAlign: "center" }}>
-              <h4>Previous Assignment:</h4>
-              <Card.Body style={{ textAlign: "left" }}>
-                <Card.Title>{lastAssignment.assignmentTitle}</Card.Title>
-                <Card.Text>{lastAssignment.assignmentDescription}</Card.Text>
-                <Card.Text>
-                  Start Date:{" "}
-                  {moment(lastAssignment.startDate).format("YYYY-MM-DD HH:mm")}
-                </Card.Text>
-                <Card.Text>
-                  End Date:{" "}
-                  {moment(lastAssignment.endDate).format("YYYY-MM-DD HH:mm")}
-                </Card.Text>
-                <Card.Text>Uploaded by: {lastAssignment.teacherName}</Card.Text>
-              </Card.Body>
-            </Card>
-          )}
-        </div>
         <Button
           variant="primary"
           onClick={() => setShowAddModal(true)}
@@ -753,44 +697,8 @@ function ViewAssignmentByTeacher() {
           )}
         </ul>
       </div>
-      {submissionDetails.length > 0 && (
-        <div>
-          <h2>Submitted Assignment Details</h2>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Student Name</th>
-                <th>Assignment Title</th>
-                <th>Remarks</th>
-                <th>Submission Time</th>
-                <th>File</th>
-              </tr>
-            </thead>
-            <tbody>
-              {submissionDetails.map((submission) => (
-                <tr key={submission._id}>
-                  <td>{submission.studentName}</td>
-                  <td>{submission.assignmentTitle}</td>
-                  <td>{submission.remarks}</td>
-                  <td>
-                    {moment(submission.timestamp).format("YYYY-MM-DD HH:mm")}
-                  </td>
-                  <td>
-                    <a
-                      href={`http://localhost:5000/uploads/${submission.file}`}
-                      download
-                    >
-                      Download
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </div>
-      )}
     </div>
   );
 }
 
-export default ViewAssignmentByTeacher;
+export default ViewAssignmentUi;

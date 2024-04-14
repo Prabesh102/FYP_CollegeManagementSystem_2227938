@@ -3,7 +3,7 @@ import React from "react";
 import "./teacher.css";
 import logooo from "../image/logooo.png";
 import { Link } from "react-router-dom";
-
+import Logout from "../login/Logout";
 const Sidebar = () => {
   return (
     <>

@@ -198,7 +198,6 @@ const updateUserDetails = async (req, res) => {
       userId,
       updatedName,
       updatedEmail,
-
       updatedSemester,
       updatedSection,
       updatedModule,

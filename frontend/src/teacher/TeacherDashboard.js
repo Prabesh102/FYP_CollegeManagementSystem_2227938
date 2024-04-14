@@ -13,18 +13,20 @@ import "./teacher.css";
 const TeacherDashboard = () => {
   const [username, setUsername] = useState("");
   const [semester, setSemester] = useState("");
-  const [section, setSection] = useState("");
   const [course, setCourse] = useState("");
-
+  const [currentDate, setCurrentDate] = useState("");
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
     const storedSemester = localStorage.getItem("semester");
-    const storedSection = localStorage.getItem("section");
     const storedCourse = localStorage.getItem("course");
     setUsername(storedUsername);
     setSemester(storedSemester);
-    setSection(storedSection);
+
     setCourse(storedCourse);
+    const date = new Date();
+    const options = { weekday: "long", month: "long", day: "numeric" };
+    const formattedDate = date.toLocaleDateString("en-US", options);
+    setCurrentDate(formattedDate);
   }, []);
   return (
     <>
@@ -64,7 +66,7 @@ const TeacherDashboard = () => {
                 >
                   <div className="hero-section-text">
                     {" "}
-                    <p style={{ color: "#c7acf0" }}>Saturday, Feb 17</p>
+                    <p style={{ color: "#c7acf0" }}>{currentDate}</p>{" "}
                     <div
                       className="down-text-hero-section-text"
                       style={{ marginTop: "120px" }}
@@ -281,9 +283,9 @@ const TeacherDashboard = () => {
                 </div>
               </div>
             </div>
-            <div className="col-md-3 d-flex justify-content-end p-4">
+            <div className="col-md-2 d-flex justify-content-end p-4">
               <div
-                className="ml-2 d-flex flex-column"
+                className="d-flex flex-column"
                 style={{ marginRight: "8px" }}
               >
                 <div className="ml-2 d-flex">
@@ -300,15 +302,8 @@ const TeacherDashboard = () => {
                     <div className="context-texts">
                       {" "}
                       <h5>{username}</h5>
-                      <p>
-                        Semester:{semester}/Section:{section}{" "}
-                      </p>
+                      <p>Semester: {semester}</p>
                     </div>
-
-                    <i
-                      class="fa-solid fa-bell fa-2x p-3"
-                      style={{ marginLeft: "5px" }}
-                    ></i>
                   </div>
                 </div>
               </div>

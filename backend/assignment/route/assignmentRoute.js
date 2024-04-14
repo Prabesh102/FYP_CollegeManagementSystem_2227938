@@ -6,7 +6,7 @@ const {
   getFiles,
   deleteFiles,
   updateFile,
-  getFilesByTeacherName,
+  getLastAssignmentByModule,
 } = require("../controller/assignmentController");
 
 const router = express.Router();
@@ -29,5 +29,6 @@ router.get("/files/:filename", (req, res) => {
   res.sendFile(path.join(__dirname, `../uploads/${filename}`));
 });
 router.delete("/deleteFile/:id", deleteFiles);
+router.get("/lastAssignment/:module", getLastAssignmentByModule);
 router.put("/updateFile/:id", upload.single("file"), updateFile); // Update route with multer upload middleware
 module.exports = router;

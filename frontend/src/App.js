@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
+  useNavigate,
 } from "react-router-dom";
 
 import { AuthProvider, useAuth } from "./login/AuthContext";
@@ -40,9 +41,30 @@ import ViewResult from "./teacher/result/ViewResult";
 import ViewAssignmentByTeacher from "./teacher/assignment/ViewAssignmentByTeacher";
 import ViewLibraryTeacher from "./teacher/library/ViewLibraryTeacher";
 import ViewScheduleTeacher from "./teacher/schedule/ViewScheduleTeacher";
+import ViewAssignmentUi from "./teacher/assignment/ViewAssignmentUi";
+
 function App() {
-  const { authenticated } = useAuth();
+  const [loading, setLoading] = useState(true); // Add loading state
+
+  const { authenticated, login } = useAuth();
   const userRole = localStorage.getItem("userRole");
+  // const navigate = useNavigate();
+  // const userRole = localStorage.getItem("userRole");
+
+  useEffect(() => {
+    // Check if the user is authenticated when the component mounts
+    const userRole = localStorage.getItem("userRole");
+    if (userRole) {
+      login();
+    }
+    setLoading(false); // Set loading to false after checking user role
+  }, [login]);
+
+  // If still loading, return null to prevent rendering until user role is checked
+  if (loading) {
+    return null;
+  }
+
   return (
     <Router>
       <Routes>
@@ -53,56 +75,99 @@ function App() {
         {authenticated ? (
           <>
             {/* Admin Routes */}
-            <Route path="/admin/books" element={<ViewBooks />} />
-            <Route path="/admin/addBooks" element={<AddBooks />} />
-            <Route path="/admin/addStudent" element={<AddStudent />} />
-            <Route path="/admin/students" element={<ViewStudents />} />
-            <Route path="/admin/notice" element={<ViewNotice />} />
-            <Route path="/admin/addNotice" element={<AddNotice />} />
-            <Route path="/admin/addFood" element={<AddFood />} />
-            <Route path="/admin/food" element={<ViewFood />} />
-            <Route path="/AdminDashboard" element={<AdminDashboard />} />
-            <Route path="/admin/viewStudents" element={<ViewStudents />} />
-            <Route path="/admin/viewCourses" element={<ViewCourses />} />
-            <Route path="/admin/viewAdmins" element={<ViewAdmin />} />
-            <Route path="/admin/viewClassroom" element={<ViewClassroom />} />
-            <Route path="/admin/viewBooks" element={<ViewLibrary />} />
-            <Route path="/admin/attendance" element={<ViewAttendanceAdmin />} />
-            <Route path="/admin/ScheduleTable" element={<ScheduleTable />} />
-
+            {userRole === "admin" && (
+              <>
+                <Route path="/hello" element={<Hello />} />
+                <Route path="/admin/books" element={<ViewBooks />} />
+                <Route path="/admin/addBooks" element={<AddBooks />} />
+                <Route path="/admin/addStudent" element={<AddStudent />} />
+                <Route path="/admin/students" element={<ViewStudents />} />
+                <Route path="/admin/notice" element={<ViewNotice />} />
+                <Route path="/admin/addNotice" element={<AddNotice />} />
+                <Route path="/admin/addFood" element={<AddFood />} />
+                <Route path="/admin/food" element={<ViewFood />} />
+                <Route path="/AdminDashboard" element={<AdminDashboard />} />
+                <Route path="/admin/viewStudents" element={<ViewStudents />} />
+                <Route path="/admin/viewCourses" element={<ViewCourses />} />
+                <Route path="/admin/viewAdmins" element={<ViewAdmin />} />
+                <Route
+                  path="/admin/viewClassroom"
+                  element={<ViewClassroom />}
+                />
+                <Route path="/admin/viewBooks" element={<ViewLibrary />} />
+                <Route
+                  path="/admin/attendance"
+                  element={<ViewAttendanceAdmin />}
+                />
+                <Route
+                  path="/admin/ScheduleTable"
+                  element={<ScheduleTable />}
+                />
+                <Route path="/admin/viewTeachers" element={<ViewTeacher />} />
+                <Route path="/admin/viewSection" element={<ViewSections />} />
+                <Route path="/admin/viewSchedule" element={<ViewSchedule />} />
+              </>
+            )}
             {/* Student Routes */}
-            <Route path="/StudentDashboard" element={<StudentDachboard />} />
-            <Route path="/admin/viewTeachers" element={<ViewTeacher />} />
-            <Route path="/admin/viewSection" element={<ViewSections />} />
-            <Route path="/admin/viewSchedule" element={<ViewSchedule />} />
-            <Route path="/student/viewLibrary" element={<ViewLibrary1 />} />
-
+            {userRole === "student" && (
+              <>
+                <Route
+                  path="/StudentDashboard"
+                  element={<StudentDachboard />}
+                />
+                <Route
+                  path="/student/ViewAssignment"
+                  element={<ViewAssignment />}
+                />
+                <Route path="/student/viewLibrary" element={<ViewLibrary1 />} />
+              </>
+            )}{" "}
             {/* Teacher Routes */}
-            <Route path="/TeacherDashboard" element={<TeacherDashboard />} />
-            <Route path="/teacher/attendance" element={<ViewAttendance />} />
-            <Route path="/teacher/oldAttendance" element={<OldAttendance />} />
-            <Route
-              path="/teacher/viewAssignment"
-              element={<ViewAssignmentByTeacher />}
-            />
-            <Route
-              path="/teacher/viewLibrary"
-              element={<ViewLibraryTeacher />}
-            />
-            <Route
-              path="/teacher/viewSchedule"
-              element={<ViewScheduleTeacher />}
-            />
-            <Route
-              path="/teacher/updateAttendance"
-              element={<UpdateAttendance />}
-            />
-            <Route path="/teacher/result" element={<ViewResult />} />
-            <Route
-              path="/student/ViewAssignment"
-              element={<ViewAssignment />}
-            />
-            <Route path="/hello" element={<Hello />} />
+            {userRole === "teacher" && (
+              <>
+                <Route
+                  path="/TeacherDashboard"
+                  element={<TeacherDashboard />}
+                />
+                <Route
+                  path="/teacher/attendance"
+                  element={<ViewAttendance />}
+                />
+                <Route
+                  path="/teacher/oldAttendance"
+                  element={<OldAttendance />}
+                />
+                <Route
+                  path="/teacher/viewAsignmentUi"
+                  element={<ViewAssignmentUi />}
+                />
+
+                <Route
+                  path="/teacher/viewAssignment"
+                  element={<ViewAssignmentByTeacher />}
+                />
+                <Route
+                  path="/teacher/viewLibrary"
+                  element={<ViewLibraryTeacher />}
+                />
+                <Route
+                  path="/teacher/viewSchedule"
+                  element={<ViewScheduleTeacher />}
+                />
+                <Route
+                  path="/teacher/updateAttendance"
+                  element={<UpdateAttendance />}
+                />
+                <Route path="/teacher/result" element={<ViewResult />} />
+              </>
+            )}
+            {/* {userRole === "teacher" &&
+              window.location.pathname === "/AdminDashboard" && (
+                <Route
+                  path="/"
+                  element={<Navigate to="/TeacherDashboard" replace />}
+                />
+              )}
             {userRole === "admin" && (
               <Route
                 path="/"
@@ -120,7 +185,80 @@ function App() {
                 path="/"
                 element={<Navigate to="/TeacherDashboard" replace />}
               />
-            )}
+            )} */}
+            {(() => {
+              switch (true) {
+                case userRole === "admin":
+                  return (
+                    <Route
+                      path="/*"
+                      element={<Navigate to="/AdminDashboard" replace />}
+                    />
+                  );
+                case userRole === "student":
+                  return (
+                    <Route
+                      path="/*"
+                      element={<Navigate to="/StudentDashboard" replace />}
+                    />
+                  );
+                case userRole === "teacher" &&
+                  window.location.pathname.startsWith("/admin"):
+                  return (
+                    <Route
+                      path="/*"
+                      element={<Navigate to="/TeacherDashboard" replace />}
+                    />
+                  );
+                case userRole === "teacher" &&
+                  window.location.pathname.startsWith("/student"):
+                  return (
+                    <Route
+                      path="/*"
+                      element={<Navigate to="/TeacherDashboard" replace />}
+                    />
+                  );
+                case userRole === "admin" &&
+                  window.location.pathname.startsWith("/student"):
+                  return (
+                    <Route
+                      path="/*"
+                      element={<Navigate to="/AdminDashboard" replace />}
+                    />
+                  );
+                case userRole === "admin" &&
+                  window.location.pathname.startsWith("/teacher"):
+                  return (
+                    <Route
+                      path="/*"
+                      element={<Navigate to="/AdminDashboard" replace />}
+                    />
+                  );
+                case userRole === "student" &&
+                  window.location.pathname.startsWith("/teacher"):
+                  return (
+                    <Route
+                      path="/*"
+                      element={<Navigate to="/StudentDashboard" replace />}
+                    />
+                  );
+                case userRole === "student" &&
+                  window.location.pathname.startsWith("/admin"):
+                  return (
+                    <Route
+                      path="/*"
+                      element={<Navigate to="/StudentDashboard" replace />}
+                    />
+                  );
+                default:
+                  return <Route path="/*" element={<Navigate to="/login" />} />;
+              }
+            })()}
+            {userRole !== "admin" &&
+              userRole !== "student" &&
+              userRole !== "teacher" && (
+                <Route path="/*" element={<Navigate to="/login" />} />
+              )}
           </>
         ) : (
           // Redirect unauthenticated users to the login page
