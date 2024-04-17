@@ -12,6 +12,7 @@ const fileSchema = new mongoose.Schema(
     course: String,
     section: String,
     module: String,
+    mark: Number,
   },
   { timestamps: true }
 );

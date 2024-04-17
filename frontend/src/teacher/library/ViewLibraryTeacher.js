@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../Sidebar";
 import axios from "axios";
 import profile from "../../image/profile.png";
+import { Modal, Button } from "react-bootstrap";
 
 const ViewLibraryTeacher = () => {
   const [library, setLibrary] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedBook, setSelectedBook] = useState(null); // Track selected book
+  const [showModal, setShowModal] = useState(false); // Modal visibility state
   const booksPerPage = 8;
-
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/library/books")
@@ -17,12 +19,24 @@ const ViewLibraryTeacher = () => {
       .catch((error) => console.error("Error fetching books:", error));
   }, []);
 
-  const indexOfLastBook = currentPage * booksPerPage;
-  const indexOfFirstBook = indexOfLastBook - booksPerPage;
+  const indexOfLastBook = currentPage * 8;
+  const indexOfFirstBook = indexOfLastBook - 8;
   const currentBooks = library.slice(indexOfFirstBook, indexOfLastBook);
 
   const handleViewMore = () => {
     setCurrentPage(currentPage + 1);
+  };
+
+  // Function to handle opening modal and setting selected book
+  const handleViewDetails = (book) => {
+    setSelectedBook(book);
+    setShowModal(true);
+  };
+
+  // Function to close modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedBook(null); // Reset selected book
   };
 
   return (
@@ -30,53 +44,10 @@ const ViewLibraryTeacher = () => {
       <div style={{ display: "flex", marginLeft: "12px" }}>
         <Sidebar />
         <div style={{ flexGrow: 1, padding: "16px" }}>
-          <nav className="navbar navbar-light">
-            <div className="d-flex align-items-center">
-              <form className="form-inline d-flex">
-                <input
-                  className="form-control mr-sm-2"
-                  type="search"
-                  placeholder="Search"
-                  aria-label="Search"
-                />
-                <button
-                  className="btn btn-outline-success my-2 my-sm-0"
-                  type="submit"
-                >
-                  Search
-                </button>
-              </form>
-            </div>
-          </nav>
           <div
             className="col-md-3 d-flex justify-content-end p-4"
             style={{ position: "absolute", right: "0", top: "0" }}
-          >
-            <div className="ml-2 d-flex flex-column">
-              <div className="ml-2 d-flex">
-                <img
-                  src={profile}
-                  alt=""
-                  style={{
-                    height: "40px",
-                    width: "40px",
-                    marginRight: "3px",
-                  }}
-                />
-                <div className="ml-2 d-flex">
-                  <div className="context-texts">
-                    {" "}
-                    <h5>Username</h5>
-                    <p>Semester/year</p>{" "}
-                  </div>
-                  <i
-                    className="fa-solid fa-bell fa-2x p-3"
-                    style={{ marginLeft: "5px" }}
-                  ></i>
-                </div>
-              </div>
-            </div>
-          </div>
+          ></div>
           <div
             style={{
               display: "flex",
@@ -106,8 +77,9 @@ const ViewLibraryTeacher = () => {
                   <p style={{ fontSize: "18px" }}>{book.bookName}</p>
                   <button
                     type="button"
-                    class="btn btn-primary"
+                    className="btn btn-primary"
                     style={{ marginLeft: "7px", backgroundColor: "#925fe2" }}
+                    onClick={() => handleViewDetails(book)}
                   >
                     View Details
                   </button>
@@ -151,6 +123,39 @@ const ViewLibraryTeacher = () => {
           )}
         </div>
       </div>
+      <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Book Details</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {selectedBook && (
+            <div
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                textAlign: "center",
+              }}
+            >
+              <h5>{selectedBook.bookName}</h5>
+              <p>Category: {selectedBook.bookCategory}</p>
+              <p>Price: {selectedBook.bookPrice}</p>
+              <p>Total Pages: {selectedBook.totalPages}</p>
+              <p>Self No: {selectedBook.selfNo}</p>
+              <img
+                src={selectedBook.image}
+                alt={selectedBook.bookName}
+                style={{ width: "120px", height: "140px" }}
+              />
+            </div>
+          )}
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

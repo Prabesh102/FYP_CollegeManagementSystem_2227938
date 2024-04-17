@@ -16,7 +16,7 @@ const ViewAssignment = () => {
   });
   const [showModal, setShowModal] = useState(false);
   const username = localStorage.getItem("username");
-
+  const studentSection = JSON.parse(localStorage.getItem("sections"));
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -89,12 +89,14 @@ const ViewAssignment = () => {
 
     try {
       const formData = new FormData();
+      formData.append("studentSection", studentSection);
       formData.append("studentName", username);
       formData.append("file", file);
       formData.append("remarks", remarks);
       formData.append("moduleName", selectedAssignment.module);
       formData.append("assignmentId", selectedAssignment._id);
-
+      formData.append("totalMark", selectedAssignment.mark);
+      formData.append("assignmentTitle", selectedAssignment.assignmentTitle);
       // Send assignment data to the backend
       await axios.post(
         "http://localhost:5000/api/submissions/submit",

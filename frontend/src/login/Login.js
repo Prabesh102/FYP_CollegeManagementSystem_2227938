@@ -78,7 +78,7 @@ const Login = () => {
         setUserId(response.data.userId);
         setShowModal(true);
       } else {
-        navigate(`/${role}Dashboard`);
+        navigate(`/${role}Dashboard`); // Redirect to appropriate dashboard
       }
     } catch (error) {
       console.error("Login failed", error.message);

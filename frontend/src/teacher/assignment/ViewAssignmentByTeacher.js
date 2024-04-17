@@ -4,8 +4,19 @@ import { Modal, Button, Table, Alert, Card } from "react-bootstrap";
 import moment from "moment-timezone";
 import Sidebar from "../Sidebar";
 import "../teacher.css";
-
+import { Link } from "react-router-dom";
 function ViewAssignmentByTeacher() {
+  const [lastAssignment, setLastAssignment] = useState(null);
+  const [secondLastAssignment, setSecondLastAssignment] = useState(null);
+  const [lastAssignmentByTeachername, setLastAssignmentByTeachername] =
+    useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [sections, setSections] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [
+    secondLastAssignmentByTeachername,
+    setSecondLastAssignmentByTeachername,
+  ] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(7);
   const [selectedFile, setSelectedFile] = useState(null);
@@ -14,10 +25,7 @@ function ViewAssignmentByTeacher() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [files, setFiles] = useState([]);
-  const [showAddModal, setShowAddModal] = useState(false);
   const [isPortalOpen, setIsPortalOpen] = useState(false);
-  const [sections, setSections] = useState([]);
-  const [courses, setCourses] = useState([]);
   const [selectedSection, setSelectedSection] = useState("");
   const [selectedCourse, setSelectedCourse] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
@@ -29,58 +37,39 @@ function ViewAssignmentByTeacher() {
   const [currentDate, setCurrentDate] = useState("");
   const teacherName = localStorage.getItem("username");
   const module = localStorage.getItem("module");
-  const [filterByTeacher, setFilterByTeacher] = useState(false);
-  const [filterByModule, setFilterByModule] = useState(false);
-  const [lastAssignment, setLastAssignment] = useState(null);
-  const [submissionDetails, setSubmissionDetails] = useState([]);
-
   useEffect(() => {
-    const fetchSubmissionDetails = async () => {
+    const fetchSecondLastAssignmentByTeachername = async () => {
       try {
+        const teacherName = localStorage.getItem("username");
         const module = localStorage.getItem("module");
         const response = await axios.get(
-          `http://localhost:5000/api/submissions/module/${module}`
+          `http://localhost:5000/api/assignments/secondLastAssignment/${teacherName}/${module}`
         );
-        setSubmissionDetails(response.data);
+        setSecondLastAssignmentByTeachername(response.data);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchSubmissionDetails();
+    fetchSecondLastAssignmentByTeachername();
   }, []);
+
   useEffect(() => {
-    const fetchLastAssignment = async () => {
+    const fetchLastAssignmentByTeachername = async () => {
       try {
+        const teacherName = localStorage.getItem("username");
         const module = localStorage.getItem("module");
         const response = await axios.get(
-          `http://localhost:5000/api/assignments/lastAssignment/${module}`
+          `http://localhost:5000/api/assignments/lastAssignment/${teacherName}/${module}`
         );
-        setLastAssignment(response.data);
+        setLastAssignmentByTeachername(response.data);
       } catch (error) {
         console.error(error);
       }
     };
 
-    fetchLastAssignment();
+    fetchLastAssignmentByTeachername();
   }, []);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5000/api/assignments/files?module=${module}`
-        );
-        const assignments = response.data;
-        setFiles(assignments);
-        setIsPortalOpen(assignments.length > 0);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   useEffect(() => {
     const fetchSections = async () => {
       try {
@@ -120,34 +109,51 @@ function ViewAssignmentByTeacher() {
 
     fetchCourses();
   }, []);
-  const handleShowByTeacherName = async () => {
+  useEffect(() => {
+    const fetchSecondLastAssignment = async () => {
+      try {
+        const module = localStorage.getItem("module");
+        const response = await axios.get(
+          `http://localhost:5000/api/assignments/secondLastAssignment/${module}`
+        );
+        setSecondLastAssignment(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchSecondLastAssignment();
+  }, []);
+  const handleUpload = async () => {
     try {
-      const username = localStorage.getItem("username");
+      const formData = new FormData();
+      formData.append("module", module);
+      formData.append("teacherName", teacherName); // Append teacherName to formData
+      formData.append("file", selectedFile);
+      formData.append("assignmentTitle", assignmentTitle);
+      formData.append("assignmentDescription", assignmentDescription);
+      formData.append("startDate", startDate);
+      formData.append("endDate", endDate);
+      formData.append("section", selectedSection);
+      formData.append("course", selectedCourse);
+
+      await axios.post(
+        "http://localhost:5000/api/assignments/upload",
+        formData
+      );
+
+      setAlertType("success");
+      setAlertMessage("Assignment uploaded successfully!");
       const response = await axios.get(
-        `http://localhost:5000/api/assignments/files?teacherName=${username}`
+        "http://localhost:5000/api/assignments/files"
       );
       setFiles(response.data);
-      setFilterByTeacher(true);
-      setFilterByModule(false); // Reset module filter
     } catch (error) {
+      setAlertType("danger");
+      setAlertMessage("Failed to upload assignment.");
       console.error(error);
     }
   };
-
-  const handleShowByModule = async () => {
-    try {
-      const module = localStorage.getItem("module");
-      const response = await axios.get(
-        `http://localhost:5000/api/assignments/files?module=${module}`
-      );
-      setFiles(response.data);
-      setFilterByModule(true);
-      setFilterByTeacher(false); // Reset teacher filter
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
   };
@@ -184,611 +190,678 @@ function ViewAssignmentByTeacher() {
     }
   };
 
-  const handleUpdateSubmit = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("assignmentTitle", assignmentTitle);
-      formData.append("assignmentDescription", assignmentDescription);
-      formData.append("startDate", startDate);
-      formData.append("endDate", endDate);
-      formData.append("section", selectedSection);
-      formData.append("course", selectedCourse);
-
-      if (selectedFile) {
-        formData.append("file", selectedFile);
+  useEffect(() => {
+    const fetchLastAssignment = async () => {
+      try {
+        const module = localStorage.getItem("module");
+        const response = await axios.get(
+          `http://localhost:5000/api/assignments/lastAssignment/${module}`
+        );
+        setLastAssignment(response.data);
+      } catch (error) {
+        console.error(error);
       }
+    };
 
-      await axios.put(
-        `http://localhost:5000/api/assignments/updateFile/${selectedFileId}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      setAlertType("success");
-      setAlertMessage("Assignment updated successfully!");
-
-      // Fetch updated files
-      const response = await axios.get(
-        "http://localhost:5000/api/assignments/files"
-      );
-      setFiles(response.data);
-      setShowUpdateModal(false); // Close update modal after successful update
-    } catch (error) {
-      setAlertType("danger");
-      setAlertMessage("Failed to update assignment.");
-      console.error(error);
-    }
-  };
-
-  const handleUpload = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("module", module);
-      formData.append("teacherName", teacherName); // Append teacherName to formData
-      formData.append("file", selectedFile);
-      formData.append("assignmentTitle", assignmentTitle);
-      formData.append("assignmentDescription", assignmentDescription);
-      formData.append("startDate", startDate);
-      formData.append("endDate", endDate);
-      formData.append("section", selectedSection);
-      formData.append("course", selectedCourse);
-
-      await axios.post(
-        "http://localhost:5000/api/assignments/upload",
-        formData
-      );
-
-      setAlertType("success");
-      setAlertMessage("Assignment uploaded successfully!");
-      const response = await axios.get(
-        "http://localhost:5000/api/assignments/files"
-      );
-      setFiles(response.data);
-    } catch (error) {
-      setAlertType("danger");
-      setAlertMessage("Failed to upload assignment.");
-      console.error(error);
-    }
-  };
-
-  const handleView = (fileId) => {
-    const file = files.find((file) => file._id === fileId);
-    setAssignmentTitle(file.assignmentTitle);
-    setAssignmentDescription(file.assignmentDescription);
-    setStartDate(file.startDate);
-    setEndDate(file.endDate);
-    setSelectedSection(file.section);
-    setSelectedCourse(file.course);
-    setShowViewModal(true);
-  };
-
-  const handleUpdate = (fileId) => {
-    const file = files.find((file) => file._id === fileId);
-    setSelectedFileId(fileId);
-    setAssignmentTitle(file.assignmentTitle);
-    setAssignmentDescription(file.assignmentDescription);
-    setStartDate(file.startDate);
-    setEndDate(file.endDate);
-    setSelectedSection(file.section);
-    setSelectedCourse(file.course);
-    setShowUpdateModal(true);
-  };
-
-  const handleDelete = async () => {
-    try {
-      await axios.delete(
-        `http://localhost:5000/api/assignments/deleteFile/${selectedFileId}`
-      );
-      const response = await axios.get(
-        "http://localhost:5000/api/assignments/files"
-      );
-      setFiles(response.data);
-      setShowDeleteModal(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // Pagination Logic
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = files.slice(indexOfFirstItem, indexOfLastItem);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    fetchLastAssignment();
+  }, []);
 
   return (
     <div style={{ display: "flex", marginLeft: "12px" }}>
       <Sidebar />
-      <div style={{ marginLeft: "50px" }}>
-        <div
-          className="card-container-assignment"
-          style={{ width: "400px", marginTop: "50px" }}
-        >
-          {lastAssignment && (
-            <Card style={{ justifyContent: "center", textAlign: "center" }}>
-              <h4>Previous Assignment:</h4>
-              <Card.Body style={{ textAlign: "left" }}>
-                <Card.Title>{lastAssignment.assignmentTitle}</Card.Title>
-                <Card.Text>{lastAssignment.assignmentDescription}</Card.Text>
-                <Card.Text>
-                  Start Date:{" "}
-                  {moment(lastAssignment.startDate).format("YYYY-MM-DD HH:mm")}
-                </Card.Text>
-                <Card.Text>
-                  End Date:{" "}
-                  {moment(lastAssignment.endDate).format("YYYY-MM-DD HH:mm")}
-                </Card.Text>
-                <Card.Text>Uploaded by: {lastAssignment.teacherName}</Card.Text>
-              </Card.Body>
-            </Card>
-          )}
-        </div>
-        <Button
-          variant="primary"
-          onClick={() => setShowAddModal(true)}
-          style={{ marginTop: "50px", height: "50px" }}
-        >
-          Add Assignment
-        </Button>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ marginLeft: "50px" }}>
+          {" "}
+          <div style={{ marginTop: "50px" }}>
+            <h4>Latest Assignments</h4>
+          </div>
+          <hr
+            style={{ backgroundColor: "black", height: "2px", border: "none" }}
+          />{" "}
+          <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
+            {/* Modal Header */}
+            <Modal.Header closeButton>
+              <Modal.Title>Add Assignment</Modal.Title>
+            </Modal.Header>
+            {/* Modal Body */}
+            <Modal.Body>
+              {alertMessage && (
+                <Alert
+                  variant={alertType}
+                  onClose={() => setAlertMessage("")}
+                  dismissible
+                >
+                  {alertMessage}
+                </Alert>
+              )}
 
-        {/* Add Assignment Modal */}
-        <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
-          {/* Modal Header */}
-          <Modal.Header closeButton>
-            <Modal.Title>Add Assignment</Modal.Title>
-          </Modal.Header>
-          {/* Modal Body */}
-          <Modal.Body>
-            {alertMessage && (
-              <Alert
-                variant={alertType}
-                onClose={() => setAlertMessage("")}
-                dismissible
+              <form>
+                <label>
+                  Assignment Title:
+                  <input
+                    type="text"
+                    className="form-control custom-input"
+                    value={assignmentTitle}
+                    onChange={handleAssignmentTitleChange}
+                    required
+                  />
+                </label>
+                <br />
+
+                <label>
+                  Assignment Description:
+                  <input
+                    type="text"
+                    className="form-control custom-input"
+                    value={assignmentDescription}
+                    onChange={handleAssignmentDescriptionChange}
+                    required
+                  />
+                </label>
+                <br />
+
+                <label>
+                  Course:
+                  <select
+                    className="form-control custom-input"
+                    value={selectedCourse}
+                    onChange={(e) => setSelectedCourse(e.target.value)}
+                    required
+                  >
+                    <option value="">Select Course</option>
+                    {courses.map((course) => (
+                      <option key={course._id} value={course.courseName}>
+                        {course.courseName}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <br />
+                {/* Section */}
+                <label>
+                  Section:
+                  <select
+                    className="form-control custom-input"
+                    value={selectedSection}
+                    onChange={(e) => setSelectedSection(e.target.value)}
+                    required
+                  >
+                    <option value="">Select Section</option>
+                    {sections.map((section) => (
+                      <option key={section._id} value={section.sectionName}>
+                        {section.sectionName}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <br />
+                {/* File input field */}
+                <label>
+                  Assignment File:
+                  <input
+                    type="file"
+                    className="form-control custom-input"
+                    onChange={handleFileChange}
+                    required
+                  />
+                </label>
+                <br />
+                {/* Start Date and Time */}
+                <label>
+                  Start Date and Time:
+                  <input
+                    className="form-control custom-input"
+                    type="datetime-local"
+                    value={startDate}
+                    onChange={handleStartDateChange}
+                    required
+                  />
+                </label>
+                <br />
+                {/* End Date and Time */}
+                <label>
+                  End Date and Time:
+                  <input
+                    className="form-control custom-input"
+                    type="datetime-local"
+                    value={endDate}
+                    onChange={handleEndDateChange}
+                    required
+                  />
+                </label>
+              </form>
+            </Modal.Body>
+            {/* Modal Footer */}
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                onClick={() => setShowAddModal(false)}
               >
-                {alertMessage}
-              </Alert>
-            )}
-
-            <form>
-              <label>
-                Assignment Title:
-                <input
-                  type="text"
-                  className="form-control custom-input"
-                  value={assignmentTitle}
-                  onChange={handleAssignmentTitleChange}
-                  required
-                />
-              </label>
-              <br />
-
-              <label>
-                Assignment Description:
-                <input
-                  type="text"
-                  className="form-control custom-input"
-                  value={assignmentDescription}
-                  onChange={handleAssignmentDescriptionChange}
-                  required
-                />
-              </label>
-              <br />
-
-              <label>
-                Course:
-                <select
-                  className="form-control custom-input"
-                  value={selectedCourse}
-                  onChange={(e) => setSelectedCourse(e.target.value)}
-                  required
-                >
-                  <option value="">Select Course</option>
-                  {courses.map((course) => (
-                    <option key={course._id} value={course.courseName}>
-                      {course.courseName}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <br />
-              {/* Section */}
-              <label>
-                Section:
-                <select
-                  className="form-control custom-input"
-                  value={selectedSection}
-                  onChange={(e) => setSelectedSection(e.target.value)}
-                  required
-                >
-                  <option value="">Select Section</option>
-                  {sections.map((section) => (
-                    <option key={section._id} value={section.sectionName}>
-                      {section.sectionName}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <br />
-              {/* File input field */}
-              <label>
-                Assignment File:
-                <input
-                  type="file"
-                  className="form-control custom-input"
-                  onChange={handleFileChange}
-                  required
-                />
-              </label>
-              <br />
-              {/* Start Date and Time */}
-              <label>
-                Start Date and Time:
-                <input
-                  className="form-control custom-input"
-                  type="datetime-local"
-                  value={startDate}
-                  onChange={handleStartDateChange}
-                  required
-                />
-              </label>
-              <br />
-              {/* End Date and Time */}
-              <label>
-                End Date and Time:
-                <input
-                  className="form-control custom-input"
-                  type="datetime-local"
-                  value={endDate}
-                  onChange={handleEndDateChange}
-                  required
-                />
-              </label>
-            </form>
-          </Modal.Body>
-          {/* Modal Footer */}
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowAddModal(false)}>
-              Close
-            </Button>
-            <Button
-              variant="primary"
-              onClick={handleUpload}
-              disabled={startDate < currentDate || endDate < currentDate}
-            >
-              Upload
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        {/* View Assignment Modal */}
-        <Modal show={showViewModal} onHide={() => setShowViewModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>View Assignment</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <h5>Assignment Title: {assignmentTitle}</h5>
-            <p>Uploaded by: {teacherName}</p>
-            <p>Module name: {module}</p>
-            <p>Assignment Description: {assignmentDescription}</p>
-            <p>Start Date: {moment(startDate).format("YYYY-MM-DD HH:mm")}</p>
-            <p>End Date: {moment(endDate).format("YYYY-MM-DD HH:mm")}</p>
-            <p>Course: {selectedCourse}</p>
-            <p>Section: {selectedSection}</p>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowViewModal(false)}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        {/* Update Assignment Modal */}
-        <Modal show={showUpdateModal} onHide={() => setShowUpdateModal(false)}>
-          {/* Modal Header */}
-          <Modal.Header closeButton>
-            <Modal.Title>Update Assignment</Modal.Title>
-          </Modal.Header>
-          {/* Modal Body */}
-          <Modal.Body>
-            <form>
-              {/* Assignment Title */}
-              <label>
-                Assignment Title:
-                <input
-                  type="text"
-                  className="form-control"
-                  value={assignmentTitle}
-                  onChange={handleAssignmentTitleChange}
-                  required
-                />
-              </label>
-              <br />
-              {/* Assignment Description */}
-              <label>
-                Assignment Description:
-                <input
-                  type="text"
-                  className="form-control"
-                  value={assignmentDescription}
-                  onChange={handleAssignmentDescriptionChange}
-                  required
-                />
-              </label>
-              <br />
-              {/* Course */}
-              <label>
-                Course:
-                <select
-                  className="form-control"
-                  value={selectedCourse}
-                  onChange={(e) => setSelectedCourse(e.target.value)}
-                  required
-                >
-                  <option value="">Select Course</option>
-                  {courses.map((course) => (
-                    <option key={course._id} value={course.courseName}>
-                      {course.courseName}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <br />
-              {/* Section */}
-              <label>
-                Section:
-                <select
-                  className="form-control"
-                  value={selectedSection}
-                  onChange={(e) => setSelectedSection(e.target.value)}
-                  required
-                >
-                  <option value="">Select Section</option>
-                  {sections.map((section) => (
-                    <option key={section._id} value={section.sectionName}>
-                      {section.sectionName}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <br />
-              {/* File input field */}
-              <label>
-                Assignment File:
-                <input
-                  type="file"
-                  className="form-control"
-                  onChange={handleFileChange}
-                  required
-                />
-              </label>
-              <br />
-              {/* Start Date and Time */}
-              <label>
-                Start Date and Time:
-                <input
-                  className="form-control"
-                  type="datetime-local"
-                  value={startDate}
-                  onChange={handleStartDateChange}
-                  required
-                />
-              </label>
-              <br />
-              {/* End Date and Time */}
-              <label>
-                End Date and Time:
-                <input
-                  className="form-control"
-                  type="datetime-local"
-                  value={endDate}
-                  onChange={handleEndDateChange}
-                  required
-                />
-              </label>
-            </form>
-          </Modal.Body>
-          {/* Modal Footer */}
-          <Modal.Footer>
-            <Button
-              variant="secondary"
-              onClick={() => setShowUpdateModal(false)}
-            >
-              Close
-            </Button>
-            <Button variant="primary" onClick={handleUpdateSubmit}>
-              Update
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        {/* Delete Assignment Modal */}
-        <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
-          <Modal.Header closeButton>
-            <Modal.Title>Confirm Deletion</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            Are you sure you want to delete this assignment?
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="secondary"
-              onClick={() => setShowDeleteModal(false)}
-            >
-              Cancel
-            </Button>
-            <Button variant="danger" onClick={handleDelete}>
-              Delete
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Button
-          variant="success"
-          onClick={handleShowByTeacherName}
-          style={{
-            marginTop: "50px",
-            marginRight: "20px",
-            marginLeft: "20px",
-            height: "50px",
-          }}
-        >
-          Show by my name
-        </Button>
-        <Button
-          variant="info"
-          onClick={handleShowByModule}
-          style={{ marginTop: "50px", height: "50px" }}
-        >
-          Show all assessment of module
-        </Button>
-        {/* Pagination */}
-
-        {/* Table */}
-        {isPortalOpen && currentItems.length > 0 && (
-          <div>
-            <Table className="table" style={{ marginTop: "50px" }}>
-              <thead>
-                <tr>
-                  <th>Assignment Title</th>
-                  <th>Uploaded By: </th>
-                  <th>Module Name</th>
-                  <th>Assignment Description</th>
-                  <th>Start Date</th>
-                  <th>End Date</th>
-                  <th>Uploaded Date</th>
-                  <th>File</th>
-                  <th>Operations</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentItems.map((file) => (
-                  <tr key={file._id}>
-                    <td>{file.assignmentTitle}</td>
-                    <td>{file.teacherName}</td>
-                    <td>{file.module}</td>
-                    <td>{file.assignmentDescription}</td>
-                    <td>
-                      {new Date(file.startDate).toLocaleString("en-US", {
-                        timeZone: "Asia/Kathmandu",
-                      })}
-                    </td>
-                    <td>
-                      {new Date(file.endDate).toLocaleString("en-US", {
-                        timeZone: "Asia/Kathmandu",
-                      })}
-                    </td>
-                    <td>
-                      {new Date(file.createdAt).toLocaleString("en-US", {
-                        timeZone: "Asia/Kathmandu",
-                      })}
-                    </td>
-                    <td>
-                      <a
-                        href={`http://localhost:5000/uploads/${file.filename}`}
-                        download
-                      >
-                        Click here
-                      </a>
-                    </td>
-                    <td
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        textAlign: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <button
-                        type="button"
-                        className="btn btn-primary me-2"
-                        onClick={() => handleView(file._id)}
-                      >
-                        View
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-warning me-2"
-                        onClick={() => handleUpdate(file._id)}
-                      >
-                        Update
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-danger me-2"
-                        onClick={() => {
-                          setSelectedFileId(file._id);
-                          setShowDeleteModal(true);
+                Close
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleUpload}
+                disabled={startDate < currentDate || endDate < currentDate}
+              >
+                Upload
+              </Button>
+            </Modal.Footer>
+          </Modal>
+          <div style={{ display: "flex" }}>
+            <div style={{ display: "flex" }}>
+              <div
+                className="card-container-assignment"
+                style={{
+                  width: "400px",
+                  marginTop: "10px",
+                  display: "flex",
+                  marginRight: "5px",
+                  height: "220px",
+                }}
+              >
+                {lastAssignment && (
+                  <Card
+                    style={{
+                      justifyContent: "center",
+                      textAlign: "center",
+                      backgroundColor: "#ffffff",
+                      borderRadius: "20px",
+                      boxShadow: "inherit",
+                    }}
+                  >
+                    <Card.Body style={{ textAlign: "left" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
                         }}
                       >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
-        )}
-        <ul className="pagination">
-          {Array.from(
-            { length: Math.ceil(files.length / itemsPerPage) },
-            (_, index) => (
-              <li
-                key={index}
-                className={`page-item ${
-                  currentPage === index + 1 ? "active" : ""
-                }`}
+                        <div>
+                          <Card.Title>
+                            {lastAssignment.assignmentTitle}
+                          </Card.Title>
+                          <Card.Text
+                            style={{
+                              color: "#b2b2b2",
+                              height: "50px",
+                              fontSize: "13px",
+                              width: "250px",
+                            }}
+                          >
+                            {lastAssignment.assignmentDescription}
+                          </Card.Text>
+                          <Card.Text>-{lastAssignment.teacherName}</Card.Text>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                          <Card.Text
+                            style={{ fontSize: "15px", color: "#c3c3c3" }}
+                          >
+                            <i
+                              className="fa-solid fa-calendar-days"
+                              style={{ marginRight: "3px" }}
+                            ></i>{" "}
+                            Assigned -{" "}
+                            {moment(lastAssignment.startDate).format(
+                              "YYYY/MM/DD"
+                            )}
+                          </Card.Text>
+                        </div>{" "}
+                      </div>{" "}
+                      <div
+                        style={{
+                          display: "flex",
+                          fontSize: "12px",
+                          marginTop: "30px",
+                        }}
+                      >
+                        {" "}
+                        <div
+                          style={{
+                            display: "flex",
+                            backgroundColor: "#b7e4cc",
+                            width: "120px",
+                            height: "30px",
+                            justifyContent: "center",
+                            textAlign: "center",
+                            alignItems: "center",
+                            borderRadius: "10px",
+                          }}
+                        >
+                          <i
+                            class="fa-solid fa-marker"
+                            style={{ marginRight: "3px" }}
+                          ></i>
+                          Marks :{lastAssignment.mark}
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            backgroundColor: "#fdd68d",
+                            width: "190px",
+                            height: "30px",
+                            justifyContent: "center",
+                            textAlign: "center",
+                            alignItems: "center",
+                            borderRadius: "10px",
+                            marginLeft: "10px",
+                          }}
+                        >
+                          {" "}
+                          <i
+                            className="fa-solid fa-calendar-days"
+                            style={{ marginRight: "3px" }}
+                          ></i>{" "}
+                          <Card.Text>
+                            Deadline:{" "}
+                            {moment(lastAssignment.endDate).format(
+                              "YYYY/MM/DD HH:mm"
+                            )}
+                          </Card.Text>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                )}
+              </div>
+              <div
+                style={{ width: "400px", marginTop: "10px", height: "auto" }}
               >
-                <button
-                  className="page-link"
-                  onClick={() => paginate(index + 1)}
+                {" "}
+                {secondLastAssignment && (
+                  <Card
+                    style={{
+                      justifyContent: "center",
+                      textAlign: "center",
+                      backgroundColor: "#ffffff",
+                      borderRadius: "20px",
+                      boxShadow: "inherit",
+                      height: "220px",
+                    }}
+                  >
+                    <Card.Body style={{ textAlign: "left" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>
+                          <Card.Title>
+                            {secondLastAssignment.assignmentTitle}
+                          </Card.Title>
+                          <Card.Text
+                            style={{
+                              color: "#b2b2b2",
+                              height: "50px",
+                              fontSize: "13px",
+                              width: "250px",
+                            }}
+                          >
+                            {secondLastAssignment.assignmentDescription}
+                          </Card.Text>
+                          <Card.Text>
+                            -{secondLastAssignment.teacherName}
+                          </Card.Text>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                          <Card.Text
+                            style={{ fontSize: "15px", color: "#c3c3c3" }}
+                          >
+                            <i
+                              className="fa-solid fa-calendar-days"
+                              style={{ marginRight: "3px" }}
+                            ></i>{" "}
+                            Assigned <br></br>-{" "}
+                            {moment(secondLastAssignment.startDate).format(
+                              "YYYY/MM/DD"
+                            )}
+                          </Card.Text>
+                        </div>{" "}
+                      </div>{" "}
+                      <div
+                        style={{
+                          display: "flex",
+                          fontSize: "12px",
+                          marginTop: "30px",
+                        }}
+                      >
+                        {" "}
+                        <div
+                          style={{
+                            display: "flex",
+                            backgroundColor: "#b7e4cc",
+                            width: "120px",
+                            height: "30px",
+                            justifyContent: "center",
+                            textAlign: "center",
+                            alignItems: "center",
+                            borderRadius: "10px",
+                          }}
+                        >
+                          <i
+                            class="fa-solid fa-marker"
+                            style={{ marginRight: "3px" }}
+                          ></i>
+                          Marks :{secondLastAssignment.mark}
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            backgroundColor: "#fdd68d",
+                            width: "190px",
+                            height: "30px",
+                            justifyContent: "center",
+                            textAlign: "center",
+                            alignItems: "center",
+                            borderRadius: "10px",
+                            marginLeft: "10px",
+                          }}
+                        >
+                          {" "}
+                          <i
+                            className="fa-solid fa-calendar-days"
+                            style={{ marginRight: "3px" }}
+                          ></i>{" "}
+                          <Card.Text>
+                            Deadline:{" "}
+                            {moment(secondLastAssignment.endDate).format(
+                              "YYYY/MM/DD HH:mm"
+                            )}
+                          </Card.Text>
+                        </div>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                )}
+              </div>
+            </div>
+            <div className="operations" style={{ marginLeft: "50px" }}>
+              <h5>Operations</h5>
+              <hr />
+              <div
+                className="buttons"
+                style={{ display: "flex", flexDirection: "column" }}
+              >
+                <Button
+                  variant="primary"
+                  onClick={() => setShowAddModal(true)}
+                  style={{
+                    height: "50px",
+                  }}
                 >
-                  {index + 1}
-                </button>
-              </li>
-            )
-          )}
-        </ul>
-      </div>
-      {submissionDetails.length > 0 && (
-        <div>
-          <h2>Submitted Assignment Details</h2>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Student Name</th>
-                <th>Assignment Title</th>
-                <th>Remarks</th>
-                <th>Submission Time</th>
-                <th>File</th>
-              </tr>
-            </thead>
-            <tbody>
-              {submissionDetails.map((submission) => (
-                <tr key={submission._id}>
-                  <td>{submission.studentName}</td>
-                  <td>{submission.assignmentTitle}</td>
-                  <td>{submission.remarks}</td>
-                  <td>
-                    {moment(submission.timestamp).format("YYYY-MM-DD HH:mm")}
-                  </td>
-                  <td>
-                    <a
-                      href={`http://localhost:5000/uploads/${submission.file}`}
-                      download
-                    >
-                      Download
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+                  Add Assignment
+                </Button>
+
+                <Button
+                  variant="primary"
+                  as={Link}
+                  to="/teacher/viewAllAssignments"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    alignItems: "center",
+                    height: "50px",
+                    marginTop: "20px",
+                  }}
+                >
+                  View All Assignments
+                </Button>
+                <Button
+                  variant="primary"
+                  as={Link}
+                  to="/teacher/viewSubmission"
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    textAlign: "center",
+                    alignItems: "center",
+                    height: "50px",
+                    marginTop: "20px",
+                  }}
+                >
+                  View Submissions
+                </Button>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
+        <div style={{ marginLeft: "50px" }}>
+          {" "}
+          <div style={{ marginTop: "40px" }}>
+            <h4>Latest Assignments Posted By Me</h4>
+          </div>
+          <hr
+            style={{ backgroundColor: "black", height: "2px", border: "none" }}
+          />
+          <div style={{ display: "flex" }}>
+            <div
+              className="card-container-assignment"
+              style={{
+                width: "400px",
+                marginTop: "10px",
+                display: "flex",
+                marginRight: "5px",
+              }}
+            >
+              {lastAssignmentByTeachername && (
+                <Card
+                  style={{
+                    justifyContent: "center",
+                    textAlign: "center",
+                    backgroundColor: "#ffffff",
+                    borderRadius: "20px",
+                    boxShadow: "inherit",
+                    height: "220px",
+                  }}
+                >
+                  <Card.Body style={{ textAlign: "left" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div>
+                        <Card.Title>
+                          {lastAssignmentByTeachername.assignmentTitle}
+                        </Card.Title>
+                        <Card.Text
+                          style={{
+                            color: "#b2b2b2",
+                            height: "50px",
+                            fontSize: "13px",
+                            width: "250px",
+                          }}
+                        >
+                          {lastAssignmentByTeachername.assignmentDescription}
+                        </Card.Text>
+                        <Card.Text>- Posted by me</Card.Text>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <Card.Text
+                          style={{ fontSize: "15px", color: "#c3c3c3" }}
+                        >
+                          <i
+                            className="fa-solid fa-calendar-days"
+                            style={{ marginRight: "3px" }}
+                          ></i>{" "}
+                          Assigned -{" "}
+                          {moment(lastAssignmentByTeachername.startDate).format(
+                            "YYYY/MM/DD"
+                          )}
+                        </Card.Text>
+                      </div>{" "}
+                    </div>{" "}
+                    <div
+                      style={{
+                        display: "flex",
+                        fontSize: "12px",
+                        marginTop: "30px",
+                      }}
+                    >
+                      {" "}
+                      <div
+                        style={{
+                          display: "flex",
+                          backgroundColor: "#b7e4cc",
+                          width: "120px",
+                          height: "30px",
+                          justifyContent: "center",
+                          textAlign: "center",
+                          alignItems: "center",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        <i
+                          class="fa-solid fa-marker"
+                          style={{ marginRight: "3px" }}
+                        ></i>
+                        Marks :{lastAssignmentByTeachername.mark}
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          backgroundColor: "#fdd68d",
+                          width: "190px",
+                          height: "30px",
+                          justifyContent: "center",
+                          textAlign: "center",
+                          alignItems: "center",
+                          borderRadius: "10px",
+                          marginLeft: "10px",
+                        }}
+                      >
+                        {" "}
+                        <i
+                          className="fa-solid fa-calendar-days"
+                          style={{ marginRight: "3px" }}
+                        ></i>{" "}
+                        <Card.Text>
+                          Deadline:{" "}
+                          {moment(lastAssignmentByTeachername.endDate).format(
+                            "YYYY/MM/DD HH:mm"
+                          )}
+                        </Card.Text>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              )}
+            </div>
+            <div style={{ width: "400px", marginTop: "10px", height: "auto" }}>
+              {" "}
+              {secondLastAssignmentByTeachername && (
+                <Card
+                  style={{
+                    justifyContent: "center",
+                    textAlign: "center",
+                    backgroundColor: "#ffffff",
+                    borderRadius: "20px",
+                    boxShadow: "inherit",
+                    height: "220px",
+                  }}
+                >
+                  <Card.Body style={{ textAlign: "left" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div>
+                        <Card.Title>
+                          {secondLastAssignmentByTeachername.assignmentTitle}
+                        </Card.Title>
+                        <Card.Text
+                          style={{
+                            color: "#b2b2b2",
+                            height: "50px",
+                            fontSize: "13px",
+                            width: "250px",
+                          }}
+                        >
+                          {
+                            secondLastAssignmentByTeachername.assignmentDescription
+                          }
+                        </Card.Text>
+                        <Card.Text>- Posted by me</Card.Text>
+                      </div>
+                      <div style={{ textAlign: "right" }}>
+                        <Card.Text
+                          style={{ fontSize: "15px", color: "#c3c3c3" }}
+                        >
+                          <i
+                            className="fa-solid fa-calendar-days"
+                            style={{ marginRight: "3px" }}
+                          ></i>{" "}
+                          Assigned <br></br>-{" "}
+                          {moment(
+                            secondLastAssignmentByTeachername.startDate
+                          ).format("YYYY/MM/DD")}
+                        </Card.Text>
+                      </div>{" "}
+                    </div>{" "}
+                    <div
+                      style={{
+                        display: "flex",
+                        fontSize: "12px",
+                        marginTop: "30px",
+                      }}
+                    >
+                      {" "}
+                      <div
+                        style={{
+                          display: "flex",
+                          backgroundColor: "#b7e4cc",
+                          width: "120px",
+                          height: "30px",
+                          justifyContent: "center",
+                          textAlign: "center",
+                          alignItems: "center",
+                          borderRadius: "10px",
+                        }}
+                      >
+                        <i
+                          class="fa-solid fa-marker"
+                          style={{ marginRight: "3px" }}
+                        ></i>
+                        Marks :{secondLastAssignmentByTeachername.mark}
+                      </div>
+                      <div
+                        style={{
+                          display: "flex",
+                          backgroundColor: "#fdd68d",
+                          width: "190px",
+                          height: "30px",
+                          justifyContent: "center",
+                          textAlign: "center",
+                          alignItems: "center",
+                          borderRadius: "10px",
+                          marginLeft: "10px",
+                        }}
+                      >
+                        {" "}
+                        <i
+                          className="fa-solid fa-calendar-days"
+                          style={{ marginRight: "3px" }}
+                        ></i>{" "}
+                        <Card.Text>
+                          Deadline:{" "}
+                          {moment(
+                            secondLastAssignmentByTeachername.endDate
+                          ).format("YYYY/MM/DD HH:mm")}
+                        </Card.Text>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

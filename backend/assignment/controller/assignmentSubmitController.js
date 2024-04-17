@@ -4,7 +4,15 @@ const AssignmentSubmission = require("../model/assignmentSubmitModel");
 
 exports.submitAssignment = async (req, res) => {
   try {
-    const { studentName, moduleName, assignmentId, remarks } = req.body;
+    const {
+      studentName,
+      moduleName,
+      assignmentId,
+      remarks,
+      assignmentTitle,
+      studentSection,
+      totalMark,
+    } = req.body;
     const file = req.file.path; // Assuming multer is used for file upload
 
     const newSubmission = new AssignmentSubmission({
@@ -13,6 +21,9 @@ exports.submitAssignment = async (req, res) => {
       assignmentId,
       file,
       remarks,
+      assignmentTitle,
+      studentSection,
+      totalMark,
     });
 
     await newSubmission.save();
@@ -31,5 +42,34 @@ exports.getAssignmentsByModule = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Failed to fetch assignments" });
+  }
+};
+exports.getSubmissionsByAssignmentId = async (req, res) => {
+  try {
+    const { assignmentId } = req.params;
+    const submissions = await AssignmentSubmission.find({ assignmentId });
+    res.status(200).json(submissions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch submissions" });
+  }
+};
+exports.getSubmissionsByAssignmentIdAndSection = async (req, res) => {
+  try {
+    const { assignmentId, section } = req.params;
+    // const { section } = req.query;
+    let submissions;
+    if (section) {
+      submissions = await AssignmentSubmission.find({
+        assignmentId,
+        studentSection: section,
+      });
+    } else {
+      submissions = await AssignmentSubmission.find({ assignmentId });
+    }
+    res.status(200).json(submissions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch submissions" });
   }
 };

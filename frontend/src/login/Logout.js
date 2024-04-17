@@ -1,17 +1,27 @@
 import React from "react";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; // Import useNavigate instead of Navigate
 
 const Logout = () => {
-  // Function to handle logout
+  const navigate = useNavigate(); // Initialize the navigate function from useNavigate
+
+  // Function to handle logout when the logout button is clicked
   const handleLogout = () => {
     // Remove all values from localStorage
     localStorage.clear();
     // Redirect to the login page
-    return <Navigate to="/login" />;
+    navigate("/login"); // Use the navigate function to redirect to "/login"
   };
 
-  // Call the handleLogout function immediately
-  return handleLogout();
+  // Render the logout button
+  return (
+    <button
+      onClick={handleLogout}
+      className="nav-link"
+      style={{ color: "white" }}
+    >
+      <i class="fa-solid fa-sign-out"></i> Logout
+    </button>
+  );
 };
 
 export default Logout;

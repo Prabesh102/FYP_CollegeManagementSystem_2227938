@@ -42,6 +42,9 @@ import ViewAssignmentByTeacher from "./teacher/assignment/ViewAssignmentByTeache
 import ViewLibraryTeacher from "./teacher/library/ViewLibraryTeacher";
 import ViewScheduleTeacher from "./teacher/schedule/ViewScheduleTeacher";
 import ViewAssignmentUi from "./teacher/assignment/ViewAssignmentUi";
+import SubmittedTask from "./teacher/assignment/SubmittedTask";
+import ViewAllAssignmentTeacher from "./teacher/assignment/ViewAllAssignmentTeacher";
+import ViewSubmission from "./teacher/assignment/ViewSubmission";
 
 function App() {
   const [loading, setLoading] = useState(true); // Add loading state
@@ -159,6 +162,18 @@ function App() {
                   element={<UpdateAttendance />}
                 />
                 <Route path="/teacher/result" element={<ViewResult />} />
+                <Route
+                  path="/teacher/submittedTask/:assignmentId"
+                  element={<SubmittedTask />}
+                />
+                <Route
+                  path="/teacher/viewAllAssignments"
+                  element={<ViewAllAssignmentTeacher />}
+                />
+                <Route
+                  path="/teacher/viewSubmission"
+                  element={<ViewSubmission />}
+                />
               </>
             )}
             {/* {userRole === "teacher" &&

@@ -4,7 +4,7 @@ import image from "../image/CMS.png";
 import "./students.css";
 import logooo from "../image/logooo.png";
 import { Link } from "react-router-dom";
-
+import Logout from "../login/Logout";
 const Sidebar = () => {
   return (
     <>
@@ -104,6 +104,9 @@ const Sidebar = () => {
               <a href="#" className="nav-link" style={{ color: "white" }}>
                 <i class="fa-solid fa-clock"></i> Class Schedule
               </a>
+            </li>
+            <li className="nav-item">
+              <Logout />
             </li>
           </ul>
         </div>

@@ -141,7 +141,7 @@ const ViewAdmin = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredAdmins.slice(indexOfFirstItem, indexOfLastItem);
+  // const currentItems = filteredAdmins.slice(indexOfFirstItem, indexOfLastItem);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 

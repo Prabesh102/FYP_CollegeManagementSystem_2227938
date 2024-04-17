@@ -7,6 +7,9 @@ const {
   deleteFiles,
   updateFile,
   getLastAssignmentByModule,
+  getSecondLastAssignmentByModule,
+  getLastAssignmentByTeacherAndModule,
+  getSecondLastAssignmentByTeacherAndModule,
 } = require("../controller/assignmentController");
 
 const router = express.Router();
@@ -30,5 +33,14 @@ router.get("/files/:filename", (req, res) => {
 });
 router.delete("/deleteFile/:id", deleteFiles);
 router.get("/lastAssignment/:module", getLastAssignmentByModule);
-router.put("/updateFile/:id", upload.single("file"), updateFile); // Update route with multer upload middleware
+router.get("/secondLastAssignment/:module", getSecondLastAssignmentByModule);
+router.put("/updateFile/:id", upload.single("file"), updateFile);
+router.get(
+  "/lastAssignment/:teacherName/:module",
+  getLastAssignmentByTeacherAndModule
+);
+router.get(
+  "/secondLastAssignment/:teacherName/:module",
+  getSecondLastAssignmentByTeacherAndModule
+);
 module.exports = router;

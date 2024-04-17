@@ -14,6 +14,7 @@ const uploadFile = async (req, res) => {
       course,
       section,
       module,
+      mark,
     } = req.body;
     console.log(req.body);
     const currentDate = moment().tz("Asia/Kathmandu");
@@ -38,6 +39,7 @@ const uploadFile = async (req, res) => {
       course,
       section,
       module,
+      mark,
     });
 
     await newFile.save();
@@ -123,7 +125,7 @@ const getFiles = async (req, res) => {
       query.teacherName = req.query.teacherName; // Add teacherName filter to the query
     }
 
-    const files = await File.find(query); // Apply the query to retrieve files
+    const files = await File.find(query).sort({ createdAt: -1 });
     return res.status(200).json(files);
   } catch (error) {
     console.error(error);
@@ -152,11 +154,54 @@ const getLastAssignmentByModule = async (req, res) => {
     return res.status(500).send(error.message);
   }
 };
+const getSecondLastAssignmentByModule = async (req, res) => {
+  try {
+    const { module } = req.params;
+    const secondLastAssignment = await File.findOne({ module })
+      .sort({
+        createdAt: -1,
+      })
+      .skip(1);
+    return res.status(200).json(secondLastAssignment);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(error.message);
+  }
+};
+const getLastAssignmentByTeacherAndModule = async (req, res) => {
+  try {
+    const { teacherName, module } = req.params;
+    const lastAssignment = await File.findOne({ teacherName, module }).sort({
+      createdAt: -1,
+    });
+    return res.status(200).json(lastAssignment);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(error.message);
+  }
+};
 
+const getSecondLastAssignmentByTeacherAndModule = async (req, res) => {
+  try {
+    const { teacherName, module } = req.params;
+    const secondLastAssignment = await File.findOne({ teacherName, module })
+      .sort({
+        createdAt: -1,
+      })
+      .skip(1);
+    return res.status(200).json(secondLastAssignment);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send(error.message);
+  }
+};
 module.exports = {
   uploadFile,
   getFiles,
   deleteFiles,
   updateFile,
   getLastAssignmentByModule,
+  getSecondLastAssignmentByModule,
+  getLastAssignmentByTeacherAndModule,
+  getSecondLastAssignmentByTeacherAndModule,
 };

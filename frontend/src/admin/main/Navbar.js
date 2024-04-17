@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-
+import Logout from "../../login/Logout";
 const Navbar = () => {
   return (
     <>
@@ -321,9 +321,9 @@ const Navbar = () => {
               </ul>
             </div>
             <div className="offcanvas-footer mt-auto p-3">
-              <Link to="/login" className="btn btn-danger">
-                Logout
-              </Link>
+              <button className="btn btn-danger">
+                <Logout />
+              </button>
             </div>
           </div>
         </div>

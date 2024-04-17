@@ -19,6 +19,15 @@ const assignmentSubmissionSchema = new mongoose.Schema({
     required: true,
   },
   remarks: String,
+  assignmentTitle: {
+    type: String,
+  },
+  studentSection: {
+    type: String,
+  },
+  totalMark: {
+    type: Number,
+  },
   timestamp: {
     type: Date,
     default: Date.now,

@@ -173,7 +173,7 @@ const ViewAttendance = () => {
           </div>
           <h1 className="text-center mb-4">Attendance System</h1>
           {students.length > 0 && (
-            <table className="table">
+            <table className="table table-bordered">
               <thead>
                 <tr>
                   <th>Student Name</th>
