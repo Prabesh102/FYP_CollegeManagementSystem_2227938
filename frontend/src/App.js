@@ -4,7 +4,6 @@ import {
   Route,
   Routes,
   Navigate,
-  useNavigate,
 } from "react-router-dom";
 
 import { AuthProvider, useAuth } from "./login/AuthContext";
@@ -47,23 +46,19 @@ import ViewAllAssignmentTeacher from "./teacher/assignment/ViewAllAssignmentTeac
 import ViewSubmission from "./teacher/assignment/ViewSubmission";
 
 function App() {
-  const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
 
   const { authenticated, login } = useAuth();
   const userRole = localStorage.getItem("userRole");
-  // const navigate = useNavigate();
-  // const userRole = localStorage.getItem("userRole");
 
   useEffect(() => {
-    // Check if the user is authenticated when the component mounts
     const userRole = localStorage.getItem("userRole");
     if (userRole) {
       login();
     }
-    setLoading(false); // Set loading to false after checking user role
+    setLoading(false);
   }, [login]);
 
-  // If still loading, return null to prevent rendering until user role is checked
   if (loading) {
     return null;
   }
@@ -71,13 +66,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
-        {/* <Route path="/register" element={<Register />} /> */}
         <Route path="/login" element={<Login />} />
-        {/* Private Routes */}
         {authenticated ? (
           <>
-            {/* Admin Routes */}
             {userRole === "admin" && (
               <>
                 <Route path="/hello" element={<Hello />} />
@@ -111,7 +102,6 @@ function App() {
                 <Route path="/admin/viewSchedule" element={<ViewSchedule />} />
               </>
             )}
-            {/* Student Routes */}
             {userRole === "student" && (
               <>
                 <Route
@@ -124,8 +114,7 @@ function App() {
                 />
                 <Route path="/student/viewLibrary" element={<ViewLibrary1 />} />
               </>
-            )}{" "}
-            {/* Teacher Routes */}
+            )}
             {userRole === "teacher" && (
               <>
                 <Route
@@ -176,107 +165,31 @@ function App() {
                 />
               </>
             )}
-            {/* {userRole === "teacher" &&
-              window.location.pathname === "/AdminDashboard" && (
-                <Route
-                  path="/"
-                  element={<Navigate to="/TeacherDashboard" replace />}
-                />
-              )}
-            {userRole === "admin" && (
+            {(userRole === "teacher" &&
+              window.location.pathname.startsWith("/admin")) ||
+            (userRole === "teacher" &&
+              window.location.pathname.startsWith("/student")) ||
+            (userRole === "admin" &&
+              window.location.pathname.startsWith("/student")) ||
+            (userRole === "admin" &&
+              window.location.pathname.startsWith("/teacher")) ? (
               <Route
-                path="/"
+                path="/*"
                 element={<Navigate to="/AdminDashboard" replace />}
               />
-            )}
-            {userRole === "student" && (
+            ) : (userRole === "student" &&
+                window.location.pathname.startsWith("/teacher")) ||
+              (userRole === "student" &&
+                window.location.pathname.startsWith("/admin")) ? (
               <Route
-                path="/"
+                path="/*"
                 element={<Navigate to="/StudentDashboard" replace />}
               />
+            ) : (
+              <Route path="/*" element={<Navigate to="/login" />} />
             )}
-            {userRole === "teacher" && (
-              <Route
-                path="/"
-                element={<Navigate to="/TeacherDashboard" replace />}
-              />
-            )} */}
-            {(() => {
-              switch (true) {
-                case userRole === "admin":
-                  return (
-                    <Route
-                      path="/*"
-                      element={<Navigate to="/AdminDashboard" replace />}
-                    />
-                  );
-                case userRole === "student":
-                  return (
-                    <Route
-                      path="/*"
-                      element={<Navigate to="/StudentDashboard" replace />}
-                    />
-                  );
-                case userRole === "teacher" &&
-                  window.location.pathname.startsWith("/admin"):
-                  return (
-                    <Route
-                      path="/*"
-                      element={<Navigate to="/TeacherDashboard" replace />}
-                    />
-                  );
-                case userRole === "teacher" &&
-                  window.location.pathname.startsWith("/student"):
-                  return (
-                    <Route
-                      path="/*"
-                      element={<Navigate to="/TeacherDashboard" replace />}
-                    />
-                  );
-                case userRole === "admin" &&
-                  window.location.pathname.startsWith("/student"):
-                  return (
-                    <Route
-                      path="/*"
-                      element={<Navigate to="/AdminDashboard" replace />}
-                    />
-                  );
-                case userRole === "admin" &&
-                  window.location.pathname.startsWith("/teacher"):
-                  return (
-                    <Route
-                      path="/*"
-                      element={<Navigate to="/AdminDashboard" replace />}
-                    />
-                  );
-                case userRole === "student" &&
-                  window.location.pathname.startsWith("/teacher"):
-                  return (
-                    <Route
-                      path="/*"
-                      element={<Navigate to="/StudentDashboard" replace />}
-                    />
-                  );
-                case userRole === "student" &&
-                  window.location.pathname.startsWith("/admin"):
-                  return (
-                    <Route
-                      path="/*"
-                      element={<Navigate to="/StudentDashboard" replace />}
-                    />
-                  );
-                default:
-                  return <Route path="/*" element={<Navigate to="/login" />} />;
-              }
-            })()}
-            {userRole !== "admin" &&
-              userRole !== "student" &&
-              userRole !== "teacher" && (
-                <Route path="/*" element={<Navigate to="/login" />} />
-              )}
           </>
         ) : (
-          // Redirect unauthenticated users to the login page
           <Route path="/*" element={<Navigate to="/login" />} />
         )}
       </Routes>

@@ -2,46 +2,43 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from "../Sidebar";
 
-const ViewScheduleTeacher = () => {
-  const [upcomingClass, setUpcomingClass] = useState(null);
-  const [ongoingClass, setOngoingClass] = useState(null);
+const ViewScheduleStudent = () => {
+  const [ongoingClasses, setOngoingClasses] = useState([]);
+  const [upcomingClasses, setUpcomingClasses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [scheduleData, setScheduleData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(4); // Number of items per page
-  const teacherName = localStorage.getItem("username");
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchSchedule = async () => {
       try {
-        const scheduleResponse = await axios.get(
-          `http://localhost:5000/api/schedule/classes/teacher/?teacherName=${teacherName}`
-        );
-        const { ongoingClasses, upcomingClasses } = scheduleResponse.data;
-        setOngoingClass(ongoingClasses);
-        setUpcomingClass(upcomingClasses);
+        // Fetch the section value from local storage
+        const sections = JSON.parse(localStorage.getItem("sections"));
+        // const sectionQueryParam = sections.join(",");
+        const url = `http://localhost:5000/api/schedule/classes/section/?section=${sections}`;
+
+        const response = await axios.get(url);
+        const { ongoingClasses, upcomingClasses } = response.data;
+
+        setOngoingClasses(ongoingClasses);
+        setUpcomingClasses(upcomingClasses);
 
         const tableDataResponse = await axios.get(
-          `http://localhost:5000/api/schedule/schedule/teacher?teacherName=${teacherName}`
+          `http://localhost:5000/api/schedule/schedule/section?section=${sections}`
         );
         setScheduleData(tableDataResponse.data);
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching data:", error);
+        setError(error.message);
+        setLoading(false);
       }
     };
 
-    fetchData();
-  }, [teacherName]);
+    fetchSchedule();
+  }, []);
 
-  // Logic to get current items
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = scheduleData.slice(indexOfFirstItem, indexOfLastItem);
-
-  // Logic for pagination number buttons
-  const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(scheduleData.length / itemsPerPage); i++) {
-    pageNumbers.push(i);
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <>
@@ -50,7 +47,7 @@ const ViewScheduleTeacher = () => {
         <div className="container">
           <div style={{ display: "flex", marginTop: "50px" }}>
             {/* Ongoing Classes */}
-            {ongoingClass && ongoingClass.length > 0 ? (
+            {ongoingClasses && ongoingClasses.length > 0 ? (
               <div
                 className="ongoing-class-box"
                 style={{
@@ -65,7 +62,7 @@ const ViewScheduleTeacher = () => {
                 }}
               >
                 <h4>Ongoing Class</h4>
-                {ongoingClass.map((classItem, index) => (
+                {ongoingClasses.map((classItem, index) => (
                   <div
                     key={index}
                     style={{
@@ -174,7 +171,7 @@ const ViewScheduleTeacher = () => {
               </div>
             )}
             {/* Upcoming Classes */}
-            {upcomingClass && upcomingClass.length > 0 ? (
+            {upcomingClasses && upcomingClasses.length > 0 ? (
               <div
                 className="upcoming-class-box"
                 style={{
@@ -190,7 +187,7 @@ const ViewScheduleTeacher = () => {
                 }}
               >
                 <h4>Upcoming Class</h4>
-                {upcomingClass.map((classItem, index) => (
+                {upcomingClasses.map((classItem, index) => (
                   <div
                     key={index}
                     style={{
@@ -318,7 +315,7 @@ const ViewScheduleTeacher = () => {
               </tr>
             </thead>
             <tbody>
-              {currentItems.map((schedule, index) => (
+              {scheduleData.map((schedule, index) => (
                 <tr key={index}>
                   <td>{schedule.section}</td>
                   <td>{schedule.scheduleDetails[0]?.scheduledDay || "N/A"}</td>
@@ -363,22 +360,10 @@ const ViewScheduleTeacher = () => {
               ))}
             </tbody>
           </table>
-          <ul className="pagination">
-            {pageNumbers.map((number) => (
-              <li key={number} className="page-item">
-                <button
-                  onClick={() => setCurrentPage(number)}
-                  className="page-link"
-                >
-                  {number}
-                </button>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </>
   );
 };
 
-export default ViewScheduleTeacher;
+export default ViewScheduleStudent;

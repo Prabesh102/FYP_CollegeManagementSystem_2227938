@@ -24,6 +24,8 @@ const Sidebar = () => {
           flexDirection: "column",
           height: "650px",
           width: "155px",
+          maxWidth: "250px",
+          minWidth: "155px",
         }}
       >
         <div className="justify-content-center text-align-center align-items-center">
@@ -90,7 +92,6 @@ const Sidebar = () => {
                 <i class="fa-solid fa-person-circle-check"></i> Attendance
               </a>
             </li>
-
             <li className="nav-item">
               <Link
                 to="/student/viewLibrary"
@@ -100,10 +101,15 @@ const Sidebar = () => {
                 <i class="fa-solid fa-book-open-reader"></i> Library
               </Link>
             </li>
+
             <li className="nav-item">
-              <a href="#" className="nav-link" style={{ color: "white" }}>
-                <i class="fa-solid fa-clock"></i> Class Schedule
-              </a>
+              <Link
+                to="/student/ViewSchedule"
+                className="nav-link"
+                style={{ color: "white" }}
+              >
+                <i class="fa-solid fa-book-open-reader"></i> Class Schedule
+              </Link>
             </li>
             <li className="nav-item">
               <Logout />

@@ -15,7 +15,17 @@ const ViewAttendance = () => {
 
   useEffect(() => {
     const section = JSON.parse(localStorage.getItem("sections"));
+    if (section) {
+      setSections(section);
+
+      // Set the default section name to the top-most section in the array
+      if (section.length > 0) {
+        setSectionName(section[0]);
+      }
+    }
     const teacherName = localStorage.getItem("username");
+
+    // Remove sectionName from the dependency array
 
     if (section && teacherName) {
       axios
@@ -63,33 +73,28 @@ const ViewAttendance = () => {
     if (sections) {
       setSections(sections);
     }
-  }, [sectionName]);
-
+  }, []);
   const handleSectionChange = async (selectedSection) => {
     setSectionName(selectedSection);
-    setShowSubmitButton(false); // Reset showSubmitButton to false when section changes
+    setShowSubmitButton(false);
 
     try {
       const response = await axios.get(
         `http://localhost:5000/api/users/getStudentsBySection?section=${selectedSection}`
       );
       setStudents(response.data);
-    } catch (error) {
-      console.error("Error fetching students:", error);
-    }
 
-    try {
       const teacherName = localStorage.getItem("username");
-      const response = await axios.get(
+      const scheduleResponse = await axios.get(
         `http://localhost:5000/api/schedule/?section=${selectedSection}&teacherName=${teacherName}`
       );
-      const scheduleData = response.data;
+      const scheduleData = scheduleResponse.data;
       if (scheduleData.section === selectedSection) {
         setShowSubmitButton(true);
         setScheduleData(scheduleData);
       }
     } catch (error) {
-      console.error("Error fetching schedule data:", error);
+      console.error("Error fetching data:", error);
     }
   };
 
@@ -145,8 +150,7 @@ const ViewAttendance = () => {
                 aria-expanded="false"
                 style={{ width: "150px" }}
               >
-                {/* {sectionName ? sectionName : "Select Section"} */}
-                Select section
+                {sectionName ? sectionName : "Select Section"}
               </button>
               <ul className="dropdown-menu">
                 {sections.map((section, index) => (

@@ -113,7 +113,7 @@ const userLogin = async (req, res) => {
         module: user.module,
       },
       process.env.ACCESS_TOKEN,
-      { expiresIn: "1h" } // Token expiration time
+      { expiresIn: "1h" }
     );
 
     // Send the token along with the user's role

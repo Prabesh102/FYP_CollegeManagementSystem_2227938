@@ -235,7 +235,6 @@ const getScheduleForTeacher = asyncHandler(async (req, res) => {
       "scheduleDetails.classrooms.teacher": teacherName,
     });
 
-    // Filter out classes that are not taught by the specified teacher
     const filteredSchedules = schedules
       .map((schedule) => {
         const filteredDetails = schedule.scheduleDetails
@@ -245,7 +244,7 @@ const getScheduleForTeacher = asyncHandler(async (req, res) => {
             });
             return { ...detail.toJSON(), classrooms: filteredClassrooms };
           })
-          .filter((detail) => detail.classrooms.length > 0); // Remove details with no classrooms
+          .filter((detail) => detail.classrooms.length > 0);
         return { ...schedule.toJSON(), scheduleDetails: filteredDetails };
       })
       .filter((schedule) => schedule.scheduleDetails.length > 0); // Remove schedules with no matching classes
@@ -253,6 +252,89 @@ const getScheduleForTeacher = asyncHandler(async (req, res) => {
     res.status(200).json(filteredSchedules);
   } catch (error) {
     console.error("Error fetching schedule for teacher:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+const getOngoingAndUpcomingClassesForSection = async (req, res) => {
+  try {
+    // Get current day in Kathmandu, Nepal timezone
+    const kathmanduTime = new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Kathmandu",
+    });
+    const currentDay = new Date(kathmanduTime).toLocaleDateString("en-US", {
+      weekday: "long",
+    });
+
+    // Get current time in Kathmandu, Nepal timezone
+    const currentTime = new Date(kathmanduTime).toLocaleTimeString("en-US", {
+      hour12: false,
+    });
+
+    console.log("Current Day:", currentDay);
+    console.log("Current Time:", currentTime);
+
+    const { section } = req.query;
+    console.log("Section:", section);
+
+    const ongoingClasses = await Schedule.aggregate([
+      {
+        $unwind: "$scheduleDetails",
+      },
+      {
+        $unwind: "$scheduleDetails.classrooms",
+      },
+      {
+        $match: {
+          "scheduleDetails.scheduledDay": currentDay,
+          section: section,
+          "scheduleDetails.classrooms.startTime": { $lte: currentTime },
+          "scheduleDetails.classrooms.endTime": { $gte: currentTime },
+        },
+      },
+    ]);
+
+    console.log("Ongoing Classes - Aggregation Pipeline Data:", ongoingClasses);
+
+    const upcomingClasses = await Schedule.aggregate([
+      {
+        $unwind: "$scheduleDetails",
+      },
+      {
+        $unwind: "$scheduleDetails.classrooms",
+      },
+      {
+        $match: {
+          "scheduleDetails.scheduledDay": currentDay,
+          section: section,
+          "scheduleDetails.classrooms.startTime": { $gt: currentTime },
+        },
+      },
+    ]);
+
+    console.log(
+      "Upcoming Classes - Aggregation Pipeline Data:",
+      upcomingClasses
+    );
+
+    res.json({ ongoingClasses, upcomingClasses });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+const getScheduleForSection = asyncHandler(async (req, res) => {
+  const { section } = req.query;
+
+  try {
+    const schedules = await Schedule.find({ section });
+    if (!schedules || schedules.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "Schedule not found for this section" });
+    }
+    res.status(200).json(schedules);
+  } catch (error) {
+    console.error("Error fetching schedule for section:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -268,4 +350,6 @@ module.exports = {
   getScheduleDetails,
   getOngoingAndUpcomingClasses,
   getScheduleForTeacher,
+  getScheduleForSection,
+  getOngoingAndUpcomingClassesForSection,
 };

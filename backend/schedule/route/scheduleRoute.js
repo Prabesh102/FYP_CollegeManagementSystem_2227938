@@ -10,8 +10,9 @@ const {
   getScheduleSection,
   getScheduleDetails,
   getOngoingAndUpcomingClasses,
-  getScheduleForTeacherAndClass,
   getScheduleForTeacher,
+  getScheduleForSection,
+  getOngoingAndUpcomingClassesForSection,
 } = require("../controller/scheduleController");
 
 scheduleRouter.get("/getAllSchedule", getSchedule);
@@ -26,4 +27,6 @@ scheduleRouter.put("/:id", updateSchedule);
 scheduleRouter.post("/", postSchedule);
 scheduleRouter.delete("/:id", deleteSchedule);
 scheduleRouter.get("/schedule/teacher", getScheduleForTeacher);
+scheduleRouter.get("/schedule/section", getScheduleForSection);
+scheduleRouter.get("/classes/section", getOngoingAndUpcomingClassesForSection);
 module.exports = scheduleRouter;

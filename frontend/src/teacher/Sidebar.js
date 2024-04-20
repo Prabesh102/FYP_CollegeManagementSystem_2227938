@@ -23,7 +23,7 @@ const Sidebar = () => {
           flexDirection: "column",
           height: "650px",
           width: "155px",
-          maxWidth: "250px", // Adjusted width
+          maxWidth: "250px",
           minWidth: "155px",
         }}
       >
