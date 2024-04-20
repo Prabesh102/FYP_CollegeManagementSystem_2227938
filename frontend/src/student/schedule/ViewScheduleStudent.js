@@ -8,13 +8,13 @@ const ViewScheduleStudent = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [scheduleData, setScheduleData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5); // Number of items per page
 
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
-        // Fetch the section value from local storage
         const sections = JSON.parse(localStorage.getItem("sections"));
-        // const sectionQueryParam = sections.join(",");
         const url = `http://localhost:5000/api/schedule/classes/section/?section=${sections}`;
 
         const response = await axios.get(url);
@@ -39,6 +39,14 @@ const ViewScheduleStudent = () => {
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
+
+  // Logic to paginate data
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = scheduleData.slice(indexOfFirstItem, indexOfLastItem);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <>
@@ -360,6 +368,18 @@ const ViewScheduleStudent = () => {
               ))}
             </tbody>
           </table>
+          <ul className="pagination">
+            {Array.from(
+              { length: Math.ceil(scheduleData.length / itemsPerPage) },
+              (_, i) => i + 1
+            ).map((number) => (
+              <li key={number} className="page-item">
+                <button onClick={() => paginate(number)} className="page-link">
+                  {number}
+                </button>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </>

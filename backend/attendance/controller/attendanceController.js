@@ -88,6 +88,37 @@ const getAttendanceByTeacherNameDateAndSection = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+const getAttendancePercentageByStudent = async (req, res) => {
+  try {
+    const { studentName } = req.query;
+
+    // Get total attendance taken for the student
+    const totalAttendanceTaken = await Attendance.countDocuments({
+      studentName,
+    });
+
+    // Get total present attendance for the student
+    const totalPresent = await Attendance.countDocuments({
+      studentName,
+      present: true,
+    });
+
+    // Calculate attendance percentage
+    const attendancePercentage =
+      totalAttendanceTaken > 0
+        ? (totalPresent / totalAttendanceTaken) * 100
+        : 0;
+
+    res.status(200).json({
+      totalAttendanceTaken,
+      totalPresent,
+      attendancePercentage,
+    });
+  } catch (error) {
+    console.error("Error fetching attendance percentage:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 module.exports = {
   recordAttendance,
@@ -95,4 +126,5 @@ module.exports = {
   getAttendanceByTeacherName,
   updateAttendance,
   getAttendanceByTeacherNameDateAndSection,
+  getAttendancePercentageByStudent,
 };

@@ -20,5 +20,9 @@ attendanceRouter.get(
   "/getAttendanceByTeacherNameDateAndSection",
   attendanceController.getAttendanceByTeacherNameDateAndSection
 );
+attendanceRouter.get(
+  "/getAttendancePercentageByStudent",
+  attendanceController.getAttendancePercentageByStudent
+);
 
 module.exports = attendanceRouter;

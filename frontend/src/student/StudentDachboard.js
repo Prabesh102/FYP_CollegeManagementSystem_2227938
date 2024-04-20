@@ -19,7 +19,7 @@ const StudentDachboard = () => {
   useEffect(() => {
     const storedUsername = localStorage.getItem("username");
     const storedSemester = localStorage.getItem("semester");
-    const storedSection = localStorage.getItem("section");
+    const storedSection = JSON.parse(localStorage.getItem("sections"));
     const storedCourse = localStorage.getItem("course");
     setUsername(storedUsername);
     setSemester(storedSemester);

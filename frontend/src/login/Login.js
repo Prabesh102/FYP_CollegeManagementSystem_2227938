@@ -72,19 +72,13 @@ const Login = () => {
       console.log("User Role:", role);
       console.log("User Username:", username);
       console.log("Navigating to Dashboard");
+      login();
 
       if (response.data.message === "Password change required") {
         setUserId(response.data.userId);
         setShowModal(true);
       } else {
-        login();
-        if (role === "admin") {
-          navigate("/AdminDashboard");
-        } else if (role === "teacher") {
-          navigate("/TeacherDashboard");
-        } else if (role === "student") {
-          navigate("/StudentDashboard");
-        }
+        navigate(`/${role}Dashboard`); // Redirect to appropriate dashboard
       }
     } catch (error) {
       console.error("Login failed", error.message);

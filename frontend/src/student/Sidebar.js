@@ -88,9 +88,13 @@ const Sidebar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <a href="#" className="nav-link" style={{ color: "white" }}>
-                <i class="fa-solid fa-person-circle-check"></i> Attendance
-              </a>
+              <Link
+                to="/student/viewAttendance"
+                className="nav-link"
+                style={{ color: "white" }}
+              >
+                <i class="fa-solid fa-laptop"></i> Attendance
+              </Link>
             </li>
             <li className="nav-item">
               <Link
