@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const express = require("express");
-// const bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../model/userModel");
 const { sendEmail } = require("./sendEmail");
@@ -36,12 +36,11 @@ const userRegister = asyncHandler(async (req, res) => {
         .send("User is already registered, please use a new email");
     }
 
-    // const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({
       username,
       email,
-      // password: hashedPassword,
-      password,
+      password: hashedPassword,
       role,
       registrationDate,
       semester,
@@ -92,10 +91,8 @@ const userLogin = async (req, res) => {
       return;
     }
 
-    // Authenticate the user by comparing the password
-    // const isPasswordMatch = await bcrypt.compare(password, user.password);
-    // if (!isPasswordMatch) {
-    if (password !== user.password) {
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatch) {
       res.status(400).json({ error: "Incorrect password" });
       return;
     }

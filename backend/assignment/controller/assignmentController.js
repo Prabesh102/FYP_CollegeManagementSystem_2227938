@@ -19,15 +19,6 @@ const uploadFile = async (req, res) => {
     console.log(req.body);
     const currentDate = moment().tz("Asia/Kathmandu");
 
-    if (
-      moment.tz(startDate, "Asia/Kathmandu").isBefore(currentDate) ||
-      moment.tz(endDate, "Asia/Kathmandu").isBefore(currentDate)
-    ) {
-      return res.status(400).json({
-        error: "Start date and end date cannot be earlier than today.",
-      });
-    }
-
     const newFile = new File({
       teacherName,
       filename,

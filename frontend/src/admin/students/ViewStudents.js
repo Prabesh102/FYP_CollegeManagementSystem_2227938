@@ -23,6 +23,8 @@ const ViewStudents = () => {
   const [sections, setSections] = useState([]); // Add state for sections
   const [courses, setCourses] = useState([]);
   const ITEMS_PER_PAGE = 7;
+  const [showAddFromExcelModal, setShowAddFromExcelModal] = useState(false);
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -124,6 +126,42 @@ const ViewStudents = () => {
       }
     } catch (error) {
       console.error("Error:", error);
+    }
+  };
+  // Function to open the modal for adding students from Excel
+  const handleAddFromExcelClick = () => {
+    setShowAddFromExcelModal(true);
+  };
+
+  // Function to close the modal for adding students from Excel
+  const handleAddFromExcelClose = () => {
+    setShowAddFromExcelModal(false);
+  };
+
+  const handleUploadFile = async (e) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/users/registerFromFile",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log("File uploaded successfully:", data);
+        // Display success message to the user or update UI as needed
+      } else {
+        console.error("Failed to upload file");
+        // Display error message to the user or handle error appropriately
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Display error message to the user or handle error appropriately
     }
   };
   useEffect(() => {
@@ -304,9 +342,16 @@ const ViewStudents = () => {
               className="btn btn-primary"
               onClick={handleAddUserClick}
             >
-              Add User
+              Add User By Form
             </button>
           </div>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleAddFromExcelClick}
+          >
+            Add Student By Excel Sheet
+          </button>{" "}
         </div>
         <table className="table">
           <thead>
@@ -653,6 +698,25 @@ const ViewStudents = () => {
             <Button variant="primary" onClick={handleAddUserSubmit}>
               Add User
             </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal show={showAddFromExcelModal} onHide={handleAddFromExcelClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Add Students From Excel</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {/* Input field for uploading Excel sheet */}
+            <input
+              type="file"
+              accept=".xlsx, .xls"
+              onChange={handleUploadFile}
+            />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleAddFromExcelClose}>
+              Close
+            </Button>
+            {/* Add a button to submit the uploaded Excel sheet */}
           </Modal.Footer>
         </Modal>
       </div>

@@ -138,26 +138,13 @@ const ViewSubmission = () => {
   };
   const handleStartDateChange = (event) => {
     const selectedDate = event.target.value;
-    if (selectedDate < currentDate) {
-      // If selected start date is earlier than current date, reset it to current date
-      setStartDate(currentDate);
-      setAlertType("warning");
-      setAlertMessage("Start date cannot be earlier than today.");
-    } else {
-      setStartDate(selectedDate);
-    }
+    setStartDate(selectedDate);
   };
 
   const handleEndDateChange = (event) => {
     const selectedDate = event.target.value;
-    if (selectedDate < currentDate) {
-      // If selected end date is earlier than current date, reset it to current date
-      setEndDate(currentDate);
-      setAlertType("warning");
-      setAlertMessage("End date cannot be earlier than today.");
-    } else {
-      setEndDate(selectedDate);
-    }
+
+    setEndDate(selectedDate);
   };
 
   const handleUpdateSubmit = async () => {
