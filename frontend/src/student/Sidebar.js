@@ -73,11 +73,14 @@ const Sidebar = () => {
             >
               <i className="fa-solid fa-house"></i> Home
             </Link>
-            <li className="nav-item">
-              <a href="#" className="nav-link" style={{ color: "white" }}>
-                <i class="fa-solid fa-book"></i> Classroom
-              </a>
-            </li>
+
+            <Link
+              to="/student/viewResult"
+              className="nav-link"
+              style={{ color: "white" }}
+            >
+              <i className="fa-solid fa-house"></i> Result
+            </Link>
             <li className="nav-item">
               <Link
                 to="/student/ViewAssignment"
@@ -105,7 +108,6 @@ const Sidebar = () => {
                 <i class="fa-solid fa-book-open-reader"></i> Library
               </Link>
             </li>
-
             <li className="nav-item">
               <Link
                 to="/student/ViewSchedule"

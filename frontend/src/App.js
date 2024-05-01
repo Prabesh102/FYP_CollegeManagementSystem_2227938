@@ -46,6 +46,7 @@ import ViewAllAssignmentTeacher from "./teacher/assignment/ViewAllAssignmentTeac
 import ViewSubmission from "./teacher/assignment/ViewSubmission";
 import ViewScheduleStudent from "./student/schedule/ViewScheduleStudent";
 import ViewAttendanceStudent from "./student/attendance/ViewAttendanceStudent";
+import StudentResult from "./student/result/StudentResult";
 
 function App() {
   const [loading, setLoading] = useState(true); // Add loading state
@@ -132,6 +133,7 @@ function App() {
                   path="/student/viewAttendance"
                   element={<ViewAttendanceStudent />}
                 />
+                <Route path="/student/viewResult" element={<StudentResult />} />
               </>
             )}{" "}
             {/* Teacher Routes */}

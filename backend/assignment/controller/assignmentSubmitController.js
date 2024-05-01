@@ -73,3 +73,13 @@ exports.getSubmissionsByAssignmentIdAndSection = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch submissions" });
   }
 };
+exports.getSubmissionsByStudentName = async (req, res) => {
+  try {
+    const { studentName } = req.params;
+    const submissions = await AssignmentSubmission.find({ studentName });
+    res.status(200).json(submissions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch student submissions" });
+  }
+};

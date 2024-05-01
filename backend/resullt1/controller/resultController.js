@@ -43,5 +43,20 @@ const createResult = asyncHandler(async (req, res) => {
       .json({ message: "Failed to create result.", error: error.message });
   }
 });
+const getResultByStudentName = asyncHandler(async (req, res) => {
+  const { studentName } = req.query;
+  try {
+    const result = await ResultMaker.findOne({ studentName });
+    if (!result) {
+      res.status(404).json({ message: "Result not found for the student" });
+      return;
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch result", error: error.message });
+  }
+});
 
-module.exports = { getAllResult, createResult };
+module.exports = { getAllResult, createResult, getResultByStudentName };

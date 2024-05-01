@@ -24,6 +24,7 @@ const ViewStudents = () => {
   const [courses, setCourses] = useState([]);
   const ITEMS_PER_PAGE = 7;
   const [showAddFromExcelModal, setShowAddFromExcelModal] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -77,7 +78,9 @@ const ViewStudents = () => {
   const handleAddUserClick = () => {
     setShowAddUserModal(true);
   };
-
+  const handleFileChange = (e) => {
+    setSelectedFile(e.target.files[0]);
+  };
   const handleAddUserClose = () => {
     setShowAddUserModal(false);
   };
@@ -315,6 +318,37 @@ const ViewStudents = () => {
       setCurrentPage(currentPage + 1);
     }
   };
+  const handleAddFromExcelSubmit = async () => {
+    if (!selectedFile) {
+      console.error("No file selected");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/users/registerFromFile",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        console.log("File uploaded successfully:", data);
+        // Display success message to the user or update UI as needed
+      } else {
+        console.error("Failed to upload file");
+        // Display error message to the user or handle error appropriately
+      }
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      // Display error message to the user or handle error appropriately
+    }
+  };
+
   return (
     <>
       <link
@@ -705,7 +739,6 @@ const ViewStudents = () => {
             <Modal.Title>Add Students From Excel</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {/* Input field for uploading Excel sheet */}
             <input
               type="file"
               accept=".xlsx, .xls"
@@ -716,7 +749,9 @@ const ViewStudents = () => {
             <Button variant="secondary" onClick={handleAddFromExcelClose}>
               Close
             </Button>
-            {/* Add a button to submit the uploaded Excel sheet */}
+            <Button variant="primary" onClick={handleAddFromExcelSubmit}>
+              Submit
+            </Button>
           </Modal.Footer>
         </Modal>
       </div>

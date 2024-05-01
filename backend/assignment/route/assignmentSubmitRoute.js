@@ -40,4 +40,8 @@ router.get(
   "/submissions/:assignmentId/:section",
   assignmentSubmissionController.getSubmissionsByAssignmentIdAndSection
 );
+router.get(
+  "/submissions/student/:studentName",
+  assignmentSubmissionController.getSubmissionsByStudentName
+);
 module.exports = router;
