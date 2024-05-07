@@ -93,11 +93,12 @@ const SubmittedTask = () => {
   };
 
   // Handle submission of obtained mark
+  // Handle submission of obtained mark
   const handleSubmitMark = async () => {
     try {
       const { studentName, studentSection, moduleName, totalMark } =
         selectedSubmission;
-
+      console.log(selectedSubmission);
       // Make a POST request to submit the obtained mark
       await axios.post("http://localhost:5000/api/resultMaker", {
         studentName,
@@ -105,6 +106,7 @@ const SubmittedTask = () => {
         moduleName,
         totalMark,
         obtainedMark,
+        submissionId: selectedSubmission._id, // Use submissionId instead of _id
       });
 
       // Close the modal and reset state
@@ -113,6 +115,7 @@ const SubmittedTask = () => {
       console.error("Error submitting mark:", error);
     }
   };
+
   return (
     <>
       <div style={{ display: "flex", marginLeft: "12px" }}>
@@ -148,6 +151,7 @@ const SubmittedTask = () => {
               <Table striped bordered hover>
                 <thead>
                   <tr>
+                    <th>Submission Id</th>
                     <th>Student Name</th>
                     <th>Section</th>
                     <th>Assignment Title</th>
@@ -161,6 +165,7 @@ const SubmittedTask = () => {
                 <tbody>
                   {currentItems.map((submission) => (
                     <tr key={submission._id}>
+                      <td>{submission._id}</td>
                       <td>{submission.studentName}</td>
                       <td>{submission.studentSection}</td>
                       <td>{submission.assignmentTitle}</td>

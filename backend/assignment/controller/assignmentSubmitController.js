@@ -77,6 +77,9 @@ exports.getSubmissionsByStudentName = async (req, res) => {
   try {
     const { studentName } = req.params;
     const submissions = await AssignmentSubmission.find({ studentName });
+    if (!submissions) {
+      console.log("No submission by student");
+    }
     res.status(200).json(submissions);
   } catch (error) {
     console.error(error);

@@ -318,6 +318,32 @@ const Navbar = () => {
                     </li>
                   </ul>
                 </li>
+                <li className="nav-item dropdown">
+                  <Link
+                    to="#"
+                    className="nav-link dropdown-toggle"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Teacher Reviews
+                  </Link>
+                  <ul className="dropdown-menu dropdown-menu-dark">
+                    <li>
+                      <Link to="/admin/viewReview" className="dropdown-item">
+                        View Reviews
+                      </Link>
+                    </li>
+                    <li>
+                      <hr className="dropdown-divider" />
+                    </li>
+                    <li>
+                      <Link to="#" className="dropdown-item">
+                        View Graph
+                      </Link>
+                    </li>
+                  </ul>
+                </li>
               </ul>
             </div>
             <div className="offcanvas-footer mt-auto p-3">

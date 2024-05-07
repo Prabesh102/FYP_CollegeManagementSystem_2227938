@@ -47,6 +47,8 @@ import ViewSubmission from "./teacher/assignment/ViewSubmission";
 import ViewScheduleStudent from "./student/schedule/ViewScheduleStudent";
 import ViewAttendanceStudent from "./student/attendance/ViewAttendanceStudent";
 import StudentResult from "./student/result/StudentResult";
+import ViewReviewAdmin from "./admin/review/ViewReviewAdmin";
+import ViewReviewStudent from "./student/review/ViewReviewStudent";
 
 function App() {
   const [loading, setLoading] = useState(true); // Add loading state
@@ -111,6 +113,7 @@ function App() {
                 <Route path="/admin/viewTeachers" element={<ViewTeacher />} />
                 <Route path="/admin/viewSection" element={<ViewSections />} />
                 <Route path="/admin/viewSchedule" element={<ViewSchedule />} />
+                <Route path="/admin/viewReview" element={<ViewReviewAdmin />} />
               </>
             )}
             {/* Student Routes */}
@@ -134,6 +137,10 @@ function App() {
                   element={<ViewAttendanceStudent />}
                 />
                 <Route path="/student/viewResult" element={<StudentResult />} />
+                <Route
+                  path="/student/viewReview"
+                  element={<ViewReviewStudent />}
+                />
               </>
             )}{" "}
             {/* Teacher Routes */}

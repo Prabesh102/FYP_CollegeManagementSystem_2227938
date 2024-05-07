@@ -19,6 +19,7 @@ const assignmentRoute = require("./assignment/route/assignmentRoute");
 const attendanceRouter = require("./attendance/route/attendanceRoute");
 const resultRouter = require("./result/route/resultRoute");
 const resultMakerRouter = require("./resullt1/route/resultRoute");
+const reviewRouter = require("./review/route/reviewRoute");
 app.use(express.static(path.join(__dirname, "uploads")));
 app.use(express.json());
 cloudinary.config({
@@ -50,7 +51,7 @@ app.use("/api/attendance", attendanceRouter);
 app.use("/api/assignments", assignmentRoute);
 app.use("/api/result", resultRouter);
 app.use("/api/resultMaker", resultMakerRouter);
-
+app.use("/api/review", reviewRouter);
 app.use("/api/submissions", assignmentSubmissionRoutes);
 const PORT = 5000;
 

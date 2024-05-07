@@ -23,7 +23,7 @@ const Sidebar = () => {
           display: "flex",
           flexDirection: "column",
           height: "650px",
-          width: "155px",
+          width: "160px",
           maxWidth: "250px",
           minWidth: "155px",
         }}
@@ -115,6 +115,15 @@ const Sidebar = () => {
                 style={{ color: "white" }}
               >
                 <i class="fa-solid fa-book-open-reader"></i> Class Schedule
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link
+                to="/student/viewReview"
+                className="nav-link"
+                style={{ color: "white" }}
+              >
+                <i class="fa-solid fa-book-open-reader"></i> Teacher Review
               </Link>
             </li>
             <li className="nav-item">

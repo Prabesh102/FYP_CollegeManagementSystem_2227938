@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Sidebar from "../Sidebar";
-import { Modal, Button, Table, Form } from "react-bootstrap";
+import { Modal, Button, Form, Card } from "react-bootstrap"; // Import Card from react-bootstrap
 import moment from "moment-timezone";
 
 const ViewAssignment = () => {
@@ -17,14 +17,12 @@ const ViewAssignment = () => {
   const [showModal, setShowModal] = useState(false);
   const username = localStorage.getItem("username");
   const studentSection = JSON.parse(localStorage.getItem("sections"));
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch user's sections and course information from local storage
-
         const userSectionsString = localStorage.getItem("sections");
         const userSections = JSON.parse(userSectionsString);
-
         const userCourse = localStorage.getItem("course");
 
         const response = await axios.get(
@@ -32,7 +30,6 @@ const ViewAssignment = () => {
         );
         const assignments = response.data;
 
-        // Filter assignments based on user's sections and course
         const visibleAssignments = assignments.filter(
           (assignment) =>
             userSections.includes(assignment.section) &&
@@ -97,7 +94,7 @@ const ViewAssignment = () => {
       formData.append("assignmentId", selectedAssignment._id);
       formData.append("totalMark", selectedAssignment.mark);
       formData.append("assignmentTitle", selectedAssignment.assignmentTitle);
-      // Send assignment data to the backend
+
       await axios.post(
         "http://localhost:5000/api/submissions/submit",
         formData,
@@ -123,64 +120,128 @@ const ViewAssignment = () => {
         <div>
           {isPortalOpen && files.length > 0 && (
             <div>
-              <Table
-                striped
-                bordered
-                hover
-                style={{ marginTop: "50px", marginLeft: "15px" }}
-              >
-                <thead>
-                  <tr>
-                    <th>Assignment Title</th>
-                    <th>Uploaded By:</th>
-                    <th>Module Name</th>
-                    <th>Assignment Description</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>File</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {files.map((file) => (
-                    <tr key={file._id}>
-                      <td>{file.assignmentTitle}</td>
-                      <td>{file.teacherName}</td>
-                      <td>{file.module}</td>
-                      <td>{file.assignmentDescription}</td>
-                      <td>
-                        {new Date(file.startDate).toLocaleString("en-US", {
-                          timeZone: "Asia/Kathmandu",
-                        })}
-                      </td>
-                      <td>
-                        {new Date(file.endDate).toLocaleString("en-US", {
-                          timeZone: "Asia/Kathmandu",
-                        })}
-                      </td>
-                      <td>
-                        <a
-                          href={`http://localhost:5000/uploads/${file.filename}`}
-                          download
+              {files.map((assignment) => (
+                <div
+                  className="card-container-assignment"
+                  key={assignment._id}
+                  style={{
+                    width: "400px",
+                    marginTop: "10px",
+                    display: "flex",
+                    marginRight: "5px",
+                    height: "300px",
+                  }}
+                >
+                  <Card
+                    style={{
+                      justifyContent: "center",
+                      textAlign: "center",
+                      backgroundColor: "#ffffff",
+                      borderRadius: "20px",
+                      boxShadow: "inherit",
+                    }}
+                  >
+                    <Card.Body style={{ textAlign: "left" }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <div>
+                          <Card.Title>{assignment.assignmentTitle}</Card.Title>
+                          <Card.Text
+                            style={{
+                              color: "#b2b2b2",
+                              height: "50px",
+                              fontSize: "13px",
+                              width: "250px",
+                            }}
+                          >
+                            {assignment.assignmentDescription}
+                          </Card.Text>
+                          <Card.Text>-{assignment.teacherName}</Card.Text>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                          <Card.Text
+                            style={{ fontSize: "15px", color: "#c3c3c3" }}
+                          >
+                            <i
+                              className="fa-solid fa-calendar-days"
+                              style={{ marginRight: "3px" }}
+                            ></i>{" "}
+                            Assigned -{" "}
+                            {moment(assignment.startDate).format("YYYY/MM/DD")}
+                          </Card.Text>
+                        </div>{" "}
+                      </div>{" "}
+                      <div
+                        style={{
+                          display: "flex",
+                          fontSize: "12px",
+                          marginTop: "30px",
+                        }}
+                      >
+                        {" "}
+                        <div
+                          style={{
+                            display: "flex",
+                            backgroundColor: "#b7e4cc",
+                            width: "120px",
+                            height: "30px",
+                            justifyContent: "center",
+                            textAlign: "center",
+                            alignItems: "center",
+                            borderRadius: "10px",
+                          }}
                         >
-                          {file.filename}
-                        </a>
-                      </td>
-                      <td>
+                          <i
+                            className="fa-solid fa-marker"
+                            style={{ marginRight: "3px" }}
+                          ></i>
+                          Marks :{assignment.mark}
+                        </div>
+                        <div
+                          style={{
+                            display: "flex",
+                            backgroundColor: "#fdd68d",
+                            width: "190px",
+                            height: "30px",
+                            justifyContent: "center",
+                            textAlign: "center",
+                            alignItems: "center",
+                            borderRadius: "10px",
+                            marginLeft: "10px",
+                          }}
+                        >
+                          {" "}
+                          <i
+                            className="fa-solid fa-calendar-days"
+                            style={{ marginRight: "3px" }}
+                          ></i>{" "}
+                          <Card.Text>
+                            Deadline:{" "}
+                            {moment(assignment.endDate).format(
+                              "YYYY/MM/DD HH:mm"
+                            )}
+                          </Card.Text>
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center", marginTop: "10px" }}>
                         <Button
                           variant="primary"
                           onClick={() => {
-                            setSelectedAssignment(file);
+                            setSelectedAssignment(assignment);
                             setShowModal(true);
                           }}
                         >
                           Submit Assignment
                         </Button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </div>
+              ))}
             </div>
           )}
         </div>

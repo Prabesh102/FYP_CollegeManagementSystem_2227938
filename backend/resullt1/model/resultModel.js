@@ -21,6 +21,10 @@ const resultSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  submissionId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
   timestamp: {
     type: Date,
     default: Date.now,

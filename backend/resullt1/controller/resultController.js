@@ -9,8 +9,22 @@ const getAllResult = asyncHandler(async (req, res) => {
 
 // Function to create a new result
 const createResult = asyncHandler(async (req, res) => {
-  const { studentName, studentSection, moduleName, totalMark, obtainedMark } =
-    req.body;
+  const {
+    studentName,
+    studentSection,
+    moduleName,
+    totalMark,
+    obtainedMark,
+    submissionId,
+  } = req.body;
+  console.log(
+    studentName,
+    studentSection,
+    moduleName,
+    totalMark,
+    obtainedMark,
+    submissionId
+  );
 
   // Validate the incoming data
   if (
@@ -18,11 +32,12 @@ const createResult = asyncHandler(async (req, res) => {
     !studentSection ||
     !moduleName ||
     !totalMark ||
-    !obtainedMark
+    !obtainedMark ||
+    !submissionId
   ) {
     res.status(400).json({
       message:
-        "Invalid request. Please provide studentName, studentSection, noOfSubject, and subjects array with corresponding data.",
+        "Invalid request. Please provide studentName, studentSection, moduleName, totalMark, obtainedMark, and submissionId.",
     });
     return;
   }
@@ -34,6 +49,7 @@ const createResult = asyncHandler(async (req, res) => {
       moduleName,
       totalMark,
       obtainedMark,
+      submissionId,
     });
     const savedResult = await result.save();
     res.status(201).json(savedResult);
@@ -43,6 +59,7 @@ const createResult = asyncHandler(async (req, res) => {
       .json({ message: "Failed to create result.", error: error.message });
   }
 });
+
 const getResultByStudentName = asyncHandler(async (req, res) => {
   const { studentName } = req.query;
   try {
@@ -59,4 +76,27 @@ const getResultByStudentName = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { getAllResult, createResult, getResultByStudentName };
+const getResultByStudentAndSubmission = asyncHandler(async (req, res) => {
+  const { studentName, submissionId } = req.query;
+  try {
+    const result = await ResultMaker.findOne({ studentName, submissionId });
+    if (!result) {
+      res
+        .status(404)
+        .json({ message: "Result not found for the student and submission" });
+      return;
+    }
+    res.status(200).json(result);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch result", error: error.message });
+  }
+});
+
+module.exports = {
+  getAllResult,
+  createResult,
+  getResultByStudentName,
+  getResultByStudentAndSubmission,
+};
