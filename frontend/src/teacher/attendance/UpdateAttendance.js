@@ -89,12 +89,21 @@ const UpdateAttendance = () => {
     <>
       <div style={{ display: "flex", marginLeft: "12px" }}>
         <Sidebar />
-        <div className="container mt-4">
-          <div className="text-center">
-            <h1 className="text-center mb-4">Attendance System</h1>
-            <div className="form-group">
-              <label htmlFor="filterDate">Filter by Date:</label>
-              <div>
+        <div className="container" style={{ marginTop: "50px" }}>
+          <div className="text-center" style={{ display: "flex" }}>
+            <div
+              className="form-group d-flex"
+              style={{
+                marginRight: "30px",
+                justifyContent: "center",
+                textAlign: "center",
+                alignItems: "center",
+              }}
+            >
+              <label htmlFor="filterDate" style={{ marginRight: "10px" }}>
+                Date:
+              </label>
+              <div style={{ width: "150px" }}>
                 <DatePicker
                   selected={filterDate}
                   onChange={(date) => setFilterDate(date)}
@@ -103,28 +112,47 @@ const UpdateAttendance = () => {
                 />
               </div>
             </div>
-            <div className="form-group">
-              <label htmlFor="filterSection">Filter by Section:</label>
+            <div
+              className="form-group d-flex"
+              style={{
+                // marginRight: "30px",
+                justifyContent: "center",
+                textAlign: "center",
+                alignItems: "center",
+              }}
+            >
+              <label htmlFor="filterSection" style={{ marginRight: "10px" }}>
+                Section:
+              </label>
               <select
                 id="filterSection"
                 value={filterSection}
                 onChange={(e) => setFilterSection(e.target.value)}
                 className="form-control"
+                style={{ width: "150px" }}
               >
-                <option value="">All Sections</option>
-                {sectionsFromLocalStorage.map((section, index) => (
-                  <option key={index} value={section}>
-                    {section}
-                  </option>
-                ))}
+                {sectionsFromLocalStorage
+                  .filter((section) => section !== "")
+                  .map((section, index) => (
+                    <option key={index} value={section}>
+                      {section}
+                    </option>
+                  ))}
               </select>
             </div>
-            <Button variant="primary" onClick={handleApplyFilter}>
+            <Button
+              variant="primary"
+              onClick={handleApplyFilter}
+              style={{ marginLeft: "10px" }}
+            >
               Apply Filter
             </Button>
           </div>
-          {students.length > 0 && (
-            <table className="table">
+          {students.length > 0 ? (
+            <table
+              className="table table-bordered"
+              style={{ marginTop: "30px" }}
+            >
               <thead>
                 <tr>
                   <th>Student Name</th>
@@ -177,12 +205,18 @@ const UpdateAttendance = () => {
                 ))}
               </tbody>
             </table>
+          ) : (
+            <div className="text-center" style={{ marginTop: "30px" }}>
+              <p>No data available!! Please select another section</p>
+            </div>
           )}
-          <div className="text-center">
-            <Button variant="success" onClick={handleUpdateAttendance}>
-              Update Attendance
-            </Button>
-          </div>
+          {students.length > 0 && (
+            <div className="text-center">
+              <Button variant="success" onClick={handleUpdateAttendance}>
+                Update Attendance
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </>

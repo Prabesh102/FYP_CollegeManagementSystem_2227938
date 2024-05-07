@@ -11,6 +11,8 @@ const OldAttendance = () => {
   const [filteredAttendance, setFilteredAttendance] = useState([]);
   const [filterDate, setFilterDate] = useState(null);
   const [filterSection, setFilterSection] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(8); // Number of items per page
   const sectionName = localStorage.getItem("section");
   const sectionsFromLocalStorage = JSON.parse(localStorage.getItem("sections"));
 
@@ -49,7 +51,19 @@ const OldAttendance = () => {
     }
 
     setFilteredAttendance(filteredData);
+    setCurrentPage(1); // Reset current page to 1 after applying filter
   };
+
+  // Logic for pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredAttendance.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <>
@@ -61,12 +75,12 @@ const OldAttendance = () => {
               justifyContent: "center",
               alignItems: "center",
               textAlign: "center",
+              marginTop: "30px",
             }}
           >
-            <h2>Attendance Details</h2>
             <Form className="filter-form" style={{ marginBottom: "50px" }}>
               <Form.Group controlId="filterDate">
-                <Form.Label>Date:</Form.Label>
+                <Form.Label style={{ marginRight: "15px" }}>Date:</Form.Label>
                 <DatePicker
                   selected={filterDate}
                   onChange={(date) => setFilterDate(date)}
@@ -81,8 +95,8 @@ const OldAttendance = () => {
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
-                  marginLeft: "50px",
-                  marginRight: "50px",
+                  marginLeft: "30px",
+                  marginRight: "20px",
                 }}
               >
                 <Form.Label style={{ marginRight: "10px" }}>
@@ -105,9 +119,8 @@ const OldAttendance = () => {
               <Button variant="primary" onClick={handleFilter}>
                 Apply Filter
               </Button>
-              <div style={{ marginLeft: "30px" }}>
-                <Button variant="primary">
-                  {" "}
+              <div style={{ marginLeft: "auto", marginRight: "15px" }}>
+                <Button variant="secondary">
                   <Link
                     to="/teacher/updateAttendance"
                     className="nav-link"
@@ -118,7 +131,7 @@ const OldAttendance = () => {
                 </Button>
               </div>
             </Form>
-            <Table striped bordered hover>
+            <Table bordered>
               <thead>
                 <tr>
                   <th>Student Name</th>
@@ -127,15 +140,46 @@ const OldAttendance = () => {
                 </tr>
               </thead>
               <tbody>
-                {filteredAttendance.map((attendance, index) => (
+                {currentItems.map((attendance, index) => (
                   <tr key={index}>
                     <td>{attendance.studentName}</td>
-                    <td>{attendance.present ? "Yes" : "No"}</td>
+                    <td>
+                      <div
+                        style={{
+                          backgroundColor: attendance.present ? "green" : "red",
+                          width: "150px",
+                          height: "30px",
+                          display: "inline-block",
+                          color: "white",
+                          borderRadius: "10px",
+                          justifyContent: "center",
+                          textAlign: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        {attendance.present ? "Present" : "Absent"}
+                      </div>
+                    </td>
                     <td>{new Date(attendance.timestamp).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
             </Table>
+            {/* Pagination */}
+            <ul className="pagination">
+              {Array.from({
+                length: Math.ceil(filteredAttendance.length / itemsPerPage),
+              }).map((_, index) => (
+                <li key={index} className="page-item">
+                  <button
+                    onClick={() => paginate(index + 1)}
+                    className="page-link"
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>

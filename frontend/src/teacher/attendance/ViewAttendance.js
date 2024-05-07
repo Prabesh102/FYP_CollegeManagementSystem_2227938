@@ -142,9 +142,9 @@ const ViewAttendance = () => {
               justifyContent: "space-evenly",
             }}
           >
-            <div className="dropdown">
+            <div className="dropdown" style={{ marginTop: "30px" }}>
               <button
-                className="btn btn-secondary dropdown-toggle"
+                className="btn btn-success dropdown-toggle"
                 type="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
@@ -165,7 +165,7 @@ const ViewAttendance = () => {
                 ))}
               </ul>
             </div>
-            <Button>
+            <Button style={{ marginTop: "30px" }}>
               <Link
                 to="/teacher/oldAttendance"
                 className="nav-link"
@@ -175,7 +175,17 @@ const ViewAttendance = () => {
               </Link>
             </Button>
           </div>
-          <h1 className="text-center mb-4">Attendance System</h1>
+          <h3 className="text-center mb-4">Attendance System</h3>
+          {sections.length === 0 && (
+            <div className="text-center">
+              <p>Please select a section</p>
+            </div>
+          )}
+          {students.length === 0 && (
+            <div className="text-center">
+              <p>No data to display please select another section</p>
+            </div>
+          )}
           {students.length > 0 && (
             <table className="table table-bordered">
               <thead>

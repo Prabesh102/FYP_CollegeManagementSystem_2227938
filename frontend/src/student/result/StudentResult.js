@@ -136,13 +136,15 @@ const StudentResult = () => {
             <Modal.Title>Grade Details</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {submissionResult && (
+            {submissionResult ? (
               <>
                 <p>Module Name: {submissionResult.moduleName}</p>
                 <p>Total Mark: {submissionResult.totalMark}</p>
                 <p>Obtained Mark: {submissionResult.obtainedMark}</p>
                 {/* Add more details as needed */}
               </>
+            ) : (
+              <p>No grade has been published for this assignment.</p>
             )}
           </Modal.Body>
           <Modal.Footer>
