@@ -208,7 +208,7 @@ const ViewSections = () => {
   }, []);
   const indexOfLastSection = currentPage * sectionsPerPage;
   const indexOfFirstSection = indexOfLastSection - sectionsPerPage;
-  const currentSections = sections.slice(
+  const currentSections = filteredSections.slice(
     indexOfFirstSection,
     indexOfLastSection
   );
@@ -226,102 +226,132 @@ const ViewSections = () => {
       />
       <Navbar />
       <div className="viewTable" style={{ paddingTop: "60px" }}>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <div className="ml-auto">
-            <input
-              type="text"
-              className="form-control form-control-sl border-black text-black"
-              placeholder="Search by section name"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ marginRight: "auto", marginLeft: "20px" }}>
+            <h3>Section Details Table</h3>
           </div>
-          <div className="d-flex justify-content-end mb-3">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleAddSectionClick}
-            >
-              Add Section
-            </button>
+          <div style={{ marginRight: "20px" }}>
+            <h6 style={{ textAlign: "center" }}>Search by section name</h6>
+            <hr />
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <div className="ml-auto">
+                <input
+                  type="text"
+                  className="form-control form-control-sl border-black text-black"
+                  placeholder="Search by section name"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+          <div style={{ marginRight: "20px" }}>
+            <h6 style={{ textAlign: "center" }}>Add section</h6>
+            <hr />
+            <div className="d-flex justify-content-end mb-3">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleAddSectionClick}
+              >
+                Add Section
+              </button>
+            </div>
           </div>
         </div>
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">S/N</th>
-              <th scope="col">
-                <i class="fa-solid fa-user"></i> Section name
-              </th>
-              <th scope="col">
-                <i class="fa-regular fa-envelope"></i> Course Name
-              </th>
-              <th scope="col">
-                <i class="fa-regular fa-envelope"></i> Total students allocated
-              </th>
-              <th scope="col">
-                <i class="fa-solid fa-gear"></i> Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentSections.map((section, index) => (
-              <tr key={section._id}>
-                <th scope="row">{index + 1}</th>
-                <td>{section.sectionName}</td>
-                <td>{section.course}</td>
-                <td>{section.totalStudents}</td>
 
-                <td>
-                  <button
-                    type="button"
-                    className="btn btn-primary me-2"
-                    onClick={() => handleView(section)}
-                  >
-                    View
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-warning me-2"
-                    onClick={() => handleUpdateClick(section)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-danger me-2"
-                    onClick={() => handleDeleteClick(section)}
-                  >
-                    Delete
-                  </button>
-                </td>
+        <div
+          style={{
+            paddingTop: "20px",
+            paddingLeft: "20px",
+            paddingRight: "20px",
+          }}
+        >
+          <table className="table table-bordered" style={{ padding: "10px" }}>
+            <thead>
+              <tr>
+                <th scope="col">S/N</th>
+                <th scope="col">
+                  <i class="fa-solid fa-user"></i> Section name
+                </th>
+                <th scope="col">
+                  <i class="fa-regular fa-envelope"></i> Course Name
+                </th>
+                <th scope="col">
+                  <i class="fa-regular fa-envelope"></i> Total students
+                  allocated
+                </th>
+                <th scope="col">
+                  <i class="fa-solid fa-gear"></i> Actions
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        <nav>
-          <ul className="pagination">
-            {Array.from(
-              { length: Math.ceil(sections.length / sectionsPerPage) },
-              (_, index) => (
-                <li
-                  key={index}
-                  className={`page-item ${
-                    currentPage === index + 1 ? "active" : ""
-                  }`}
-                >
-                  <a
-                    onClick={() => paginate(index + 1)}
-                    className="page-link"
-                    href="#"
+            </thead>
+            <tbody>
+              {currentSections.map((section, index) => (
+                <tr key={section._id}>
+                  <th scope="row">{index + 1}</th>
+                  <td>{section.sectionName}</td>
+                  <td>{section.course}</td>
+                  <td>{section.totalStudents}</td>
+
+                  <td>
+                    <button
+                      type="button"
+                      className="btn btn-primary me-2"
+                      onClick={() => handleView(section)}
+                    >
+                      View
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-warning me-2"
+                      onClick={() => handleUpdateClick(section)}
+                    >
+                      Update
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-danger me-2"
+                      onClick={() => handleDeleteClick(section)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <nav>
+            <ul className="pagination">
+              {Array.from(
+                { length: Math.ceil(sections.length / sectionsPerPage) },
+                (_, index) => (
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === index + 1 ? "active" : ""
+                    }`}
                   >
-                    {index + 1}
-                  </a>
-                </li>
-              )
-            )}
-          </ul>
-        </nav>
+                    <a
+                      onClick={() => paginate(index + 1)}
+                      className="page-link"
+                      href="#"
+                    >
+                      {index + 1}
+                    </a>
+                  </li>
+                )
+              )}
+            </ul>
+          </nav>
+        </div>
         {showDeleteAlert && (
           <div className="alert alert-success" role="alert">
             Section deleted successfully!

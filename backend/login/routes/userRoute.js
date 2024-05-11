@@ -1,3 +1,12 @@
+// Function to check if two dates are the same day
+const isSameDay = (date1, date2) => {
+  return (
+    date1.getFullYear() === date2.getFullYear() &&
+    date1.getMonth() === date2.getMonth() &&
+    date1.getDate() === date2.getDate()
+  );
+};
+
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
@@ -29,10 +38,13 @@ router.post("/registerFromFile", upload.single("file"), async (req, res) => {
 
   // Register users with the extracted data
   try {
-    const registeredUsers = await registerUsersFromExcel(excelData);
+    const { registeredUsers, failedUsers } = await registerUsersFromExcel(
+      excelData
+    );
     res.status(201).json({
       message: "Users registered successfully",
-      users: registeredUsers,
+      registeredUsers: registeredUsers,
+      failedUsers: failedUsers,
     });
   } catch (error) {
     console.error("Error registering users from Excel:", error);
@@ -54,12 +66,12 @@ const extractDataFromExcel = async (filePath) => {
         username: row.getCell(1).value,
         email: row.getCell(2).text,
         password: row.getCell(3).value,
-        role: row.getCell(4).value,
+        role: "student",
         registrationDate: new Date(),
-        semester: row.getCell(5).value,
-        course: row.getCell(6).value,
-        sections: row.getCell(7).value
-          ? [String(row.getCell(7).value).trim()]
+        semester: row.getCell(4).value,
+        course: row.getCell(5).value,
+        sections: row.getCell(6).value
+          ? [String(row.getCell(6).value).trim()]
           : [], // Convert value to string before trimming
       };
       excelData.push(rowData);
@@ -72,10 +84,66 @@ const extractDataFromExcel = async (filePath) => {
 // Function to register users from the extracted Excel data
 const registerUsersFromExcel = async (excelData) => {
   const registeredUsers = [];
+  const failedUsers = [];
+
+  const existingEmails = new Set(); // Set to store existing email addresses
+
   for (const userData of excelData) {
     try {
+      // Validation checks
+      const { username, email, password, registrationDate, sections } =
+        userData;
+
+      // Check for whitespace in any field
+      if (
+        Object.values(userData).some(
+          (value) => typeof value === "string" && /\s/.test(value)
+        )
+      ) {
+        console.error("Whitespace found in user data:", userData);
+        failedUsers.push(userData);
+
+        continue; // Skip this user
+      }
+
+      // Check email format
+      if (!email.endsWith("@heraldcollege.edu.np")) {
+        console.error("Invalid email domain:", email);
+        failedUsers.push(userData);
+        continue; // Skip this user
+      }
+
+      // Check if email already exists in the database or in the current batch
+      if (existingEmails.has(email) || (await User.exists({ email }))) {
+        console.error("Email already exists:", email);
+        failedUsers.push(userData);
+
+        continue; // Skip this user
+      }
+
+      // Check if the password matches the default password
+      if (password !== "prabesh") {
+        console.error("Invalid password:", password);
+        failedUsers.push(userData);
+
+        continue; // Skip this user
+      }
+
+      // Check registration date
+      const currentDate = new Date();
+      const excelDate = new Date(registrationDate);
+      if (!isSameDay(currentDate, excelDate)) {
+        console.error("Invalid registration date:", registrationDate);
+        failedUsers.push(userData);
+
+        continue; // Skip this user
+      }
+
+      // Add email to the set of existing emails
+      existingEmails.add(email);
+
       // Hash the password before saving it to the database
-      const hashedPassword = await bcrypt.hash(userData.password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
       userData.password = hashedPassword;
 
       const newUser = await User.create(userData);
@@ -85,7 +153,7 @@ const registerUsersFromExcel = async (excelData) => {
       const emailSent = await sendEmail(
         newUser.email,
         "Registration Details",
-        `Thank you for registering!\nEmail: ${newUser.email}\nPassword: ${userData.password} \nSection: ${userData.sections[0]}`
+        `Thank you for registering!\nEmail: ${newUser.email}\nPassword: ${password} \nSection: ${sections[0]}`
       );
 
       if (!emailSent) {
@@ -93,9 +161,10 @@ const registerUsersFromExcel = async (excelData) => {
       }
     } catch (error) {
       console.error("Error registering user from Excel:", error);
+      console.log(failedUsers);
     }
   }
-  return registeredUsers;
+  return { registeredUsers, failedUsers };
 };
 
 router.post("/register", userRegister);

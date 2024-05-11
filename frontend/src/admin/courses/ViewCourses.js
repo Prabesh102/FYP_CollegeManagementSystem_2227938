@@ -219,17 +219,34 @@ const ViewCourses = () => {
         referrerpolicy="no-referrer"
       />
       <div className="viewTable" style={{ paddingTop: "60px" }}>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <div className="ml-auto">
-            <input
-              type="text"
-              className="form-control form-control-sl border-black text-black"
-              placeholder="Search by course name"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ marginRight: "auto", marginLeft: "20px" }}>
+            <h3>Course Details Table</h3>
           </div>
-          <div className="d-flex justify-content-end mb-3">
+          <div style={{ marginRight: "20px" }}>
+            <h6 style={{ textAlign: "center" }}>Search by course name</h6>
+            <hr />
+            <div className="d-flex justify-content-between align-items-center">
+              <div className="ml-auto">
+                <input
+                  type="text"
+                  className="form-control form-control-sl border-black text-black"
+                  placeholder="Search by course name"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+          <div style={{ marginRight: "20px" }}>
+            <h6 style={{ textAlign: "center" }}>Add course</h6>
+            <hr />
             <button
               type="button"
               className="btn btn-primary"
@@ -239,61 +256,70 @@ const ViewCourses = () => {
             </button>
           </div>
         </div>
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">S/N</th>
-              <th scope="col">Course Name</th>
-              <th scope="col">Total Credits</th>
-              <th scope="col">Total Modules</th>
-              <th scope="col" style={{ textAlign: "left" }}>
-                All Modules
-              </th>
-              <th scope="col">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentCourses.map((course, index) => (
-              <tr key={course._id}>
-                <th scope="row">{index + 1}</th>
-                <td>{course.courseName}</td>
-                <td>{course.totalCredits}</td>
-                <td>{course.modules.length}</td>
-                <td style={{ textAlign: "left" }}>
-                  {course.modules.map((module, index) => (
-                    <div key={index}>
-                      <i class="fa-solid fa-book-open"></i> {module.moduleName}
-                    </div>
-                  ))}
-                </td>
-
-                <td>
-                  <button
-                    type="button"
-                    className="btn btn-primary me-2"
-                    onClick={() => handleViewClick(course)}
-                  >
-                    View
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-warning me-2"
-                    onClick={() => handleUpdateClick(course)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-danger me-2"
-                    onClick={() => handleDeleteClick(course)}
-                  >
-                    Delete
-                  </button>
-                </td>
+        <div
+          style={{
+            paddingTop: "20px",
+            paddingLeft: "20px",
+            paddingRight: "20px",
+          }}
+        >
+          <table className="table table-bordered" style={{ padding: "10px" }}>
+            <thead>
+              <tr>
+                <th scope="col">S/N</th>
+                <th scope="col">Course Name</th>
+                <th scope="col">Total Credits</th>
+                <th scope="col">Total Modules</th>
+                <th scope="col" style={{ textAlign: "left" }}>
+                  All Modules
+                </th>
+                <th scope="col">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currentCourses.map((course, index) => (
+                <tr key={course._id}>
+                  <th scope="row">{index + 1}</th>
+                  <td>{course.courseName}</td>
+                  <td>{course.totalCredits}</td>
+                  <td>{course.modules.length}</td>
+                  <td style={{ textAlign: "left" }}>
+                    {course.modules.map((module, index) => (
+                      <div key={index}>
+                        <i class="fa-solid fa-book-open"></i>{" "}
+                        {module.moduleName}
+                      </div>
+                    ))}
+                  </td>
+
+                  <td>
+                    <button
+                      type="button"
+                      className="btn btn-primary me-2"
+                      onClick={() => handleViewClick(course)}
+                    >
+                      View
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-warning me-2"
+                      onClick={() => handleUpdateClick(course)}
+                    >
+                      Update
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-danger me-2"
+                      onClick={() => handleDeleteClick(course)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         <nav>
           <ul className="pagination">
             {Array.from(

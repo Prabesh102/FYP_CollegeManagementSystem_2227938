@@ -113,6 +113,15 @@ const userLogin = async (req, res) => {
       { expiresIn: "1h" }
     );
 
+    // Check if the password is equal to "prabesh"
+    if (password === "prabesh") {
+      // Return a specific message to indicate password change is required
+      return res.status(200).json({
+        message: "Password change required",
+        userId: user._id, // Include user ID for frontend to identify the user
+      });
+    }
+
     // Send the token along with the user's role
     res.status(200).json({
       token,
@@ -159,8 +168,11 @@ const updatePassword = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
     // Update the password
-    user.password = newPassword;
+    user.password = hashedPassword;
 
     // Save the updated user
     const updatedUser = await user.save();
@@ -177,6 +189,7 @@ const updatePassword = async (req, res) => {
     return res.status(500).json({ error: "Password update failed" });
   }
 };
+
 const getAllStudents = async (req, res) => {
   try {
     const students = await User.find({ role: "student" }).sort({

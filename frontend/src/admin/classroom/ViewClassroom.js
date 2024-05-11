@@ -194,102 +194,130 @@ const ViewClassroom = () => {
       />
       <Navbar />
       <div className="viewTable" style={{ paddingTop: "60px" }}>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <div className="ml-auto">
-            <input
-              type="text"
-              className="form-control form-control-sl border-black text-black"
-              placeholder="Search by section name"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ marginRight: "auto", marginLeft: "20px" }}>
+            <h3>Classroom Details Table</h3>
           </div>
-          <div className="d-flex justify-content-end mb-3">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleAddClassroomClick}
-            >
-              Add Classroom
-            </button>
+          <div style={{ marginRight: "20px" }}>
+            <h6 style={{ textAlign: "center" }}>Search by classroom name</h6>
+            <hr />
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <div className="ml-auto">
+                <input
+                  type="text"
+                  className="form-control form-control-sl border-black text-black"
+                  placeholder="Search by section name"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+          <div style={{ marginRight: "20px" }}>
+            <h6 style={{ textAlign: "center" }}>Add classroom</h6>
+            <hr />
+            <div className="d-flex justify-content-end mb-3">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleAddClassroomClick}
+              >
+                Add Classroom
+              </button>
+            </div>
           </div>
         </div>
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">S/N</th>
-              <th scope="col">
-                <i class="fa-solid fa-user"></i> Classroom Name
-              </th>
-              <th scope="col">
-                <i class="fa-regular fa-envelope"></i> Total Desk
-              </th>
-              <th scope="col">
-                <i class="fa-solid fa-gear"></i> Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentClassrooms.map((classroom, index) => (
-              <tr key={classroom._id}>
-                <th scope="row">{index + 1}</th>
-                <td>{classroom.className}</td>
-                <td>{classroom.totalDesk}</td>
-
-                <td>
-                  <button
-                    type="button"
-                    className="btn btn-primary me-2"
-                    onClick={() => handleView(classroom)}
-                  >
-                    View
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-warning me-2"
-                    onClick={() => handleUpdateClick(classroom)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-danger me-2"
-                    onClick={() => handleDeleteClick(classroom)}
-                  >
-                    Delete
-                  </button>
-                </td>
+        <div
+          style={{
+            paddingTop: "20px",
+            paddingLeft: "20px",
+            paddingRight: "20px",
+          }}
+        >
+          <table className="table table-bordered" style={{ padding: "10px" }}>
+            <thead>
+              <tr>
+                <th scope="col">S/N</th>
+                <th scope="col">
+                  <i class="fa-solid fa-user"></i> Classroom Name
+                </th>
+                <th scope="col">
+                  <i class="fa-regular fa-envelope"></i> Total Desk
+                </th>
+                <th scope="col">
+                  <i class="fa-solid fa-gear"></i> Actions
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        <nav>
-          <ul className="pagination">
-            {Array.from(
-              {
-                length: Math.ceil(
-                  filteredClassrooms.length / classroomsPerPage
-                ),
-              },
-              (_, index) => (
-                <li
-                  key={index}
-                  className={`page-item ${
-                    currentPage === index + 1 ? "active" : ""
-                  }`}
-                >
-                  <a
-                    onClick={() => paginate(index + 1)}
-                    className="page-link"
-                    href="#"
+            </thead>
+            <tbody>
+              {currentClassrooms.map((classroom, index) => (
+                <tr key={classroom._id}>
+                  <th scope="row">{index + 1}</th>
+                  <td>{classroom.className}</td>
+                  <td>{classroom.totalDesk}</td>
+
+                  <td>
+                    <button
+                      type="button"
+                      className="btn btn-primary me-2"
+                      onClick={() => handleView(classroom)}
+                    >
+                      View
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-warning me-2"
+                      onClick={() => handleUpdateClick(classroom)}
+                    >
+                      Update
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-danger me-2"
+                      onClick={() => handleDeleteClick(classroom)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <nav>
+            <ul className="pagination">
+              {Array.from(
+                {
+                  length: Math.ceil(
+                    filteredClassrooms.length / classroomsPerPage
+                  ),
+                },
+                (_, index) => (
+                  <li
+                    key={index}
+                    className={`page-item ${
+                      currentPage === index + 1 ? "active" : ""
+                    }`}
                   >
-                    {index + 1}
-                  </a>
-                </li>
-              )
-            )}
-          </ul>
-        </nav>
+                    <a
+                      onClick={() => paginate(index + 1)}
+                      className="page-link"
+                      href="#"
+                    >
+                      {index + 1}
+                    </a>
+                  </li>
+                )
+              )}
+            </ul>
+          </nav>
+        </div>
+
         {showDeleteAlert && (
           <div className="alert alert-success" role="alert">
             Classroom deleted successfully!

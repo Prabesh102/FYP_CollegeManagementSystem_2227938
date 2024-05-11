@@ -101,33 +101,30 @@ const ViewReviewStudent = () => {
       <Sidebar />
       <div style={{ marginTop: "50px", marginLeft: "50px" }}>
         <div>
-          <h2>Schedule for {storedSection[0]}</h2>
-          {teachers.length > 0 && (
-            <div>
-              <h3>Teachers:</h3>
-              <ul>
-                {teachers.map((teacher) => (
-                  <li key={teacher._id}>{teacher.username}</li>
-                ))}
-              </ul>
-            </div>
-          )}
           {schedule && (
-            <div>
-              <h3>Review the Teachers:</h3>
+            <div
+              style={{
+                backgroundColor: "white",
+                borderRadius: "10px",
+              }}
+            >
+              <h3 style={{ padding: "10px" }}>Review the Teachers:</h3>
               {teachers.map((teacher) => (
-                <div key={teacher._id}>
+                <div key={teacher._id} style={{ margin: "20px" }}>
                   <h4>{teacher.username}</h4>
                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
                     <button
+                      className="btn btn-primary active"
                       key={rating}
                       onClick={() => handleReview(rating, teacher._id)}
                       disabled={selectedRatings[teacher._id] === rating}
                       style={{
                         backgroundColor:
                           selectedRatings[teacher._id] === rating
-                            ? "yellow"
+                            ? "#5D3FD3"
                             : "",
+                        marginRight: "5px",
+                        padding: "10px",
                       }}
                     >
                       {rating}

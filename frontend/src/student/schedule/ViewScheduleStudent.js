@@ -10,6 +10,7 @@ const ViewScheduleStudent = () => {
   const [scheduleData, setScheduleData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5); // Number of items per page
+  const [selectedDay, setSelectedDay] = useState(""); // State to store the selected day
 
   useEffect(() => {
     const fetchSchedule = async () => {
@@ -40,13 +41,31 @@ const ViewScheduleStudent = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
-  // Logic to paginate data
+  // Filter schedule data based on the selected day
+  const filteredScheduleData = selectedDay
+    ? scheduleData.filter(
+        (schedule) =>
+          schedule.scheduleDetails[0]?.scheduledDay.toLowerCase() ===
+          selectedDay.toLowerCase()
+      )
+    : scheduleData;
+
+  // Logic to paginate filtered schedule data
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = scheduleData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredScheduleData.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Function to handle day selection change
+  const handleDayChange = (e) => {
+    setSelectedDay(e.target.value);
+    setCurrentPage(1); // Reset pagination when changing the day
+  };
 
   return (
     <>
@@ -310,67 +329,89 @@ const ViewScheduleStudent = () => {
             className="d-flex justify-content-between align-items-center mb-3"
             style={{ marginTop: "60px" }}
           ></div>
-          <table className="table table-bordered">
-            <thead>
-              <tr>
-                <th>Section</th>
-                <th>Scheduled Day</th>
-                {/* <th>Number of Classes</th> */}
-                <th>Classroom</th>
-                <th>Class Type</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {scheduleData.map((schedule, index) => (
-                <tr key={index}>
-                  <td>{schedule.section}</td>
-                  <td>{schedule.scheduleDetails[0]?.scheduledDay || "N/A"}</td>
-                  {/* <td>{schedule.scheduleDetails[0]?.numberOfClass || "N/A"}</td> */}
-                  <td>
-                    <ul>
-                      {schedule.scheduleDetails[0]?.classrooms.map(
-                        (classroom, i) => (
-                          <li key={i}>{classroom.classroom}</li>
-                        )
-                      )}
-                    </ul>
-                  </td>
-                  <td>
-                    <ul>
-                      {schedule.scheduleDetails[0]?.classrooms.map(
-                        (classroom, i) => (
-                          <li key={i}>{classroom.classType || "N/A"}</li>
-                        )
-                      )}
-                    </ul>
-                  </td>
-                  <td>
-                    <ul>
-                      {schedule.scheduleDetails[0]?.classrooms.map(
-                        (classroom, i) => (
-                          <li key={i}>{classroom.startTime || "N/A"}</li>
-                        )
-                      )}
-                    </ul>
-                  </td>
-                  <td>
-                    <ul>
-                      {schedule.scheduleDetails[0]?.classrooms.map(
-                        (classroom, i) => (
-                          <li key={i}>{classroom.endTime || "N/A"}</li>
-                        )
-                      )}
-                    </ul>
-                  </td>
+          <div className="mb-3" style={{ width: "150px" }}>
+            <select
+              className="form-select"
+              value={selectedDay}
+              onChange={handleDayChange}
+            >
+              <option value="">All Days</option>
+              <option value="sunday">Sunday</option>
+              <option value="monday">Monday</option>
+              <option value="tuesday">Tuesday</option>
+              <option value="wednesday">Wednesday</option>
+              <option value="thursday">Thursday</option>
+              <option value="friday">Friday</option>
+              <option value="saturday">Saturday</option>
+            </select>
+          </div>
+          {currentItems.length > 0 ? (
+            <table className="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Section</th>
+                  <th>Scheduled Day</th>
+                  {/* <th>Number of Classes</th> */}
+                  <th>Classroom</th>
+                  <th>Class Type</th>
+                  <th>Start Time</th>
+                  <th>End Time</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {currentItems.map((schedule, index) => (
+                  <tr key={index}>
+                    <td>{schedule.section}</td>
+                    <td>
+                      {schedule.scheduleDetails[0]?.scheduledDay || "N/A"}
+                    </td>
+                    {/* <td>{schedule.scheduleDetails[0]?.numberOfClass || "N/A"}</td> */}
+                    <td>
+                      <ul>
+                        {schedule.scheduleDetails[0]?.classrooms.map(
+                          (classroom, i) => (
+                            <li key={i}>{classroom.classroom}</li>
+                          )
+                        )}
+                      </ul>
+                    </td>
+                    <td>
+                      <ul>
+                        {schedule.scheduleDetails[0]?.classrooms.map(
+                          (classroom, i) => (
+                            <li key={i}>{classroom.classType || "N/A"}</li>
+                          )
+                        )}
+                      </ul>
+                    </td>
+                    <td>
+                      <ul>
+                        {schedule.scheduleDetails[0]?.classrooms.map(
+                          (classroom, i) => (
+                            <li key={i}>{classroom.startTime || "N/A"}</li>
+                          )
+                        )}
+                      </ul>
+                    </td>
+                    <td>
+                      <ul>
+                        {schedule.scheduleDetails[0]?.classrooms.map(
+                          (classroom, i) => (
+                            <li key={i}>{classroom.endTime || "N/A"}</li>
+                          )
+                        )}
+                      </ul>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No classes scheduled for the selected day</p>
+          )}
           <ul className="pagination">
             {Array.from(
-              { length: Math.ceil(scheduleData.length / itemsPerPage) },
+              { length: Math.ceil(filteredScheduleData.length / itemsPerPage) },
               (_, i) => i + 1
             ).map((number) => (
               <li key={number} className="page-item">

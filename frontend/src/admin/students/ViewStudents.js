@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../main/Navbar";
 import "../main/admin.css";
-import { Modal, Button, Form } from "react-bootstrap";
-
+import { Modal, Button, Form, Alert } from "react-bootstrap";
 const ViewStudents = () => {
   const [selectedSection, setSelectedSection] = useState("");
   const [students, setStudents] = useState([]);
@@ -25,6 +24,8 @@ const ViewStudents = () => {
   const ITEMS_PER_PAGE = 7;
   const [showAddFromExcelModal, setShowAddFromExcelModal] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [failedUsers, setFailedUsers] = useState(null);
+  const [loading, setLoading] = useState(false); // State variable to track loading state
 
   const [formData, setFormData] = useState({
     username: "",
@@ -85,50 +86,69 @@ const ViewStudents = () => {
     setShowAddUserModal(false);
   };
 
+  const [errorMessage, setErrorMessage] = useState(""); // State variable for error message
+
   const handleAddUserSubmit = async (e) => {
     e.preventDefault();
 
+    // Validation checks
+    const username = formData.username.trim();
+    const email = formData.email.trim();
+    const password = "prabesh"; // Fixed password
+    const registrationDate = new Date().toISOString().split("T")[0]; // Today's date
+
+    // Check for empty fields
+    if (!username || !email || !password) {
+      setErrorMessage("Please enter all details."); // Set error message for empty fields
+      return;
+    }
+
+    // Check for valid email domain
+    if (!email.endsWith("@heraldcollege.edu.np")) {
+      setErrorMessage("Please use a valid email domain."); // Set error message for invalid email domain
+      return;
+    }
+
+    // Check for whitespace in username
+    if (/\s/.test(username)) {
+      setErrorMessage("Username should not contain whitespace."); // Set error message for whitespace in username
+      return;
+    }
+
+    // Check for whitespace in email
+    if (/\s/.test(email)) {
+      setErrorMessage("Email should not contain whitespace."); // Set error message for whitespace in email
+      return;
+    }
+
     try {
-      console.log("Form Data:", formData);
       const response = await fetch("http://localhost:5000/api/users/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
+          username,
+          email,
+          password,
           role: formData.role,
-          registrationDate: formData.registrationDate,
+          registrationDate,
           sections: formData.sections,
           course: formData.course,
         }),
       });
-      console.log("Sending request with payload:", {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        role: formData.role,
-        registrationDate: formData.registrationDate,
-        sections: formData.sections,
-        course: formData.course,
-      });
 
-      console.log("Server response:", response); // Log the server response
       if (response.ok) {
         // Handle successful registration
-        console.log("User added successfully");
-        // Close the modal or handle any other UI updates
         setShowAddUserModal(false);
         setAlertMessage("User added successfully!");
       } else {
         // Handle errors
-        console.error("Failed to add user");
-        setAlertMessage("Failed to add user. Please try again later.");
+        setErrorMessage("Failed to add user. Please try again later."); // Set generic error message
       }
     } catch (error) {
       console.error("Error:", error);
+      setErrorMessage("An error occurred. Please try again later."); // Set generic error message
     }
   };
   // Function to open the modal for adding students from Excel
@@ -141,32 +161,6 @@ const ViewStudents = () => {
     setShowAddFromExcelModal(false);
   };
 
-  const handleUploadFile = async (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/users/registerFromFile",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        console.log("File uploaded successfully:", data);
-        // Display success message to the user or update UI as needed
-      } else {
-        console.error("Failed to upload file");
-        // Display error message to the user or handle error appropriately
-      }
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      // Display error message to the user or handle error appropriately
-    }
-  };
   useEffect(() => {
     const fetchStudentData = async () => {
       try {
@@ -318,6 +312,7 @@ const ViewStudents = () => {
       setCurrentPage(currentPage + 1);
     }
   };
+
   const handleAddFromExcelSubmit = async () => {
     if (!selectedFile) {
       console.error("No file selected");
@@ -337,15 +332,36 @@ const ViewStudents = () => {
       );
       if (response.ok) {
         const data = await response.json();
-        console.log("File uploaded successfully:", data);
-        // Display success message to the user or update UI as needed
+        console.log("failed users:", data);
+
+        // console.log("File uploaded successfully:", data);
+        if (data.failedUsers && data.failedUsers.length > 0) {
+          setFailedUsers(data.failedUsers); // Store failed users in state
+          console.log("failedUsers: ", failedUsers);
+        } else {
+          // No failed users, handle accordingly
+          console.log("no failed users");
+        }
       } else {
         console.error("Failed to upload file");
-        // Display error message to the user or handle error appropriately
       }
     } catch (error) {
       console.error("Error uploading file:", error);
       // Display error message to the user or handle error appropriately
+    }
+  };
+  const handleDownloadFailedUsers = () => {
+    if (failedUsers) {
+      const blob = new Blob([JSON.stringify(failedUsers)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "failed_users.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
   };
 
@@ -360,101 +376,144 @@ const ViewStudents = () => {
       />
       <Navbar />
       <div className="viewTable" style={{ paddingTop: "60px" }}>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <div className="ml-auto">
-            <input
-              type="text"
-              className="form-control form-control-sl border-black text-black"
-              placeholder="Search by username"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        <div style={{ display: "flex", alignItems: "center" }}>
+          {/* Left side */}
+          <div style={{ marginRight: "auto", marginLeft: "20px" }}>
+            <h3>Student Details Table</h3>
           </div>
-          <div className="d-flex justify-content-end mb-3">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleAddUserClick}
-            >
-              Add User By Form
-            </button>
-          </div>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleAddFromExcelClick}
+          {/* Right side */}
+          <div
+            style={{
+              marginLeft: "auto",
+              display: "flex",
+              alignItems: "center",
+            }}
           >
-            Add Student By Excel Sheet
-          </button>{" "}
+            <div style={{ marginRight: "20px" }}>
+              <h6 style={{ textAlign: "center" }}>Search by student name</h6>
+              <hr />
+              <input
+                type="text"
+                className="form-control form-control-sl border-black text-black"
+                placeholder="Search by username"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div>
+              <h6 style={{ textAlign: "center" }}>Add student by</h6>
+              <hr />
+              <div className="d-flex">
+                <button
+                  type="button"
+                  className="btn btn-primary mb-2"
+                  style={{
+                    marginRight: "5px",
+                    height: "35px",
+                    width: "150px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                  }}
+                  onClick={handleAddFromExcelClick}
+                >
+                  Excel Sheet
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  style={{
+                    height: "35px",
+                    width: "150px",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    textAlign: "center",
+                  }}
+                  onClick={handleAddUserClick}
+                >
+                  Form
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">S/N</th>
-              <th scope="col">
-                <i class="fa-solid fa-user"></i> Username
-              </th>
-              <th scope="col">
-                <i class="fa-regular fa-envelope"></i> Email
-              </th>
-              <th scope="col">
-                <i class="fa-regular fa-calendar-days"></i> Registration Date
-              </th>
-              <th scope="col">
-                <i class="fa-solid fa-book"></i> Course
-              </th>
-              <th scope="col">
-                <i class="fa-solid fa-landmark"></i> Section
-              </th>
-              <th scope="col">
-                <i class="fa-solid fa-book"></i> Semester
-              </th>
 
-              <th scope="col">
-                <i class="fa-solid fa-gear"></i> Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentStudents.map((student, index) => (
-              <tr key={student._id}>
-                <th scope="row">{index + 1}</th>
-                <td>{student.username}</td>
-                <td>{student.email}</td>
-                <td>
-                  {new Date(student.registrationDate).toLocaleDateString()}
-                </td>
-                <td>{student.course}</td>
-                <td>{student.sections ? student.sections.join(", ") : ""}</td>
-                <td>{student.semester}</td>
+        <div
+          style={{
+            paddingTop: "20px",
+            paddingLeft: "20px",
+            paddingRight: "20px",
+          }}
+        >
+          <table className="table table-bordered" style={{ padding: "10px" }}>
+            <thead>
+              <tr>
+                <th scope="col">S/N</th>
+                <th scope="col">
+                  <i class="fa-solid fa-user"></i> Username
+                </th>
+                <th scope="col">
+                  <i class="fa-regular fa-envelope"></i> Email
+                </th>
+                <th scope="col">
+                  <i class="fa-regular fa-calendar-days"></i> Registration Date
+                </th>
+                <th scope="col">
+                  <i class="fa-solid fa-book"></i> Course
+                </th>
+                <th scope="col">
+                  <i class="fa-solid fa-landmark"></i> Section
+                </th>
+                <th scope="col">
+                  <i class="fa-solid fa-book"></i> Semester
+                </th>
 
-                <td>
-                  <button
-                    type="button"
-                    className="btn btn-primary me-2"
-                    onClick={() => handleView(student)}
-                  >
-                    View
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-warning me-2"
-                    onClick={() => handleUpdateClick(student)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-danger me-2"
-                    onClick={() => handleDeleteClick(student)}
-                  >
-                    Delete
-                  </button>
-                </td>
+                <th scope="col">
+                  <i class="fa-solid fa-gear"></i> Actions
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {currentStudents.map((student, index) => (
+                <tr key={student._id}>
+                  <th scope="row">{index + 1}</th>
+                  <td>{student.username}</td>
+                  <td>{student.email}</td>
+                  <td>
+                    {new Date(student.registrationDate).toLocaleDateString()}
+                  </td>
+                  <td>{student.course}</td>
+                  <td>{student.sections ? student.sections.join(", ") : ""}</td>
+                  <td>{student.semester}</td>
+
+                  <td>
+                    <button
+                      type="button"
+                      className="btn btn-primary me-2"
+                      onClick={() => handleView(student)}
+                    >
+                      View
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-warning me-2"
+                      onClick={() => handleUpdateClick(student)}
+                    >
+                      Update
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-danger me-2"
+                      onClick={() => handleDeleteClick(student)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
         {showDeleteAlert && (
           <div className="alert alert-success" role="alert">
             User deleted successfully!
@@ -602,9 +661,18 @@ const ViewStudents = () => {
         </Modal>
         <Modal show={showAddUserModal} onHide={handleAddUserClose}>
           <Modal.Header closeButton>
-            <Modal.Title>Add User</Modal.Title>
+            <Modal.Title>Add Student</Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            {errorMessage && ( // Conditionally render the error message
+              <Alert
+                variant="danger"
+                onClose={() => setErrorMessage("")}
+                dismissible
+              >
+                {errorMessage}
+              </Alert>
+            )}
             <div className="mb-3">
               <label>Username</label>
               <input
@@ -642,10 +710,9 @@ const ViewStudents = () => {
                 name="password"
                 className="form-control"
                 placeholder="Enter password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
+                value="prabesh"
+                readOnly
+                // readOnly attribute prevents user from editing the field
                 required
               />
             </div>
@@ -671,10 +738,10 @@ const ViewStudents = () => {
                 type="date"
                 name="registrationDate"
                 className="form-control"
-                value={formData.registrationDate}
-                onChange={(e) =>
-                  setFormData({ ...formData, registrationDate: e.target.value })
-                }
+                value={new Date().toISOString().split("T")[0]}
+                // Set the value to the current date
+                disabled
+                // Disable the input field so that the user cannot change it
                 required
               />
             </div>
@@ -739,10 +806,24 @@ const ViewStudents = () => {
             <Modal.Title>Add Students From Excel</Modal.Title>
           </Modal.Header>
           <Modal.Body>
+            {failedUsers && (
+              <div>
+                <button
+                  className="btn btn-success"
+                  onClick={handleDownloadFailedUsers}
+                >
+                  Download Failed Users
+                </button>
+                <p>
+                  Some users failed to register. Click the button above to
+                  download the list of failed users.
+                </p>
+              </div>
+            )}
             <input
               type="file"
               accept=".xlsx, .xls"
-              onChange={handleUploadFile}
+              onChange={handleFileChange}
             />
           </Modal.Body>
           <Modal.Footer>

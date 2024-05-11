@@ -322,17 +322,34 @@ const ViewTeacher = () => {
       />
       <Navbar />
       <div className="viewTable" style={{ paddingTop: "60px" }}>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <div className="ml-auto">
-            <input
-              type="text"
-              className="form-control form-control-sl border-black text-black"
-              placeholder="Search by username"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ marginRight: "auto", marginLeft: "20px" }}>
+            <h3>Teacher Details Table</h3>
           </div>
-          <div className="d-flex justify-content-end mb-3">
+          <div style={{ marginRight: "20px" }}>
+            <h6 style={{ textAlign: "center" }}>Search by teacher name</h6>
+            <hr />
+            <div className="d-flex justify-content-between align-items-center ">
+              <div className="ml-auto">
+                <input
+                  type="text"
+                  className="form-control form-control-sl border-black text-black"
+                  placeholder="Search by username"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+          <div style={{ marginRight: "20px" }}>
+            <h6 style={{ textAlign: "center" }}>Add teacher</h6>
+            <hr />
             <button
               type="button"
               className="btn btn-primary"
@@ -342,89 +359,97 @@ const ViewTeacher = () => {
             </button>
           </div>
         </div>
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">S/N</th>
-              <th scope="col">
-                <i class="fa-solid fa-user"></i> Username
-              </th>
-              <th scope="col">
-                <i class="fa-regular fa-envelope"></i> Email
-              </th>
-              <th scope="col">
-                <i class="fa-regular fa-envelope"></i> Course
-              </th>
-              <th scope="col">
-                <i class="fa-regular fa-envelope"></i> Semester
-              </th>
-              <th scope="col">
-                <i class="fa-regular fa-envelope"></i> Module
-              </th>
-              <th scope="col">
-                <i class="fa-regular fa-envelope"></i> Section
-              </th>
-              <th scope="col">
-                <i class="fa-regular fa-calendar-days"></i> Registration Date
-              </th>
+        <div
+          style={{
+            paddingTop: "20px",
+            paddingLeft: "20px",
+            paddingRight: "20px",
+          }}
+        >
+          <table className="table table-bordered" style={{ padding: "10px" }}>
+            <thead>
+              <tr>
+                <th scope="col">S/N</th>
+                <th scope="col">
+                  <i class="fa-solid fa-user"></i> Username
+                </th>
+                <th scope="col">
+                  <i class="fa-regular fa-envelope"></i> Email
+                </th>
+                <th scope="col">
+                  <i class="fa-regular fa-envelope"></i> Course
+                </th>
+                <th scope="col">
+                  <i class="fa-regular fa-envelope"></i> Semester
+                </th>
+                <th scope="col">
+                  <i class="fa-regular fa-envelope"></i> Module
+                </th>
+                <th scope="col">
+                  <i class="fa-regular fa-envelope"></i> Section
+                </th>
+                <th scope="col">
+                  <i class="fa-regular fa-calendar-days"></i> Registration Date
+                </th>
 
-              <th scope="col">
-                <i class="fa-regular fa-calendar-days"></i> Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentTeachers.map((teacher, index) => {
-              console.log("Teacher Object:", teacher);
-              return (
-                <tr key={teacher._id}>
-                  <th scope="row">{index + 1}</th>
-                  <td>{teacher.username}</td>
-                  <td>{teacher.email}</td>
-                  <td>{teacher.course}</td>
-                  <td>{teacher.semester}</td>
-                  <td>{teacher.module}</td>
-                  <td>
-                    {teacher.sections
-                      ? teacher.sections.map((section, index) => (
-                          <span key={index}>
-                            {section}
-                            <br />
-                          </span>
-                        ))
-                      : ""}
-                  </td>
-                  <td>
-                    {new Date(teacher.registrationDate).toLocaleDateString()}
-                  </td>
-                  <td>
-                    <button
-                      type="button"
-                      className="btn btn-primary me-2"
-                      onClick={() => handleView(teacher)}
-                    >
-                      View
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-warning me-2"
-                      onClick={() => handleUpdateClick(teacher)}
-                    >
-                      Update
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-danger me-2"
-                      onClick={() => handleDeleteClick(teacher)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                <th scope="col">
+                  <i class="fa-regular fa-calendar-days"></i> Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentTeachers.map((teacher, index) => {
+                console.log("Teacher Object:", teacher);
+                return (
+                  <tr key={teacher._id}>
+                    <th scope="row">{index + 1}</th>
+                    <td>{teacher.username}</td>
+                    <td>{teacher.email}</td>
+                    <td>{teacher.course}</td>
+                    <td>{teacher.semester}</td>
+                    <td>{teacher.module}</td>
+                    <td>
+                      {teacher.sections
+                        ? teacher.sections.map((section, index) => (
+                            <span key={index}>
+                              {section}
+                              <br />
+                            </span>
+                          ))
+                        : ""}
+                    </td>
+                    <td>
+                      {new Date(teacher.registrationDate).toLocaleDateString()}
+                    </td>
+                    <td>
+                      <button
+                        type="button"
+                        className="btn btn-primary me-2"
+                        onClick={() => handleView(teacher)}
+                      >
+                        View
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-warning me-2"
+                        onClick={() => handleUpdateClick(teacher)}
+                      >
+                        Update
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-danger me-2"
+                        onClick={() => handleDeleteClick(teacher)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
         {showDeleteAlert && (
           <div className="alert alert-success" role="alert">
             User deleted successfully!

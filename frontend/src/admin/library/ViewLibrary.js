@@ -216,112 +216,142 @@ const ViewLibrary = () => {
       />
       <Navbar />
       <div className="viewTable" style={{ paddingTop: "60px" }}>
-        <div className="d-flex justify-content-between align-items-center mb-3">
-          <div className="ml-auto">
-            <input
-              type="text"
-              className="form-control form-control-sl border-black text-black"
-              placeholder="Search by section name"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ marginRight: "auto", marginLeft: "20px" }}>
+            <h3>Book Details Table</h3>
           </div>
-          <div className="d-flex justify-content-end mb-3">
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={handleAddLibraryClick}
-            >
-              Add Book
-            </button>
+          <div style={{ marginRight: "20px" }}>
+            <h6 style={{ textAlign: "center" }}>Search by book name</h6>
+            <hr />
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <div className="ml-auto">
+                <input
+                  type="text"
+                  className="form-control form-control-sl border-black text-black"
+                  placeholder="Search by section name"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+          <div style={{ marginRight: "20px" }}>
+            <h6 style={{ textAlign: "center" }}>Add book</h6>
+            <hr />
+            <div className="d-flex justify-content-end mb-3">
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={handleAddLibraryClick}
+              >
+                Add Book
+              </button>
+            </div>
           </div>
         </div>
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">S/N</th>
-              <th scope="col">
-                <i class="fa-solid fa-user"></i> Image
-              </th>
-              <th scope="col">
-                <i class="fa-solid fa-user"></i> Book name
-              </th>
-              <th scope="col">
-                <i class="fa-regular fa-envelope"></i> Category
-              </th>
-              <th scope="col">
-                <i class="fa-solid fa-gear"></i> Price
-              </th>
-              <th scope="col">
-                <i class="fa-solid fa-gear"></i> Total pages
-              </th>
-              <th scope="col">
-                <i class="fa-solid fa-gear"></i> Self No.
-              </th>
-              <th scope="col">
-                <i class="fa-solid fa-gear"></i> Action
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentItems.map((library, index) => (
-              <tr key={library._id}>
-                <th scope="row">{index + 1}</th>
-                <td>
-                  <img
-                    src={library.image}
-                    alt={library.bookName}
-                    width="100"
-                    height="130"
-                  />
-                </td>
-                <td>{library.bookName}</td>
-                <td>{library.bookCategory}</td>
-                <td>{library.bookPrice}</td>
-                <td>{library.totalPages}</td>
-                <td>{library.selfNo}</td>
-                <td>
-                  <button
-                    type="button"
-                    className="btn btn-primary me-2"
-                    onClick={() => handleView(library)}
-                  >
-                    View
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-warning me-2"
-                    onClick={() => handleUpdateClick(library)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-danger me-2"
-                    onClick={() => handleDeleteClick(library)}
-                  >
-                    Delete
-                  </button>
-                </td>
+        <div
+          style={{
+            paddingTop: "20px",
+            paddingLeft: "20px",
+            paddingRight: "20px",
+          }}
+        >
+          <table className="table table-bordered" style={{ padding: "10px" }}>
+            <thead>
+              <tr>
+                <th scope="col">S/N</th>
+                <th scope="col">
+                  <i class="fa-solid fa-user"></i> Image
+                </th>
+                <th scope="col">
+                  <i class="fa-solid fa-user"></i> Book name
+                </th>
+                <th scope="col">
+                  <i class="fa-regular fa-envelope"></i> Category
+                </th>
+                <th scope="col">
+                  <i class="fa-solid fa-gear"></i> Price
+                </th>
+                <th scope="col">
+                  <i class="fa-solid fa-gear"></i> Total pages
+                </th>
+                <th scope="col">
+                  <i class="fa-solid fa-gear"></i> Self No.
+                </th>
+                <th scope="col">
+                  <i class="fa-solid fa-gear"></i> Action
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="pagination">
-          <button
-            className="btn btn-primary"
-            onClick={() => paginate(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
-          <button
-            className="btn btn-primary"
-            onClick={() => paginate(currentPage + 1)}
-            disabled={indexOfLastItem >= library.length}
-          >
-            Next
-          </button>
+            </thead>
+            <tbody>
+              {currentItems.map((library, index) => (
+                <tr key={library._id}>
+                  <th scope="row">{index + 1}</th>
+                  <td>
+                    <img
+                      src={library.image}
+                      alt={library.bookName}
+                      width="100"
+                      height="120"
+                    />
+                  </td>
+                  <td>{library.bookName}</td>
+                  <td>{library.bookCategory}</td>
+                  <td>{library.bookPrice}</td>
+                  <td>{library.totalPages}</td>
+                  <td>{library.selfNo}</td>
+                  <td>
+                    <button
+                      type="button"
+                      className="btn btn-primary me-2"
+                      onClick={() => handleView(library)}
+                    >
+                      View
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-warning me-2"
+                      onClick={() => handleUpdateClick(library)}
+                    >
+                      Update
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-danger me-2"
+                      onClick={() => handleDeleteClick(library)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="pagination">
+            {currentPage > 1 && (
+              <button
+                className="btn btn-primary"
+                onClick={() => paginate(currentPage - 1)}
+              >
+                {currentPage - 1}
+              </button>
+            )}
+            <button className="btn btn-primary active">{currentPage}</button>
+            {currentPage < Math.ceil(filteredLibrary.length / itemsPerPage) && (
+              <button
+                className="btn btn-primary"
+                onClick={() => paginate(currentPage + 1)}
+              >
+                {currentPage + 1}
+              </button>
+            )}
+          </div>
         </div>
         {showDeleteAlert && (
           <div className="alert alert-success" role="alert">
@@ -445,8 +475,14 @@ const ViewLibrary = () => {
           <Modal.Header closeButton>
             <Modal.Title>Books Details</Modal.Title>
           </Modal.Header>
-          <Modal.Body>
-            <img src={selectedLibrary?.image} height={100} width={150} />
+          <Modal.Body
+            style={{
+              justifyContent: "center",
+              textAlign: "center",
+              alignItems: "center",
+            }}
+          >
+            <img src={selectedLibrary?.image} height={150} width={150} />
             <p>Book Name: {selectedLibrary?.bookName}</p>
             <p>Book Category: {selectedLibrary?.bookCategory}</p>
             <p>Book Price: {selectedLibrary?.bookPrice}</p>

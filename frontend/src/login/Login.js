@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, Button } from "react-bootstrap";
@@ -16,9 +15,7 @@ const Login = () => {
   const [alertMessage, setAlertMessage] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [userId, setUserId] = useState(null);
-  // const [username, setUsername] = useState("");
-  // const [semester, setSemester] = useState("");
-  // const [section, setSection] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // State to hold error message
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -94,8 +91,21 @@ const Login = () => {
       const newPassword = e.target.newPassword.value;
       const confirmPassword = e.target.confirmPassword.value;
 
+      // Check if passwords match
       if (newPassword !== confirmPassword) {
-        // Handle password mismatch error
+        setErrorMessage("Passwords do not match");
+        return;
+      }
+
+      // Check for whitespace in the password
+      if (/\s/.test(newPassword)) {
+        setErrorMessage("Password should not contain whitespace");
+        return;
+      }
+
+      // Check for minimum length
+      if (newPassword.length < 6) {
+        setErrorMessage("Password should be at least 6 characters long");
         return;
       }
 
@@ -107,14 +117,12 @@ const Login = () => {
         }
       );
 
-      // Handle successful password change
       setShowModal(false);
+      navigate(`/${response.data.role}Dashboard`);
     } catch (error) {
-      // Handle password change error
       console.error("Password change failed", error.message);
     }
   };
-
   return (
     <div className="hero-section-login">
       <Modal show={showModal} onHide={handleClose}>
@@ -151,6 +159,11 @@ const Login = () => {
               Change Password
             </Button>
           </form>
+          {errorMessage && (
+            <div className="alert alert-danger mt-3" role="alert">
+              {errorMessage}
+            </div>
+          )}
         </Modal.Body>
       </Modal>
 
